@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>معالج التثبيت - Lyalina Ads Manager</title>
+  <style>
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --surface-2: #273449;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --success: #22c55e;
+      --danger: #ef4444;
+      --border: #334155;
+      --code-bg: #0b1220;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      padding: 2rem 1rem;
+    }
+    .container { max-width: 880px; margin: 0 auto; }
+    header {
+      text-align: center;
+      padding: 2rem 1rem;
+      background: linear-gradient(135deg, var(--primary), var(--success));
+      border-radius: 16px;
+      margin-bottom: 2rem;
+    }
+    header h1 { color: #fff; font-size: 1.8rem; }
+    header p { color: #eef2ff; margin-top: .4rem; }
+    nav { display: flex; gap: .5rem; justify-content: center; flex-wrap: wrap; margin-bottom: 2rem; }
+    nav a { color: var(--text); text-decoration: none; background: var(--surface); padding: .5rem 1rem; border-radius: 8px; border: 1px solid var(--border); transition: .2s; }
+    nav a:hover { background: var(--primary); color: #fff; }
+    section { background: var(--surface); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; border: 1px solid var(--border); }
+    h2 { color: var(--primary); margin-bottom: 1rem; font-size: 1.3rem; }
+    p { color: var(--muted); margin-bottom: .75rem; }
+    label { display: block; color: var(--muted); margin: .9rem 0 .3rem; font-size: .95rem; }
+    input[type=text], select {
+      width: 100%; padding: .6rem .8rem; border-radius: 8px;
+      border: 1px solid var(--border); background: var(--surface-2);
+      color: var(--text); font-size: .95rem; direction: ltr; text-align: left;
+    }
+    input:focus { outline: 2px solid var(--primary); }
+    .row { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .col { flex: 1; min-width: 240px; }
+    .checks { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: .6rem; margin-bottom: 1rem; }
+    .check {
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: 8px; padding: .8rem 1rem;
+    }
+    .check .name { font-size: .8rem; color: var(--muted); }
+    .check .val { font-size: 1.1rem; font-weight: 700; margin-top: .2rem; }
+    .ok { color: var(--success); }
+    .no { color: var(--danger); }
+    pre {
+      background: var(--code-bg); border: 1px solid var(--border);
+      border-radius: 8px; padding: 1rem; overflow-x: auto;
+      direction: ltr; text-align: left; margin-bottom: 1rem;
+      max-height: 360px; overflow-y: auto;
+    }
+    pre code { color: #e2e8f0; font-family: Consolas, monospace; font-size: .82rem; white-space: pre; }
+    button {
+      background: var(--primary); color: #fff; border: none; cursor: pointer;
+      padding: .7rem 1.4rem; border-radius: 8px; font-size: .95rem; font-weight: 600;
+      transition: .2s;
+    }
+    button:hover { background: var(--primary-dark); }
+    button.ghost { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
+    button.ghost:hover { background: rgba(99,102,241,.1); }
+    .btn-row { display: flex; gap: .6rem; flex-wrap: wrap; margin-top: 1rem; }
+    code.inline { background: var(--code-bg); padding: .1rem .4rem; border-radius: 4px; color: #a5b4fc; font-family: Consolas, monospace; font-size: .9em; direction: ltr; display: inline-block; }
+    .tip { background: rgba(34,197,94,.1); border-right: 4px solid var(--success); padding: .8rem 1rem; border-radius: 6px; margin: 1rem 0; color: var(--text); }
+    .warn { background: rgba(245,158,11,.1); border-right: 4px solid #f59e0b; padding: .8rem 1rem; border-radius: 6px; margin: 1rem 0; color: var(--text); }
+    .steps { counter-reset: st; list-style: none; padding: 0; }
+    .steps li { counter-increment: st; position: relative; padding-right: 2.6rem; margin-bottom: .9rem; color: var(--muted); }
+    .steps li::before {
+      content: counter(st); position: absolute; right: 0; top: 0;
+      width: 1.7rem; height: 1.7rem; background: var(--primary); color: #fff;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: .9rem;
+    }
+    footer { text-align: center; color: var(--muted); margin-top: 2rem; font-size: .9rem; }
+    .hidden { display: none; }
+    .tabs { display: flex; gap: .4rem; margin-bottom: .8rem; flex-wrap: wrap; }
+    .tab { background: var(--surface-2); border: 1px solid var(--border); color: var(--muted); padding: .45rem 1rem; border-radius: 8px; cursor: pointer; font-size: .9rem; }
+    .tab.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>معالج التثبيت (Wizard)</h1>
+      <p>تجهيز إعدادات الاتصال بقاعدة البيانات وملفات التكوين تلقائياً</p>
+    </header>
+
+    <nav>
+      <a href="installation.html">التثبيت</a>
+      <a href="Readme.html">القراءة (README)</a>
+      <a href="FaQ.html">الأسئلة الشائعة (FAQ)</a>
+      <a href="wizard.html">معالج التثبيت</a>
+    </nav>
+
+    <section>
+      <h2>الخطوة 1: فحص جاهزية المتطلبات</h2>
+      <div class="checks" id="checks">
+        <div class="check"><div class="name">Node.js (20+)</div><div class="val" id="c-node">...جارٍ الفحص</div></div>
+        <div class="check"><div class="name">pnpm (9+)</div><div class="val" id="c-pnpm">...جارٍ الفحص</div></div>
+        <div class="check"><div class="name">git</div><div class="val" id="c-git">...جارٍ الفحص</div></div>
+        <div class="check"><div class="name">Firebase CLI</div><div class="val" id="c-fb">...جارٍ الفحص</div></div>
+      </div>
+      <div class="warn">هذا الفحص يعمل عند فتح الملف من المتصفح مع أذونات محلية. إن لم تظهر النتائج، تحقق يدوياً بفتح الطرفية وتشغيل: <code class="inline">node -v</code>، <code class="inline">pnpm -v</code>، <code class="inline">git --version</code>، <code class="inline">npx firebase --version</code>.</div>
+    </section>
+
+    <section>
+      <h2>الخطوة 2: إدخال إعدادات مشروع Firebase</h2>
+      <p>أدخل قيم مشروع Firebase (من <strong>Firebase Console ← إعدادات المشروع ← عام ← تطبيقاتك</strong>). يمكنك ملء المفاتيح الحساسة هنا أو تركها فارغة لاستخدام فتحات <code class="inline">PASTE_YOUR_...</code> في ملف التكوين.</p>
+      <div class="row">
+        <div class="col"><label>معرّف المشروع (projectId)</label><input type="text" id="f-project" placeholder="lyalina-ads"></div>
+        <div class="col"><label>مفتاح Firebase (apiKey)</label><input type="text" id="f-apikey" placeholder="AIza..." dir="ltr"></div>
+      </div>
+      <div class="row">
+        <div class="col"><label>نطاق المصادقة (authDomain)</label><input type="text" id="f-auth" placeholder="project.firebaseapp.com" dir="ltr"></div>
+        <div class="col"><label>حاوية التخزين (storageBucket)</label><input type="text" id="f-bucket" placeholder="project.firebasestorage.app" dir="ltr"></div>
+      </div>
+      <div class="row">
+        <div class="col"><label>معرّف المرسل (messagingSenderId)</label><input type="text" id="f-sender" placeholder="1234567890" dir="ltr"></div>
+        <div class="col"><label>معرّف التطبيق (appId)</label><input type="text" id="f-app" placeholder="1:xxx:web:yyy" dir="ltr"></div>
+      </div>
+      <div class="row">
+        <div class="col"><label>معرّف القياس (measurementId) - اختياري</label><input type="text" id="f-meas" placeholder="G-XXXXXXX" dir="ltr"></div>
+        <div class="col"><label>مسار البيانات داخل Firestore (appPath)</label><input type="text" id="f-apppath" placeholder="lyalina-ads-production" dir="ltr"></div>
+      </div>
+      <label>مفتاح Gemini AI (geminiApiKey) - اختياري</label>
+      <input type="text" id="f-gemini" placeholder="AIza..." dir="ltr">
+      <div class="btn-row">
+        <button onclick="generate()">توليد ملفات التكوين</button>
+      </div>
+    </section>
+
+    <section id="output" class="hidden">
+      <h2>الخطوة 3: الملفات الجاهزة</h2>
+      <p>انسخ المحتوى الناتج إلى الملف الموافق، أو حمّله مباشرة.</p>
+
+      <div class="tabs">
+        <div class="tab active" onclick="showTab('env','this')">.env</div>
+        <div class="tab" onclick="showTab('config','this')">firebaseConfig.ts</div>
+      </div>
+
+      <div id="tab-env">
+        <p>الصقه في ملف <code class="inline">.env</code> (أضفه إلى <code class="inline">.gitignore</code> واجعله خاصاً).</p>
+        <pre><code id="out-env"></code></pre>
+      </div>
+
+      <div id="tab-config" class="hidden">
+        <p>انسخ "القيم المزروعة" أسفل ملف التكوين، أو استبدل الملف كاملاً على المسار <code class="inline">src/config/firebaseConfig.ts</code>.</p>
+        <pre><code id="out-config"></code></pre>
+      </div>
+
+      <div class="btn-row">
+        <button class="ghost" onclick="copyEnv()">نسخ .env</button>
+        <button class="ghost" onclick="copyConfig()">نسخ firebaseConfig.ts</button>
+        <button class="ghost" onclick="download('env')">تحميل .env</button>
+        <button class="ghost" onclick="download('config')">تحميل firebaseConfig.ts</button>
+      </div>
+    </section>
+
+    <section>
+      <h2>الخطوة 4: الخطوات التالية</h2>
+      <ol class="steps">
+        <li>تثبيت الاعتماديات: <code class="inline">pnpm install</code></li>
+        <li>تشغيل خادم التطوير: <code class="inline">pnpm dev</code> ثم افتح <code class="inline">http://localhost:3000</code></li>
+        <li>التحقق من البناء: <code class="inline">pnpm build</code></li>
+        <li>النشر على Firebase Hosting: <code class="inline">pnpm deploy</code></li>
+      </ol>
+      <div class="tip">للتفاصيل الكاملة حول تجهيز مشروع Firebase من الصفر راجع قسم <a href="installation.html#firebase" style="color:var(--primary)">الإعداد على Firebase</a> في دليل التثبيت.</div>
+    </section>
+
+    <footer>© 2026 Lyalina Ads Manager - شركة ليالينا. جميع الحقوق محفوظة.</footer>
+  </div>
+
+  <script>
+    // فحص جاهزية المتطلبات (أفضل جهد داخل المتصفح)
+    function setCheck(id, label, ok, detail) {
+      const el = document.getElementById(id);
+      el.innerHTML = ok ? ('<span class="ok">متوفر</span> ' + (detail||'')) : ('<span class="no">غير متوفر</span> ' + (detail||''));
+      el.style.color = ok ? 'var(--success)' : 'var(--danger)';
+    }
+    // لا يمكن تنفيذ أوامر CLI من المتصفح العادي؛ نعرض إرشادات يدوية.
+    function manualCheck(id, name) {
+      document.getElementById(id).innerHTML = '<span style="font-size:.85rem;color:var(--muted)">افحص يدوياً: <code class="inline">' + name + '</code></span>';
+      document.getElementById(id).style.color = 'var(--muted)';
+    }
+    setCheck('c-node','Node',false); manualCheck('c-node','node -v');
+    manualCheck('c-pnpm','pnpm -v');
+    manualCheck('c-git','git --version');
+    manualCheck('c-fb','npx firebase --version');
+
+    function v(f) { return document.getElementById(f).value.trim(); }
+
+    function buildConfig() {
+      const project = v('f-project') || 'YOUR_PROJECT_ID';
+      const auth = v('f-auth') || project + '.firebaseapp.com';
+      const bucket = v('f-bucket') || project + '.firebasestorage.app';
+      const sender = v('f-sender') || 'YOUR_SENDER_ID';
+      const appid = v('f-app') || 'PASTE_YOUR_FIREBASE_APP_ID';
+      const meas = v('f-meas') || 'YOUR_MEASUREMENT_ID';
+      const apppath = v('f-apppath') || 'lyalina-ads-production';
+      const apikey = v('f-apikey') || 'PASTE_YOUR_FIREBASE_API_KEY';
+      const gemini = v('f-gemini') || 'PASTE_YOUR_GEMINI_API_KEY';
+
+      const cfg = [
+        '// @ts-nocheck',
+        'export const firebaseConfig = {',
+        '  apiKey: ' + JSON.stringify(apikey) + ',',
+        '  authDomain: ' + JSON.stringify(auth) + ',',
+        '  projectId: ' + JSON.stringify(project) + ',',
+        '  storageBucket: ' + JSON.stringify(bucket) + ',',
+        '  messagingSenderId: ' + JSON.stringify(sender) + ',',
+        '  appId: ' + JSON.stringify(appid) + ',',
+        '  measurementId: ' + JSON.stringify(meas) + ',',
+        '};',
+        'export const appId = ' + JSON.stringify(apppath) + ';',
+        'export const geminiApiKey = ' + JSON.stringify(gemini) + ';',
+        ''
+      ].join('\n');
+
+      const env = [
+        'VITE_FIREBASE_API_KEY=' + apikey,
+        'VITE_FIREBASE_AUTH_DOMAIN=' + auth,
+        'VITE_FIREBASE_PROJECT_ID=' + project,
+        'VITE_FIREBASE_STORAGE_BUCKET=' + bucket,
+        'VITE_FIREBASE_MESSAGING_SENDER_ID=' + sender,
+        'VITE_FIREBASE_APP_ID=' + appid,
+        'VITE_FIREBASE_MEASUREMENT_ID=' + meas,
+        'VITE_FIREBASE_APP_PATH=' + apppath,
+        'VITE_GEMINI_API_KEY=' + gemini,
+        ''
+      ].join('\n');
+
+      return { cfg, env };
+    }
+
+    function generate() {
+      const { cfg, env } = buildConfig();
+      document.getElementById('out-env').textContent = env;
+      document.getElementById('out-config').textContent = cfg;
+      document.getElementById('output').classList.remove('hidden');
+      document.getElementById('output').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function showTab(name, btn) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.getElementById('tab-env').classList.toggle('hidden', name !== 'env');
+      document.getElementById('tab-config').classList.toggle('hidden', name !== 'config');
+      btn.classList.add('active');
+    }
+
+    function copyText(id) {
+      const t = document.getElementById(id).textContent;
+      return navigator.clipboard.writeText(t);
+    }
+    function copyEnv() { copyText('out-env').then(()=>alert('تم نسخ محتوى .env')); }
+    function copyConfig() { copyText('out-config').then(()=>alert('تم نسخ محتوى firebaseConfig.ts')); }
+
+    function download(kind) {
+      const { cfg, env } = buildConfig();
+      const name = kind === 'env' ? '.env' : 'firebaseConfig.ts';
+      const content = kind === 'env' ? env : cfg;
+      const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = name;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+  </script>
+</body>
+</html>

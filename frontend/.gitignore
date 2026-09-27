@@ -1,0 +1,37 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+dist-ssr/
+*.local
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Editor
+.vscode/
+.idea/
+.vite/
+
+# Firebase
+.firebase/
+*-debug.log
+
+# Backups & archives
+Backup/
+*.zip
+
+# Secrets & OAuth client files
+Docs/
+
+# TypeScript build info
+*.tsbuildinfo

@@ -1,0 +1,27 @@
+# الاعتماديات والبناء
+node_modules/
+dist/
+build/
+*.tsbuildinfo
+
+# Cloudflare Wrangler
+.wrangler/
+
+# الأسرار والبيئة (أبداً لا تُلتزم)
+.env
+.env.*
+!.env.example
+.dev.vars
+
+# النسخ الاحتياطية والملفات المضغوطة
+Backup/
+*.zip
+
+# نظام وآخر
+.DS_Store
+Thumbs.db
+*.log
+
+# IDE
+.vscode/
+.idea/

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>README - Lyalina Ads Manager</title>
+  <style>
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --surface-2: #273449;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --success: #22c55e;
+      --border: #334155;
+      --code-bg: #0b1220;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.8;
+      padding: 2rem 1rem;
+    }
+    .container { max-width: 860px; margin: 0 auto; }
+    header {
+      text-align: center;
+      padding: 2rem 1rem;
+      background: linear-gradient(135deg, var(--primary), var(--success));
+      border-radius: 16px;
+      margin-bottom: 2rem;
+    }
+    header h1 { color: #fff; font-size: 1.8rem; }
+    header p { color: #eef2ff; margin-top: .5rem; }
+    nav {
+      display: flex; gap: .5rem; justify-content: center;
+      flex-wrap: wrap; margin-bottom: 2rem;
+    }
+    nav a {
+      color: var(--text); text-decoration: none;
+      background: var(--surface); padding: .5rem 1rem;
+      border-radius: 8px; border: 1px solid var(--border);
+      transition: .2s;
+    }
+    nav a:hover { background: var(--primary); color: #fff; }
+    section {
+      background: var(--surface);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      border: 1px solid var(--border);
+    }
+    h2 { color: var(--primary); margin-bottom: 1rem; font-size: 1.3rem; }
+    h3 { color: var(--text); margin: 1rem 0 .5rem; }
+    p { color: var(--muted); margin-bottom: .75rem; }
+    ul, ol { padding-right: 1.4rem; color: var(--muted); margin-bottom: .75rem; }
+    li { margin-bottom: .4rem; }
+    code {
+      background: var(--code-bg);
+      padding: .15rem .4rem;
+      border-radius: 4px;
+      color: #a5b4fc;
+      font-family: Consolas, monospace;
+      font-size: .9em;
+      direction: ltr;
+      display: inline-block;
+    }
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      overflow-x: auto;
+      margin-bottom: 1rem;
+      direction: ltr;
+      text-align: left;
+    }
+    pre code { background: none; padding: 0; color: #e2e8f0; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; }
+    th, td { text-align: right; padding: .6rem; border: 1px solid var(--border); font-size: .9rem; }
+    th { background: var(--surface-2); color: var(--text); }
+    td { color: var(--muted); }
+    .badge {
+      display: inline-block; padding: .25rem .6rem; border-radius: 6px;
+      font-size: .8rem; margin-left: .3rem;
+    }
+    .badge-green { background: rgba(34,197,94,.15); color: var(--success); }
+    .struct { font-family: Consolas, monospace; direction: ltr; text-align: left; color: var(--muted); font-size: .9rem; line-height: 1.6; }
+    footer { text-align: center; color: var(--muted); margin-top: 2rem; font-size: .9rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Lyalina Ads Manager</h1>
+      <p>نظام إدارة الإعلانات والعملاء لشركة ليالينا - الإصدار 6.4.0</p>
+    </header>
+
+    <nav>
+      <a href="installation.html">التثبيت</a>
+      <a href="Readme.html">القراءة (README)</a>
+      <a href="FaQ.html">الأسئلة الشائعة (FAQ)</a>
+      <a href="wizard.html">معالج التثبيت</a>
+    </nav>
+
+    <section>
+      <h2>نظرة عامة</h2>
+      <p>تطبيق <strong>React + Vite + Firebase</strong> لإدارة الإعلانات، العملاء، المسوقين، والباقات. يدعم المصادقة، قاعدة بيانات Firestore فورية، وتكامل مع <strong>Gemini AI</strong>.</p>
+      <p><span class="badge badge-green">React 19.2.6</span><span class="badge badge-green">Vite 8.0.11</span><span class="badge badge-green">Firebase 12.13.0</span><span class="badge badge-green">Tailwind 4.3.0</span><span class="badge badge-green">TypeScript 6.0.3</span></p>
+    </section>
+
+    <section>
+      <h2>التقنيات المستخدمة</h2>
+      <table>
+        <tr><th>التقنية</th><th>الإصدار</th><th>الاستخدام</th></tr>
+        <tr><td>React</td><td>19.2.6</td><td>واجهة المستخدم</td></tr>
+        <tr><td>Vite</td><td>8.0.11</td><td>أداة البناء والتطوير</td></tr>
+        <tr><td>Firebase</td><td>12.13.0</td><td>المصادقة + Firestore</td></tr>
+        <tr><td>Tailwind CSS</td><td>4.3.0</td><td>التصميم (Utility-first)</td></tr>
+        <tr><td>TypeScript</td><td>6.0.3</td><td>الكتابة القوية</td></tr>
+        <tr><td>Zustand</td><td>5.0.13</td><td>إدارة الحالة</td></tr>
+        <tr><td>Lucide React</td><td>0.487.0</td><td>الأيقونات</td></tr>
+        <tr><td>React Router</td><td>7.15.0</td><td>التوجيه</td></tr>
+      </table>
+    </section>
+
+    <section>
+      <h2>هيكل المشروع</h2>
+      <div class="struct">src/
+├── AdsManager.tsx      # الموزع الرئيسي
+├── main.tsx            # نقطة الدخول
+├── index.css           # ملف CSS الوحيد (Tailwind v4)
+├── firebase/index.ts   # تهيئة Firebase
+├── constants/index.ts  # الثوابت
+├── utils/index.ts      # الدوال المساعدة
+├── hooks/
+│   ├── useAuth.ts      # إدارة المصادقة
+│   ├── useData.ts      # اشتراكات Firestore
+│   └── useFilters.ts   # بحث وفلترة وفرز
+├── components/
+│   ├── Auth/AuthScreen.tsx
+│   ├── Layout/  (Sidebar, Topbar, AdvancedFiltersDrawer)
+│   ├── Modals/  (10+ ملفات مستقلة)
+│   └── Views/   (Analytics, CRM, CustomerDetail, Marketers,
+│                MarketerDetail, Packages, Settings)
+└── Docs/              # الوثائق (HTML)</div>
+    </section>
+
+    <section>
+      <h2>الأوامر</h2>
+      <pre><code># تثبيت الاعتماديات
+pnpm install
+
+# خادم التطوير (http://localhost:3000)
+pnpm dev
+
+# بناء الإنتاج
+pnpm build
+
+# معاينة البناء
+pnpm preview</code></pre>
+    </section>
+
+    <section>
+      <h2>المسارات (Routes)</h2>
+      <table>
+        <tr><th>المسار</th><th>العرض</th><th>الوصف</th></tr>
+        <tr><td><code>/</code></td><td>CRMView</td><td>إدارة العملاء</td></tr>
+        <tr><td><code>/marketers</code></td><td>MarketersView</td><td>إدارة المسوقين</td></tr>
+        <tr><td><code>/packages</code></td><td>PackagesView</td><td>إدارة الباقات</td></tr>
+        <tr><td><code>/analytics</code></td><td>AnalyticsView</td><td>التحليلات والتقارير</td></tr>
+        <tr><td><code>/settings</code></td><td>SettingsView</td><td>الإعدادات</td></tr>
+      </table>
+    </section>
+
+    <section>
+      <h2>قواعد التطوير</h2>
+      <ol>
+        <li><strong>اللغة:</strong> العربية فقط في التعليقات ورسائل المستخدمين</li>
+        <li><strong>TypeScript:</strong> استخدام <code>// @ts-nocheck</code> في جميع الملفات لتجاوز strict mode</li>
+        <li><strong>التقسيم:</strong> فصل UI عن منطق الأعمال (UI في <code>components/</code>، المنطق في <code>hooks/</code>)</li>
+        <li><strong>المكونات:</strong> مكوّن صغير واحد لكل ملف يستقبل props فقط</li>
+        <li><strong>Firebase:</strong> الإعدادات تُقرأ من <code>.env</code> عبر <code>import.meta.env</code></li>
+        <li><strong>التصميم:</strong> Tailwind CSS utility classes فقط</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>أدلة ذات صلة</h2>
+      <ul>
+        <li><a href="installation.html" style="color:var(--primary)">دليل التثبيت الكامل</a></li>
+        <li><a href="FaQ.html" style="color:var(--primary)">الأسئلة الشائعة (FAQ)</a></li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>الترخيص</h2>
+      <p>خاص - شركة ليالينا</p>
+    </section>
+
+    <footer>© 2026 Lyalina Ads Manager - شركة ليالينا. جميع الحقوق محفوظة.</footer>
+  </div>
+</body>
+</html>

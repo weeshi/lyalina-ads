@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>الأسئلة الشائعة - Lyalina Ads Manager</title>
+  <style>
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --surface-2: #273449;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --success: #22c55e;
+      --border: #334155;
+      --code-bg: #0b1220;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.8;
+      padding: 2rem 1rem;
+    }
+    .container { max-width: 860px; margin: 0 auto; }
+    header {
+      text-align: center;
+      padding: 2rem 1rem;
+      background: linear-gradient(135deg, var(--primary), var(--success));
+      border-radius: 16px;
+      margin-bottom: 2rem;
+    }
+    header h1 { color: #fff; font-size: 1.8rem; }
+    header p { color: #eef2ff; margin-top: .5rem; }
+    nav {
+      display: flex; gap: .5rem; justify-content: center;
+      flex-wrap: wrap; margin-bottom: 2rem;
+    }
+    nav a {
+      color: var(--text); text-decoration: none;
+      background: var(--surface); padding: .5rem 1rem;
+      border-radius: 8px; border: 1px solid var(--border);
+      transition: .2s;
+    }
+    nav a:hover { background: var(--primary); color: #fff; }
+    section {
+      background: var(--surface);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      border: 1px solid var(--border);
+    }
+    h2 { color: var(--primary); margin-bottom: 1rem; font-size: 1.3rem; }
+    p { color: var(--muted); margin-bottom: .75rem; }
+    details {
+      background: var(--surface-2);
+      border-radius: 8px;
+      margin-bottom: .75rem;
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+    summary {
+      padding: 1rem 1.2rem;
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--text);
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: .2s;
+    }
+    summary:hover { background: rgba(99,102,241,.08); }
+    summary::after { content: "+"; font-size: 1.4rem; color: var(--primary); }
+    details[open] summary::after { content: "−"; }
+    details .answer { padding: 0 1.2rem 1.2rem; color: var(--muted); }
+    details .answer code {
+      background: var(--code-bg); padding: .15rem .4rem;
+      border-radius: 4px; color: #a5b4fc;
+      font-family: Consolas, monospace; font-size: .9em;
+      direction: ltr; display: inline-block;
+    }
+    .tip {
+      background: rgba(34,197,94,.1);
+      border-right: 4px solid var(--success);
+      padding: .8rem 1rem; border-radius: 6px;
+      margin: 1rem 0; color: var(--text);
+    }
+    footer { text-align: center; color: var(--muted); margin-top: 2rem; font-size: .9rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>الأسئلة الشائعة (FAQ)</h1>
+      <p>Lyalina Ads Manager - إجابات عن أكثر الأسئلة تكراراً</p>
+    </header>
+
+    <nav>
+      <a href="installation.html">التثبيت</a>
+      <a href="Readme.html">القراءة (README)</a>
+      <a href="FaQ.html">الأسئلة الشائعة (FAQ)</a>
+      <a href="wizard.html">معالج التثبيت</a>
+    </nav>
+
+    <section>
+      <h2>التثبيت والتشغيل</h2>
+
+      <details>
+        <summary>ما هي متطلبات تشغيل التطبيق؟</summary>
+        <div class="answer">
+          تحتاج إلى <code>Node.js 20+</code> و <code>pnpm 9+</code>. كما يتطلب تطبيقاً مفعّلاً على Firebase (المصادقة + Firestore) ومفتاح Gemini API للذكاء الاصطناعي. راجع دليل <a href="installation.html" style="color:var(--primary)">التثبيت</a> للتفاصيل الكاملة.
+        </div>
+      </details>
+
+      <details>
+        <summary>كيف أثبّت الاعتماديات بعد سحب المشروع؟</summary>
+        <div class="answer">
+          شغّل الأمر: <code>pnpm install</code>. سيقوم بتنزيل جميع المكتبات المطلوبة في مجلد <code>node_modules</code>.
+        </div>
+      </details>
+
+      <details>
+        <summary>ماذا أفعل إذا ظهر خطأ "pnpm: command not found"؟</summary>
+        <div class="answer">
+          ثبّت pnpm عالمياً عبر npm: <code>npm install -g pnpm</code> ثم أعد فتح الطرفية وحاول مرة أخرى.
+        </div>
+      </details>
+
+      <details>
+        <summary>أين أضع إعدادات Firebase؟</summary>
+        <div class="answer">
+          أنشئ ملف <code>.env</code> من <code>.env.example</code> وعبّئ متغيرات <code>VITE_FIREBASE_*</code> (المفتاح، النطاق، معرف المشروع، الحاوية، معرف المرسل، معرف التطبيق، معرف القياس).
+        </div>
+      </details>
+
+      <details>
+        <summary>كيف أشغّل التطبيق محلياً؟</summary>
+        <div class="answer">
+          شغّل <code>pnpm dev</code> ثم افتح <code>http://localhost:3000</code> في المتصفح. سيعمل التطبيق مع إعادة التحميل التلقائي عند تعديل الكود.
+        </div>
+      </details>
+
+      <details>
+        <summary>كيف أنشئ نسخة الإنتاج؟</summary>
+        <div class="answer">
+          شغّل <code>pnpm build</code> لإنشاء مجلد <code>dist</code> الجاهز، ثم <code>pnpm preview</code> لمعاينته قبل النشر.
+        </div>
+      </details>
+    </section>
+
+    <section>
+      <h2>المصادقة والمستخدمون</h2>
+
+      <details>
+        <summary>كيف أسجّل الدخول كمدير عام؟</summary>
+        <div class="answer">
+          استخدم حساب المدير العام المحدد (البريد الإلكتروني <code>ai@ly-tech.ly</code>) وكلمة المرور الخاصة به. يُحدَّد المدير العام بمقارنة البريد الإلكتروني داخل التطبيق.
+        </div>
+      </details>
+
+      <details>
+        <summary>كيف أضيف مستخدماً جديداً؟</summary>
+        <div class="answer">
+          من لوحة <strong>الإعدادات (Settings)</strong> يستطيع المدير العام إنشاء مستخدمين جدد وتعيين أدوارهم (مدير، موظف، مبيعات، مسوّق). تُخزَّن بيانات المستخدمين في مجموعة <code>system_users</code> في Firestore.
+        </div>
+      </details>
+
+      <details>
+        <summary>نسيت كلمة المرور، ماذا أفعل؟</summary>
+        <div class="answer">
+          استخدم خيار "نسيت كلمة المرور" في شاشة تسجيل الدخول لإعادة تعيينها عبر البريد الإلكتروني، أو اطلب من المدير العام إعادة تعيينها من مشروع Firebase Console.
+        </div>
+      </details>
+    </section>
+
+    <section>
+      <h2>البيانات والاشتغال بها</h2>
+
+      <details>
+        <summary>أين تُخزَّن البيانات؟</summary>
+        <div class="answer">
+          جميع البيانات (الحملات، العملاء، الفواتير، المسوقون، المدفوعات، الباقات، طلبات المسوقين، حركات المحفظة) تُخزَّن في <strong>Firestore</strong> وتُقرأ لحظياً عبر اشتراكات الهوك <code>useData</code>.
+        </div>
+      </details>
+
+      <details>
+        <summary>كم عدد أنواع السجلات الأساسية؟</summary>
+        <div class="answer">
+          يحتوي النظام على 9 مجموعات رئيسية: <code>campaigns</code>، <code>customers</code>، <code>invoices</code>، <code>marketers</code>، <code>payouts</code>، <code>point_logs</code>، <code>packages</code>، <code>marketer_requests</code>، <code>wallet_transactions</code>.
+        </div>
+      </details>
+
+      <details>
+        <summary>كيف أبحث وأفلتر البيانات؟</summary>
+        <div class="answer">
+          استخدم شريط البحث أعلى الصفحات، وافتح درج <strong>الفلترة المتقدمة</strong> (<code>AdvancedFiltersDrawer</code>) لتحديد الحالة، النطاق الزمني، والنتائج المطلوبة. يعمل ذلك عبر الهوك <code>useFilters</code>.
+        </div>
+      </details>
+
+      <details>
+        <summary>هل يمكن استخدام الذكاء الاصطناعي داخل التطبيق؟</summary>
+        <div class="answer">
+          نعم، التطبيق يتكامل مع <strong>Gemini AI</strong> لإنشاء نصوص إعلانات ومساعدة في التحليلات. يتطلب ذلك مفتاح API صالحاً في إعدادات <code>AdsManager.tsx</code>.
+        </div>
+      </details>
+    </section>
+
+    <section>
+      <h2>النشر والاستضافة</h2>
+
+      <details>
+        <summary>كيف أنشر التطبيق على الإنترنت؟</summary>
+        <div class="answer">
+          سجّل الدخول إلى Firebase CLI بـ <code>npx firebase login</code> ثم انشر عبر <code>pnpm deploy</code>. يمكنك أيضاً النشر يدوياً بـ <code>pnpm build</code> ثم <code>npx firebase deploy --only hosting</code>.
+        </div>
+      </details>
+
+      <details>
+        <summary>ما هو المشروع المربوط للنشر؟</summary>
+        <div class="answer">
+          المشروع المربوط حالياً هو <code>lyalina-ads</code>، وموقعه المُستضاف على <code>https://lyalina-ads.web.app</code>.
+        </div>
+      </details>
+
+      <details>
+        <summary>كيف أضيف تحديثاً جديداً؟</summary>
+        <div class="answer">
+          طبّق تعديلاتك في الكود، تأكد من نجاح <code>pnpm build</code>، ثم أعد النشر على Firebase Hosting بنفس الخطوات السابقة.
+        </div>
+      </details>
+    </section>
+
+    <section>
+      <h2>الأمان وأفضل الممارسات</h2>
+
+      <details>
+        <summary>هل ملف <code>.env</code> يُرفع إلى مستودع Git؟</summary>
+        <div class="answer">
+          لا. ملف <code>.env</code> مستبعد عبر <code>.gitignore</code>. لا ترفع أي مفاتيح سرية إلى المستودع حفاظاً على أمان المشروع.
+        </div>
+      </details>
+
+      <details>
+        <summary>كيف أتأكد من أمان قواعد بياناتنا؟</summary>
+        <div class="answer">
+          تحقق من قواعد الأمان في Firebase Console؛ القاعدة الافتراضية الموصى بها تسمح بالقراءة/الكتابة فقط للمستخدمين المصادقين (<code>request.auth != null</code>).
+        </div>
+      </details>
+
+      <div class="tip">
+        <strong>لم تجد إجابتك؟</strong> راجع دليل <a href="installation.html" style="color:var(--primary)">التثبيت</a> و <a href="Readme.html" style="color:var(--primary)">README</a>، أو تواصل مع فريق التطوير لشركة ليالينا.
+      </div>
+    </section>
+
+    <footer>© 2026 Lyalina Ads Manager - شركة ليالينا. جميع الحقوق محفوظة.</footer>
+  </div>
+</body>
+</html>

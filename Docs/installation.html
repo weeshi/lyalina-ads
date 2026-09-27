@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>دليل التثبيت - Lyalina Ads Manager</title>
+  <style>
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --surface-2: #273449;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --success: #22c55e;
+      --border: #334155;
+      --code-bg: #0b1220;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.8;
+      padding: 2rem 1rem;
+    }
+    .container { max-width: 860px; margin: 0 auto; }
+    header {
+      text-align: center;
+      padding: 2rem 1rem;
+      background: linear-gradient(135deg, var(--primary), var(--success));
+      border-radius: 16px;
+      margin-bottom: 2rem;
+    }
+    header h1 { color: #fff; font-size: 1.8rem; }
+    header p { color: #eef2ff; margin-top: .5rem; }
+    nav {
+      display: flex; gap: .5rem; justify-content: center;
+      flex-wrap: wrap; margin-bottom: 2rem;
+    }
+    nav a {
+      color: var(--text); text-decoration: none;
+      background: var(--surface); padding: .5rem 1rem;
+      border-radius: 8px; border: 1px solid var(--border);
+      transition: .2s;
+    }
+    nav a:hover { background: var(--primary); color: #fff; }
+    section {
+      background: var(--surface);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      border: 1px solid var(--border);
+    }
+    h2 { color: var(--primary); margin-bottom: 1rem; font-size: 1.3rem; }
+    h3 { color: var(--text); margin: 1rem 0 .5rem; }
+    p { color: var(--muted); margin-bottom: .75rem; }
+    ul, ol { padding-right: 1.4rem; color: var(--muted); margin-bottom: .75rem; }
+    li { margin-bottom: .4rem; }
+    code {
+      background: var(--code-bg);
+      padding: .15rem .4rem;
+      border-radius: 4px;
+      color: #a5b4fc;
+      font-family: Consolas, monospace;
+      font-size: .9em;
+      direction: ltr;
+      display: inline-block;
+    }
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      overflow-x: auto;
+      margin-bottom: 1rem;
+      direction: ltr;
+      text-align: left;
+    }
+    pre code { background: none; padding: 0; color: #e2e8f0; }
+    .step {
+      display: flex; gap: .8rem; align-items: flex-start;
+      background: var(--surface-2); border-radius: 8px;
+      padding: 1rem; margin-bottom: .75rem;
+    }
+    .step-num {
+      background: var(--primary); color: #fff; font-weight: bold;
+      width: 28px; height: 28px; min-width: 28px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 50%;
+    }
+    .step-content { flex: 1; }
+    .tip {
+      background: rgba(34,197,94,.1);
+      border-right: 4px solid var(--success);
+      padding: .8rem 1rem; border-radius: 6px;
+      margin: 1rem 0; color: var(--text);
+    }
+    .warn {
+      background: rgba(245,158,11,.1);
+      border-right: 4px solid #f59e0b;
+      padding: .8rem 1rem; border-radius: 6px;
+      margin: 1rem 0; color: var(--text);
+    }
+    footer { text-align: center; color: var(--muted); margin-top: 2rem; font-size: .9rem; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; }
+    th, td { text-align: right; padding: .6rem; border: 1px solid var(--border); font-size: .9rem; }
+    th { background: var(--surface-2); color: var(--text); }
+    td { color: var(--muted); }
+    td code, th code { font-size: .85em; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Lyalina Ads Manager</h1>
+      <p>دليل التثبيت والتشغيل الكامل - الإصدار 6.4.0</p>
+    </header>
+
+    <nav>
+      <a href="installation.html">التثبيت</a>
+      <a href="Readme.html">القراءة (README)</a>
+      <a href="FaQ.html">الأسئلة الشائعة (FAQ)</a>
+      <a href="wizard.html">معالج التثبيت</a>
+    </nav>
+
+    <section>
+      <h2>متطلبات التشغيل</h2>
+      <ul>
+        <li><strong>Node.js</strong> الإصدار 20 أو أحدث</li>
+        <li><strong>pnpm</strong> الإصدار 9 أو أحدث</li>
+        <li><strong>Git</strong> (أحد الإصدارات المستقرة)</li>
+        <li>حساب <strong>Firebase</strong> مع مشروع مفعّل (المصادقة + Firestore)</li>
+        <li>حساب <strong>Google</strong> لمفتاح Gemini API (للذكاء الاصطناعي)</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>خطوات التثبيت</h2>
+
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h3>تثبيت أدوات التشغيل</h3>
+          <p>تأكد من تثبيت Node.js و pnpm على جهازك:</p>
+          <pre><code>node -v
+npm install -g pnpm
+pnpm -v</code></pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h3>نسخ المشروع أو سحبه</h3>
+          <p>انسخ مجلد المشروع إلى المسار المطلوب أو اسحبه من المستودع:</p>
+          <pre><code>git clone https://github.com/weeshi/lyalina-ads-manager.git
+cd lyalina-ads-manager</code></pre>
+          <p>أو افتح مجلد المشروع مباشرةً في محرر الأكواد (VS Code).</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h3>تثبيت الاعتماديات</h3>
+          <pre><code>pnpm install</code></pre>
+          <p>يتم تنزيل جميع المكتبات المطلوبة من ملف <code>package.json</code>.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <h3>إعداد متغيرات البيئة</h3>
+          <p>انسخ ملف <code>.env.example</code> إلى <code>.env</code> وعبّئ قيم Firebase الخاصة بمشروعك:</p>
+          <pre><code>copy .env.example .env</code></pre>
+          <table>
+            <tr><th>المتغير</th><th>الوصف</th></tr>
+            <tr><td><code>VITE_FIREBASE_API_KEY</code></td><td>مفتاح Firebase</td></tr>
+            <tr><td><code>VITE_FIREBASE_AUTH_DOMAIN</code></td><td>نطاق المصادقة</td></tr>
+            <tr><td><code>VITE_FIREBASE_PROJECT_ID</code></td><td>معرف المشروع</td></tr>
+            <tr><td><code>VITE_FIREBASE_STORAGE_BUCKET</code></td><td>حاوية التخزين</td></tr>
+            <tr><td><code>VITE_FIREBASE_MESSAGING_SENDER_ID</code></td><td>معرف المرسل</td></tr>
+            <tr><td><code>VITE_FIREBASE_APP_ID</code></td><td>معرف التطبيق</td></tr>
+            <tr><td><code>VITE_FIREBASE_MEASUREMENT_ID</code></td><td>معرف القياس</td></tr>
+          </table>
+          <div class="warn"><strong>تنبيه:</strong> لا ترفع ملف <code>.env</code> إلى أي مستودع عام؛ فهو مستبعد من Git عبر <code>.gitignore</code>.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-content">
+          <h3>تشغيل خادم التطوير</h3>
+          <pre><code>pnpm dev</code></pre>
+          <p>يفتح التطبيق في المتصفح على العنوان <code>http://localhost:3000</code>.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">6</div>
+        <div class="step-content">
+          <h3>التحقق من البناء (اختياري)</h3>
+          <pre><code>pnpm build</code></pre>
+          <p>يُنشئ مجلد <code>dist</code> الجاهز للنشر في الإنتاج.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>تثبيت سريع بأمر واحد (bootstrap)</h2>
+      <p>أسهل طريقة لتجهيز المنصة على أي جهاز جديد — أمر واحد يفحص المتطلبات، يجهّز ملف <code>.env</code>، يثبّت الاعتماديات، ويشغّل خادم التطوير:</p>
+      <pre><code>pnpm bootstrap</code></pre>
+      <p>يقوم المعالج تلقائياً بـ:</p>
+      <ol>
+        <li>فحص جاهزية المتطلبات (Node.js, pnpm, git, Firebase CLI) مع تنبيهات واضحة.</li>
+        <li>إنشاء ملف <code>.env</code> من <code>.env.example</code> إن لم يكن موجوداً، وفتح <a href="wizard.html" style="color:var(--primary)">معالج التثبيت</a> لملء القيم.</li>
+        <li>سؤالك تفاعلياً عن قيم Firebase (أو تخطٍّ في الوضع الآلي <code>--ci</code>).</li>
+        <li>تثبيت الاعتماديات عبر <code>pnpm install</code>.</li>
+        <li>عرض الخطوات التالية وتشغيل خادم التطوير عند الطلب.</li>
+      </ol>
+      <table>
+        <tr><th>الخيار</th><th>الوصف</th></tr>
+        <tr><td><code>pnpm bootstrap</code></td><td>وضع تفاعلي كامل</td></tr>
+        <tr><td><code>pnpm bootstrap --ci</code></td><td>وضع آلي غير تفاعلي (للنصوص البرمجية/CI)</td></tr>
+        <tr><td><code>pnpm bootstrap --no-dev</code></td><td>عدم المطالبة بتشغيل خادم التطوير</td></tr>
+      </table>
+      <div class="tip"><strong>نصيحة:</strong> يظهر معالج الإعداد الأولي (Setup Wizard) تلقائياً داخل التطبيق عند تشغيله إذا كانت إعدادات الاتصال بقاعدة البيانات غير مكتملة — يسهّل تعبئة <code>.env</code> وتوليد <code>firebaseConfig.ts</code> دون الحاجة لسطر أوامر.</div>
+    </section>
+
+    <section>
+      <h2>ملف الإعدادات المركزي (config) - الزرع</h2>
+      <p>جميع إعدادات الاتصال بقاعدة البيانات (Firebase) ومفتاح الذكاء الاصطناعي معزولة في ملف واحد قابل للزرع:</p>
+      <pre><code>src/config/firebaseConfig.ts</code></pre>
+      <p>عند نقل النظام إلى بيئة جديدة أو قاعدة بيانات أخرى، عدّل القيم المزروعة في أعلى هذا الملف فقط (لا حاجة لتعديل باقي الكود). النظام يطبّق القيم المزروعة مباشرة، ويُعطي الأولوية لمتغيرات <code>.env</code> إذا وُجدت (غير فارغة).</p>
+      <table>
+        <tr><th>القيمة المزروعة</th><th>الوصف</th><th>تجاوزها من</th></tr>
+        <tr><td>apiKey</td><td>مفتاح Firebase</td><td><code>VITE_FIREBASE_API_KEY</code></td></tr>
+        <tr><td>authDomain</td><td>نطاق المصادقة</td><td><code>VITE_FIREBASE_AUTH_DOMAIN</code></td></tr>
+        <tr><td>projectId</td><td>معرّف المشروع</td><td><code>VITE_FIREBASE_PROJECT_ID</code></td></tr>
+        <tr><td>storageBucket</td><td>حاوية التخزين</td><td><code>VITE_FIREBASE_STORAGE_BUCKET</code></td></tr>
+        <tr><td>messagingSenderId</td><td>معرّف الإرسال</td><td><code>VITE_FIREBASE_MESSAGING_SENDER_ID</code></td></tr>
+        <tr><td>appId</td><td>معرّف التطبيق</td><td><code>VITE_FIREBASE_APP_ID</code></td></tr>
+        <tr><td>measurementId</td><td>معرّف القياس</td><td><code>VITE_FIREBASE_MEASUREMENT_ID</code></td></tr>
+        <tr><td>appId (المسار)</td><td>مسار البيانات داخل Firestore (<code>artifacts/{path}/...)</code></td><td><code>VITE_FIREBASE_APP_PATH</code></td></tr>
+        <tr><td>geminiApiKey</td><td>مفتاح Gemini AI</td><td><code>VITE_GEMINI_API_KEY</code></td></tr>
+      </table>
+      <div class="warn"><strong>مستوى أمان:</strong> المفاتيح الحساسة (apiKey, appId, geminiApiKey) مفتوحة بفتحات <code>PASTE_YOUR_...</code> في الملف المزروع. الأفضل وضع هذه الثلاثة في ملف <code>.env</code> (المستبعد من Git) وترك قيم المشروع العامة (projectId, authDomain...) في config. يمكنك اختيار الأسلوب الذي يناسبك — الأولوية دائماً لمتغيرات <code>.env</code>.</div>
+      <div class="tip"><strong>نصيحة:</strong> لتجهيز ملفات config و.env تلقائياً، استخدم <a href="wizard.html" style="color:var(--primary)">معالج التثبيت (Wizard)</a>.</div>
+    </section>
+
+    <section>
+      <h2>الإعداد على Firebase</h2>
+      <p>لاستخدام قاعدة البيانات والمصادقة يجب تجهيز مشروع Firebase:</p>
+      <ol>
+        <li>ادخل إلى <a href="https://console.firebase.google.com" style="color:var(--primary)">Firebase Console</a> وأنشئ مشروعاً جديداً.</li>
+        <li>فعّل خدمة <strong>Authentication</strong> واختر مزوّد <strong>Email/Password</strong>.</li>
+        <li>فعّل خدمة <strong>Firestore Database</strong> واختر موقعاً قريباً.</li>
+        <li>انسخ بيانات الإعداد من (إعدادات المشروع ← عام ← تطبيقاتك) إلى ملف <code>.env</code>.</li>
+        <li>أضِف أذونات الأمان لقراءة/كتابة المقصود للمصادقين.</li>
+      </ol>
+      <div class="tip"><strong>نصيحة:</strong> استخدم بيانات مشروع <code>lyalina-ads</code> الحالي إذا كنت تعمل على البيانات الفعلية.</div>
+    </section>
+
+    <section>
+      <h2>النشر على Firebase Hosting</h2>
+      <pre><code># تسجيل الدخول (مرة واحدة)
+npx firebase login
+
+# بناء ونشر
+pnpm deploy</code></pre>
+      <p>أو يدوياً:</p>
+      <pre><code>pnpm build
+npx firebase deploy --only hosting</code></pre>
+      <p>المشروع المربوط حالياً: <code>lyalina-ads</code></p>
+    </section>
+
+    <section>
+      <h2>النشر عبر Docker (حاوية)</h2>
+      <p>لنشر المنصة بشكل متسق في أي بيئة (سيرفر، خادم سحابي، Docker Swarm/Kubernetes) بدون الحاجة لتثبيت Node محلياً.</p>
+      <h3>البناء والتشغيل بـ docker compose</h3>
+      <pre><code># قيّم المتغيرات في ملف .env (تُقرأ تلقائياً) ثم:
+docker compose up -d --build</code></pre>
+      <p>يُبنى التطبيق (Node 20) ويُقدَّم عبر Nginx مع دعم التوجيه (SPA) على المنفذ <code>8080</code>: <code>http://localhost:8080</code></p>
+      <h3>البناء يدوياً (تمرير القيم عبر build-args)</h3>
+      <pre><code>docker build \
+  --build-arg VITE_FIREBASE_API_KEY=AIza... \
+  --build-arg VITE_FIREBASE_PROJECT_ID=my-project \
+  -t lyalina-ads-manager .
+
+docker run -p 8080:80 lyalina-ads-manager</code></pre>
+      <table>
+        <tr><th>الملف</th><th>الوظيفة</th></tr>
+        <tr><td><code>Dockerfile</code></td><td>بناء متعدد المراحل (Node → Nginx)</td></tr>
+        <tr><td><code>docker-compose.yml</code></td><td>تنسيق البناء والتشغيل بمتغيرات من <code>.env</code></td></tr>
+        <tr><td><code>nginx.conf</code></td><td>إعداد Nginx مع دعم توجيه SPA والضغط</td></tr>
+        <tr><td><code>.dockerignore</code></td><td>استبعاد ملفات غير ضرورية من الحاوية</td></tr>
+      </table>
+      <div class="tip"><strong>ملاحظة:</strong> تمرر قيم Firebase كوسائط بناء (build-args) لأنها تُدمج في حزمة الجافاسكربت أثناء البناء. راجع أيضاً <code>src/config/firebaseConfig.ts</code> للزرع الدائم داخل الكود.</div>
+    </section>
+
+    <section>
+      <h2>حل مشاكل شائعة أثناء التثبيت</h2>
+      <div class="warn"><strong>الأمر <code>pnpm</code> غير معروف:</strong> ثبّت pnpm عالمياً: <code>npm install -g pnpm</code>.</div>
+      <div class="warn"><strong>خطأ في متغيرات البيئة:</strong> تأكد من إنشاء ملف <code>.env</code> وملئه بالقيم الصحيحة.</div>
+      <div class="warn"><strong>رفض الاتصال بـ Firebase:</strong> تحقق من أن ملف <code>.env</code> يحتوي قيم المشروع الصحيح، وأن المشروع مفعّل.</div>
+      <div class="warn"><strong>منفذ مشغول:</strong> التطبيق يستخدم المنفذ 3000؛ حرّره أو غيّره في إعدادات Vite.</div>
+      <div class="warn"><strong>يظهر معالج الإعداد الأولي باستمرار:</strong> هذا يعني أن إعدادات الاتصال بقاعدة البيانات غير مكتملة (لا يزال بعضها placeholder أو يفقد القيم). املأ <code>VITE_FIREBASE_*</code> في ملف <code>.env</code>، أو زرع القيم في <code>src/config/firebaseConfig.ts</code>، ثم أعد تحميل الصفحة.</div>
+    </section>
+
+    <footer>© 2026 Lyalina Ads Manager - شركة ليالينا. جميع الحقوق محفوظة.</footer>
+  </div>
+</body>
+</html>
