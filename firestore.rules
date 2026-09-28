@@ -1,0 +1,61 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // دوال مساعدة
+    function appId() {
+      return 'lyalina-ads-production';
+    }
+    
+    function isNotAnonymous() {
+      return request.auth != null 
+        && request.auth.token.firebase.sign_in_provider != 'anonymous';
+    }
+    
+    function getSystemUser(uid) {
+      return get(/databases/$(database)/documents/artifacts/$(appId())/public/data/system_users/$(uid));
+    }
+    
+    function isValidUser(uid) {
+      let userDoc = getSystemUser(uid);
+      return userDoc.exists 
+        && userDoc.data.isActive != false
+        && userDoc.data.role in ['admin', 'sales', 'marketer'];
+    }
+    
+    function isAdmin(uid) {
+      let userDoc = getSystemUser(uid);
+      return userDoc.exists && userDoc.data.role == 'admin';
+    }
+    
+    function canManageSystemUsers(uid) {
+      return isAdmin(uid);
+    }
+    
+    function resourceOwnerOrAdmin(uid) {
+      return resource.data.ownerId == uid || isAdmin(uid);
+    }
+
+    // system_users: قراءة للمسجلين الصالحين، كتابة للأدمن فقط
+    match /artifacts/{appId}/public/data/system_users/{uid} {
+      allow read: if isNotAnonymous() && isValidUser(request.auth.uid);
+      allow create: if isNotAnonymous() && canManageSystemUsers(request.auth.uid);
+      allow update: if isNotAnonymous() 
+        && canManageSystemUsers(request.auth.uid)
+        && (!request.resource.data.keys().hasAny(['role', 'isActive']) 
+            || request.resource.data.role == resource.data.role
+            && request.resource.data.isActive == resource.data.isActive);
+      allow delete: if isNotAnonymous() && canManageSystemUsers(request.auth.uid);
+    }
+
+    // باقي المجموعات: قراءة/كتابة للمستخدمين الصالحين، حذف للأدمن
+    match /artifacts/{appId}/public/data/{collection}/{docId} {
+      allow read: if isNotAnonymous() && isValidUser(request.auth.uid);
+      allow create: if isNotAnonymous() && isValidUser(request.auth.uid);
+      allow update: if isNotAnonymous() 
+        && isValidUser(request.auth.uid)
+        && (resourceOwnerOrAdmin(request.auth.uid) 
+            || collection == 'wallet_transactions');
+      allow delete: if isNotAnonymous() && isAdmin(request.auth.uid);
+    }
+  }
+}
