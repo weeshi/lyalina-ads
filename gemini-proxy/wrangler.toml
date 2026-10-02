@@ -4,6 +4,11 @@ compatibility_date = "2025-09-01"
 
 [vars]
 FIREBASE_PROJECT_ID = "lyalina-ads"
+FIREBASE_APP_PATH = "lyalina-ads-production"
 ALLOWED_ORIGINS = "https://lyalina-ads.web.app,https://lyalina-ads.firebaseapp.com,http://localhost:3000"
 ALLOWED_ROLES = "sales,marketer,admin"
 GEMINI_MODEL = "gemini-flash-latest"
+
+[[kv_namespaces]]
+binding = "RATE_LIMIT_KV"
+id = "cda19075b682458fb8f96d0b9725b85b"

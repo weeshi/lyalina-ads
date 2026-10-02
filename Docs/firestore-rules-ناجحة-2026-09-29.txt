@@ -1,0 +1,40 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function notAnonymous() {
+      return signedIn() && request.auth.token.firebase.sign_in_provider != 'anonymous';
+    }
+    function isSuperAdmin() {
+      return signedIn() && request.auth.token.email_verified == true &&
+        request.auth.token.email in ['ai@ly-tech.ly', 'weeshi.design@gmail.com'];
+    }
+    function userExists() {
+      return exists(/databases/$(database)/documents/artifacts/lyalina-ads-production/public/data/system_users/$(request.auth.uid));
+    }
+    function isValidUser() {
+      return notAnonymous() && userExists() &&
+        get(/databases/$(database)/documents/artifacts/lyalina-ads-production/public/data/system_users/$(request.auth.uid)).data.isActive != false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    match /artifacts/lyalina-ads-production/public/data/system_users/{uid} {
+      allow read: if signedIn();
+      allow create, delete: if isSuperAdmin();
+      allow update: if isSuperAdmin()
+        || (request.auth.uid == uid
+            && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'isActive']));
+    }
+
+    match /artifacts/lyalina-ads-production/public/data/{collection}/{docId} {
+      allow read, write: if isSuperAdmin() || isValidUser();
+    }
+  }
+}
+
+
+

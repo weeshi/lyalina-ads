@@ -1,8 +1,5 @@
 import { jwtVerify, createRemoteJWKSet } from "jose";
 
-const FIREBASE_PROJECT_ID = "lyalina-ads";
-const FIREBASE_APP_PATH = "lyalina-ads-production";
-
 const JWKS = createRemoteJWKSet(
   new URL("https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com")
 );
@@ -13,13 +10,14 @@ interface Env {
   ALLOWED_ORIGINS?: string;
   ALLOWED_ROLES?: string;
   GEMINI_MODEL?: string;
+  FIREBASE_PROJECT_ID?: string;
+  FIREBASE_APP_PATH?: string;
+  RATE_LIMIT_KV?: KVNamespace;
 }
 
 const MAX_BODY_BYTES = 1024 * 1024;
 const RATE_LIMIT_REQUESTS = 30;
 const RATE_LIMIT_WINDOW_MS = 60 * 1000;
-
-const rateBuckets = new Map<string, number[]>();
 
 const splitCsv = (value: string | undefined): string[] =>
   (value || "")
@@ -53,8 +51,13 @@ const valueOf = (v: any): any => {
   return undefined;
 };
 
-const getSystemUserRole = async (token: string, uid: string): Promise<{ role?: string; isActive?: boolean } | null> => {
-  const url = `https://firestore.googleapis.com/v1/projects/${FIREBASE_PROJECT_ID}/databases/(default)/documents/artifacts/${FIREBASE_APP_PATH}/public/data/system_users/${uid}`;
+const getSystemUserRole = async (
+  token: string,
+  uid: string,
+  projectId: string,
+  appPath: string
+): Promise<{ role?: string; isActive?: boolean } | null> => {
+  const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/artifacts/${appPath}/public/data/system_users/${uid}`;
   const res = await fetch(url, {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -70,6 +73,30 @@ const getSystemUserRole = async (token: string, uid: string): Promise<{ role?: s
   };
 };
 
+const checkRateLimit = async (
+  kv: KVNamespace | undefined,
+  uid: string,
+  now: number
+): Promise<boolean> => {
+  if (!kv) {
+    return true;
+  }
+  const key = `ratelimit:${uid}`;
+  try {
+    const data = await kv.get(key, { type: "json" }) as number[] | null;
+    const bucket = (data || []).filter((t) => now - t < RATE_LIMIT_WINDOW_MS);
+    if (bucket.length >= RATE_LIMIT_REQUESTS) {
+      return false;
+    }
+    bucket.push(now);
+    await kv.put(key, JSON.stringify(bucket), { expirationTtl: Math.ceil(RATE_LIMIT_WINDOW_MS / 1000) + 60 });
+    return true;
+  } catch (e: any) {
+    console.error(`[RateLimit] KV error for uid=${uid}: ${e?.message || e}`);
+    return true;
+  }
+};
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const origin = request.headers.get("Origin") || "";
@@ -78,6 +105,8 @@ export default {
     const allowedRoles = splitCsv(env.ALLOWED_ROLES);
     const geminiModel = env.GEMINI_MODEL || "gemini-flash-latest";
     const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent`;
+    const projectId = env.FIREBASE_PROJECT_ID || "lyalina-ads";
+    const appPath = env.FIREBASE_APP_PATH || "lyalina-ads-production";
 
     if (request.method === "OPTIONS") {
       return new Response(null, { status: 204, headers: corsHeaders(origin) });
@@ -104,8 +133,8 @@ export default {
     let payload: any;
     try {
       const { payload: verified } = await jwtVerify(token, JWKS, {
-        issuer: `https://securetoken.google.com/${FIREBASE_PROJECT_ID}`,
-        audience: FIREBASE_PROJECT_ID,
+        issuer: `https://securetoken.google.com/${projectId}`,
+        audience: projectId,
       });
       payload = verified;
     } catch (e) {
@@ -116,12 +145,10 @@ export default {
     const email = (payload.email || "").toLowerCase();
 
     const now = Date.now();
-    const bucket = (rateBuckets.get(uid) || []).filter((t) => now - t < RATE_LIMIT_WINDOW_MS);
-    if (bucket.length >= RATE_LIMIT_REQUESTS) {
+    const rateOk = await checkRateLimit(env.RATE_LIMIT_KV, uid, now);
+    if (!rateOk) {
       return jsonResponse({ error: "Rate limit exceeded, try again later" }, 429, origin);
     }
-    bucket.push(now);
-    rateBuckets.set(uid, bucket);
 
     const contentLength = Number(request.headers.get("Content-Length") || "0");
     if (contentLength > MAX_BODY_BYTES) {
@@ -140,24 +167,23 @@ export default {
     const isSuperAdmin = superAdmins.includes(email);
     if (!isSuperAdmin) {
       const claimRole = payload.role;
-      if (claimRole && (allowedRoles.length === 0 || !allowedRoles.includes(claimRole))) {
-        return jsonResponse({ error: "Access denied" }, 403, origin);
-      }
-      if (!claimRole) {
-        try {
-          const user = await getSystemUserRole(token, uid);
-          if (!user) {
-            return jsonResponse({ error: "Account not found" }, 403, origin);
-          }
-          if (user.isActive === false) {
-            return jsonResponse({ error: "Account is disabled" }, 403, origin);
-          }
-          if (user.role && allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
-            return jsonResponse({ error: "Access denied" }, 403, origin);
-          }
-        } catch (e) {
-          return jsonResponse({ error: "Authorization check failed" }, 403, origin);
+      try {
+        const user = await getSystemUserRole(token, uid, projectId, appPath);
+        if (!user) {
+          return jsonResponse({ error: "Account not found" }, 403, origin);
         }
+        if (user.isActive === false) {
+          return jsonResponse({ error: "Account is disabled" }, 403, origin);
+        }
+        const effectiveRole = claimRole || user.role;
+        if (effectiveRole && allowedRoles.length > 0 && !allowedRoles.includes(effectiveRole)) {
+          return jsonResponse({ error: "Access denied" }, 403, origin);
+        }
+        if (!effectiveRole) {
+          return jsonResponse({ error: "No role assigned" }, 403, origin);
+        }
+      } catch (e) {
+        return jsonResponse({ error: "Authorization check failed" }, 403, origin);
       }
     }
 

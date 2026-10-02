@@ -12,7 +12,10 @@ const useAuth = () => {
   const [isLinkingGoogle, setIsLinkingGoogle] = useState(false);
 
   const currentUser = user;
-  const SUPER_ADMIN_EMAILS = ['ai@ly-tech.ly', 'weeshi.design@gmail.com'];
+  const SUPER_ADMIN_EMAILS = (import.meta.env.VITE_SUPER_ADMIN_EMAILS || "")
+    .split(",")
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean);
   const isSuperAdmin = SUPER_ADMIN_EMAILS.includes(currentUser?.email?.toLowerCase());
 
   const handleLogout = async () => {

@@ -1,0 +1,121 @@
+2) سكّر الثغرة (5 دقائق)
+
+Firestore Database، ثم تبويب Rules.
+انسخ القواعد الحالية كاملة والصقها بملف Notepad كنسخة احتياطية.
+
+
+
+
+
+------------------------------------------------------------------------------ 25-9-2026 ------------------------------------------------------------------------------
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // منع افتراضي شامل
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // المستخدم يقرا وثيقته الخاصة بس، ما يقدر يكتبها إطلاقاً
+    // (تغيير الدور/الحالة لازم يصير بس من أداة أدمن موثوقة، مش من المستخدم نفسه)
+    match /artifacts/lyalina-ads-production/public/data/system_users/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if false;
+    }
+
+    // باقي المجموعات (حملات، عملاء...) — مؤقتاً بس لتسجيل الدخول
+    // فقط كخطوة انتقالية، لحد ما نصمم قواعد دقيقة لكل مجموعة
+    match /artifacts/lyalina-ads-production/public/data/{collection}/{docId} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}
+
+
+------------------------------------------------------------------------------ 27-9-2026 ------------------------------------------------------------------------------
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isSuperAdmin() {
+      return signedIn()
+        && request.auth.token.email_verified == true
+        && request.auth.token.email in ['ai@ly-tech.ly', 'weeshi.design@gmail.com'];
+    }
+
+    function isAdmin() {
+      return isSuperAdmin()
+        || (signedIn()
+            && exists(/databases/$(database)/documents/artifacts/lyalina-ads-production/public/data/system_users/$(request.auth.uid))
+            && get(/databases/$(database)/documents/artifacts/lyalina-ads-production/public/data/system_users/$(request.auth.uid)).data.role == 'admin');
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    match /artifacts/lyalina-ads-production/public/data/system_users/{uid} {
+      allow read: if signedIn();
+      allow create, delete: if isAdmin();
+      allow update: if isAdmin()
+        || (request.auth.uid == uid
+            && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'isActive']));
+    }
+
+    match /artifacts/lyalina-ads-production/public/data/{collection}/{docId} {
+      allow read, write: if signedIn() && collection != 'system_users';
+    }
+  }
+}
+
+
+
+------------------------------------------------------------------------------ 29-9-2026 ------------------------------------------------------------------------------
+
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function notAnonymous() {
+      return signedIn() && request.auth.token.firebase.sign_in_provider != 'anonymous';
+    }
+    function isSuperAdmin() {
+      return signedIn() && request.auth.token.email_verified == true &&
+        request.auth.token.email in ['ai@ly-tech.ly', 'weeshi.design@gmail.com'];
+    }
+    function userExists() {
+      return exists(/databases/$(database)/documents/artifacts/lyalina-ads-production/public/data/system_users/$(request.auth.uid));
+    }
+    function isValidUser() {
+      return notAnonymous() && userExists() &&
+        get(/databases/$(database)/documents/artifacts/lyalina-ads-production/public/data/system_users/$(request.auth.uid)).data.isActive != false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    match /artifacts/lyalina-ads-production/public/data/system_users/{uid} {
+      allow read: if signedIn();
+      allow create, delete: if isSuperAdmin();
+      allow update: if isSuperAdmin()
+        || (request.auth.uid == uid
+            && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'isActive']));
+    }
+
+    match /artifacts/lyalina-ads-production/public/data/{collection}/{docId} {
+      allow read, write: if isSuperAdmin() || isValidUser();
+    }
+  }
+}
+
+
+
