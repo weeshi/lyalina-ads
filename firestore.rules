@@ -8,7 +8,7 @@ service cloud.firestore {
     }
     function isSuperAdmin() {
       return signedIn() && request.auth.token.email_verified == true &&
-        request.auth.token.email in ['ai@ly-tech.ly', 'weeshi.design@gmail.com'];
+        request.auth.token.email in ['ai@ly-tech.ly', 'weeshiaia@gmail.com'];
     }
     function userExists() {
       return exists(/databases/$(database)/documents/artifacts/lyalina-ads-production/public/data/system_users/$(request.auth.uid));
