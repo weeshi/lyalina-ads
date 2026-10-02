@@ -155,10 +155,6 @@ export default {
       return jsonResponse({ error: "Request body too large" }, 413, origin);
     }
 
-    if (payload.email_verified !== true) {
-      return jsonResponse({ error: "Email not verified" }, 403, origin);
-    }
-
     const provider = payload.firebase?.sign_in_provider;
     if (!provider) {
       return jsonResponse({ error: "Invalid sign-in method" }, 403, origin);
