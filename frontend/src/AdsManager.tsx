@@ -8,8 +8,7 @@ import {
   UserPlus, Edit3, Trash, Mail, FilePlus, Layers, Briefcase, Percent, Banknote, Landmark,
   Image as ImageIcon, AlertTriangle, Award, Gift, Download, Upload, FolderKanban as WorkspaceIcon,
   SlidersHorizontal, PackagePlus, Bot, SendHorizontal, RefreshCw, Info, MessageCircle, Activity, DollarSign,
-  HardDrive, UserCircle, LogOut, CheckCircle2, Lock, Mail as MailIcon, Cloud, ShieldAlert, Key, Coins, ArrowRightLeft, Cog,
-Pause,
+  HardDrive, UserCircle, LogOut, CheckCircle2, Lock, Mail as MailIcon, Cloud, ShieldAlert, Key, Coins, ArrowRightLeft, Cog
 } from 'lucide-react';
 import { doc, setDoc, getDocs, collection, query, onSnapshot, deleteDoc, serverTimestamp, getDoc } from 'firebase/firestore';
 
@@ -1359,60 +1358,6 @@ const App = () => {
           {/* VIEW: Ads (Main Table) */}
           {currentView === 'ads' && (
             <div className="flex flex-col h-full overflow-hidden">
-              {/* KPI Cards - مطابق لتصميم Stitch */}
-              <div className="bg-white border-b border-slate-200 px-4 py-3 shadow-sm z-10 flex-none">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                  {/* Active Campaigns */}
-                  <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex items-center gap-3">
-                    <div className="bg-emerald-100 p-3 rounded-lg text-emerald-700"><Activity size={20} /></div>
-                    <div>
-                      <p className="text-[11px] font-bold text-emerald-700">الحملات النشطة الآن</p>
-                      <p className="text-xl font-black text-emerald-800">{data.filter(r => r["الحالة"] === "نشط").length} حملة نشطة</p>
-                      <p className="text-[10px] text-emerald-600">موزعة على {new Set(data.filter(r => r["الحالة"] === "نشط").map(r => r["اسم الصفحة"])).size} صفحات تجارية</p>
-                    </div>
-                  </div>
-
-                  {/* Daily Spend */}
-                  <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-center gap-3">
-                    <div className="bg-blue-100 p-3 rounded-lg text-blue-700"><Wallet size={20} /></div>
-                    <div>
-                      <p className="text-[11px] font-bold text-blue-700">إجمالي الإنفاق اليوم</p>
-                      <p className="text-xl font-black text-blue-800">
-                        {data.filter(r => r["الحالة"] === "نشط").reduce((sum, r) => sum + parseCurrency(r["القيمة (د.ل)"] || r["القيمة"] || "0"), 0).toLocaleString()} د.ل
-                      </p>
-                      <p className="text-[10px] text-blue-600">
-                        ≈ ${((data.filter(r => r["الحالة"] === "نشط").reduce((sum, r) => sum + parseCurrency(r["القيمة (د.ل)"] || r["القيمة"] || "0"), 0)) / (globalExchangeRate || 1)).toFixed(2)}
-                        سعر الصرف {globalExchangeRate?.toFixed(1) || '—'}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Unpaid Alerts */}
-                  <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-center gap-3">
-                    <div className="bg-amber-100 p-3 rounded-lg text-amber-700"><Bell size={20} /></div>
-                    <div>
-                      <p className="text-[11px] font-bold text-amber-700">تحتاج متابعة تحصيل</p>
-                      <p className="text-xl font-black text-amber-800">
-                        {data.filter(r => r["الدفع"]?.includes("غير مدفوع")).length} حملات غير مدفوعة
-                      </p>
-                      <p className="text-[10px] text-amber-600">
-                        مستحقات معلقة: {data.filter(r => r["الدفع"]?.includes("غير مدفوع")).reduce((sum, r) => sum + parseCurrency(r["القيمة (د.ل)"] || r["القيمة"] || "0"), 0).toLocaleString()} د.ل
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Performance */}
-                  <div className="bg-purple-50 border border-purple-200 rounded-xl p-4 flex items-center gap-3">
-                    <div className="bg-purple-100 p-3 rounded-lg text-purple-700"><TrendingUp size={20} /></div>
-                    <div>
-                      <p className="text-[11px] font-bold text-purple-700">كفاءة الأداء والتحويلات</p>
-                      <p className="text-xl font-black text-purple-800">+18.4% مقارنة بالأسبوع الماضي</p>
-                      <p className="text-[10px] text-purple-600">متوسط تكلفة النقرة: 0.14 د.ل</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
               {/* Filters Bar */}
               <div className="bg-white border-b border-slate-200 px-4 py-3 flex flex-col lg:flex-row items-stretch lg:items-center shadow-sm z-10 flex-none gap-3">
                 {selectedAds.length > 0 ? (
@@ -1545,12 +1490,11 @@ const App = () => {
                           <input type="checkbox" checked={selectedAds.length === sortedAndFilteredData.length && sortedAndFilteredData.length > 0} onChange={toggleSelectAll} className="rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer" />
                         </th>
                         <th className="p-2 w-10 text-center text-[10px] font-bold bg-slate-100">#</th>
-                        {HEADERS.map((h, i) => (
-                          <th key={`th-${i}`} className={`p-2 text-[10px] font-black border-l border-slate-200 whitespace-nowrap cursor-pointer hover:bg-slate-200 bg-slate-100 ${h === "القيمة ($)" || h === "القيمة (د.ل)" ? 'w-[60px] md:w-[70px]' : ''}`} onClick={() => setSortConfig({ key: h, direction: sortConfig.direction === 'ascending' ? 'descending' : 'ascending' })}>
+                        {dynamicHeaders.map((h, i) => (
+                          <th key={`th-${i}`} className={`p-2 text-[10px] font-black border-l border-slate-200 whitespace-nowrap cursor-pointer hover:bg-slate-200 bg-slate-100 ${h === "القيمة" || h === "القيمة (د.ل)" ? 'w-[60px] md:w-[70px]' : ''}`} onClick={() => setSortConfig({ key: h, direction: sortConfig.direction === 'ascending' ? 'descending' : 'ascending' })}>
                             <div className="flex items-center gap-1 justify-between">{safeRender(h)}{sortConfig.key === h ? (sortConfig.direction === 'ascending' ? <ArrowUp size={10} className="text-emerald-500" /> : <ArrowDown size={10} className="text-emerald-500" />) : (<ArrowUpDown size={10} className="text-slate-300" />)}</div>
                           </th>
                         ))}
-                        <th className="p-2 w-28 text-center text-[10px] font-bold bg-slate-100">الإجراءات</th>
                       </tr>
                     </thead>
                     <tbody className="bg-white">
@@ -1558,75 +1502,60 @@ const App = () => {
                         <tr key={String(row.id)} className={`border-b transition-all duration-200 group text-xs ${getRowStyle(row["الحالة"], row["الدفع"], selectedAds.includes(row.id))}`}>
                           <td className="p-2 text-center"><input type="checkbox" checked={selectedAds.includes(row.id)} onChange={() => toggleSelectRow(row.id)} className="rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer w-4 h-4" /></td>
                           <td className="p-2 text-center font-mono text-[10px] opacity-60 font-bold">{index + 1}</td>
-                          {HEADERS.map((h, i) => {
-                            const isNarrow = h === "القيمة ($)" || h === "القيمة (د.ل)";
+                          {dynamicHeaders.map((h, i) => {
+                            const isNarrow = h === "القيمة" || h === "القيمة (د.ل)";
                             return (
-                            <td key={`td-${row.id}-${i}`} className={`p-1 border-l border-black/5 relative ${isNarrow ? 'min-w-[55px] md:min-w-[65px]' : 'min-w-[90px] md:min-w-[110px]'}`}>
-                              {h === "الحالة" ? (
-                                <div className="p-1 flex items-center justify-center">
-                                  <select value={safeRender(row[h]) || "قيد المراجعة"} onChange={(e) => updateCell(index, h, e.target.value)} className="w-auto p-1.5 bg-transparent outline-none font-black text-center cursor-pointer appearance-none inherit-color text-xs">
-                                    {Object.keys(STATUS_OPTIONS).map(opt => <option key={opt} value={opt} className="text-slate-800">{opt}</option>)}
-                                  </select>
-                                  <span className={`ml-1 inline-flex items-center px-1.5 py-0.5 rounded text-[8px] font-bold ${STATUS_OPTIONS[row[h]]?.bg || 'bg-slate-50 border-slate-200'} ${STATUS_OPTIONS[row[h]]?.color || 'text-slate-500'}`}>
-                                    {STATUS_OPTIONS[row[h]]?.icon || ''}
-                                  </span>
+                            <td key={`td-${row.id}-${i}`} className={`p-0 border-l border-black/5 relative ${isNarrow ? 'min-w-[60px] md:min-w-[70px]' : 'min-w-[100px] md:min-w-[120px]'}`}>
+                              {h === "المستخدم" ? (
+                                <div className="p-2 text-center font-mono text-[10px] font-bold text-slate-500 bg-black/5 h-full flex items-center justify-center truncate max-w-[100px]" title={row.ownerEmail}>{safeRender(row.ownerEmail?.split('@')[0] || 'غير معروف')}</div>
+                              ) : h === "المدة" ? (
+                                <div className="relative flex flex-col justify-center px-2 py-1">
+                                  <input type="text" value={safeRender(row[h])} onChange={(e) => updateCell(index, h, e.target.value)} className="w-full bg-transparent outline-none font-bold text-center text-xs inherit-color" />
+                                  <div className="w-full bg-black/10 rounded-full h-1 mt-0.5 overflow-hidden"><div className="bg-current h-full rounded-full transition-all duration-500 opacity-50" style={{ width: `${Math.min(100, calculateProgress(row["التاريخ"], row[h], row["الحالة"]))}%` }}></div></div>
                                 </div>
+                              ) : h === "التاريخ" ? (
+                                <input type="date" value={safeRender(row[h])} onChange={(e) => updateCell(index, h, e.target.value)} className="w-full p-2.5 bg-transparent outline-none font-bold text-center cursor-pointer text-xs inherit-color" />
+                              ) : h === "الحالة" ? (
+                                <select value={safeRender(row[h]) || "قيد المراجعة"} onChange={(e) => updateCell(index, h, e.target.value)} className="w-full p-2.5 bg-transparent outline-none font-black text-center cursor-pointer appearance-none inherit-color">
+                                  {Object.keys(STATUS_OPTIONS).map(opt => <option key={opt} value={opt} className="text-slate-800">{opt}</option>)}
+                                </select>
                               ) : h === "الدفع" ? (
-                                <div className="p-1 flex items-center justify-center gap-1">
-                                  <select value={safeRender(row[h]) || "غير مدفوع"} onChange={(e) => handlePaymentChange(index, e.target.value)} className="w-auto p-1.5 bg-transparent outline-none font-black text-center cursor-pointer appearance-none inherit-color text-xs">
-                                    {Object.keys(PAYMENT_METHODS).map(opt => <option key={opt} value={opt} className="text-slate-800">{opt}</option>)}
+                                <div className="flex items-center gap-1 px-2">
+                                  <select value={safeRender(row[h]) || "غير مدفوع"} onChange={(e) => handlePaymentChange(index, e.target.value)} className="flex-1 bg-transparent outline-none font-black text-center cursor-pointer appearance-none inherit-color text-xs">
+                                    <option value="غير مدفوع" className="text-slate-800">غير مدفوع</option>
+                                    <option value="مدفوع" className="text-slate-800">مدفوع</option>
                                   </select>
-                                  <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[8px] font-bold ${PAYMENT_METHODS[row[h]]?.bg || 'bg-slate-50 border-slate-200'} ${PAYMENT_METHODS[row[h]]?.color || 'text-slate-500'}`}>
-                                    {PAYMENT_METHODS[row[h]]?.label || row[h]}
-                                  </span>
-                                </div>
-                              ) : h === "المدة والانقضاء" ? (
-                                <div className="relative flex flex-col justify-center px-1 py-1">
-                                  <input type="text" value={safeRender(row["المدة"])} onChange={(e) => updateCell(index, "المدة", e.target.value)} className="w-full bg-transparent outline-none font-bold text-center text-xs inherit-color" />
-                                  <div className="w-full bg-black/10 rounded-full h-1 mt-0.5 overflow-hidden"><div className="bg-current h-full rounded-full transition-all duration-500 opacity-50" style={{ width: `${Math.min(100, calculateProgress(row["التاريخ"], row["المدة"], row["الحالة"]))}%` }}></div></div>
-                                  <div className="text-[9px] text-slate-500 text-center mt-0.5">
-                                    {row["التاريخ"] ? (() => { const start = new Date(row["التاريخ"]); const dur = parseInt(String(row["المدة"]).replace(/\D/g, '')) || 0; if (dur > 0) { const end = new Date(start); end.setDate(start.getDate() + dur); const diff = Math.ceil((end - new Date()) / (1000 * 60 * 60 * 24)); return diff > 0 ? `${diff} منقضي` : `انتهت ${Math.abs(diff)}`; } return ''; })() : ''}
-                                  </div>
-                                </div>
-                              ) : h === "القيمة ($)" || h === "القيمة (د.ل)" ? (
-                                <input type="text" value={safeRender(row[h])} onChange={(e) => updateCell(index, h, e.target.value)} className="w-full p-2 bg-transparent outline-none font-bold text-center text-[10px] inherit-color font-mono text-right pr-2" placeholder="0" />
-                              ) : h === "الرابط" ? (
-                                <div className="relative group/link p-1">
-                                  <input type="text" value={safeRender(row[h])} onChange={(e) => updateCell(index, h, e.target.value)} className="w-full p-1.5 pl-6 bg-transparent outline-none font-medium text-[10px] inherit-color placeholder-black/30" placeholder="الصق الرابط..." dir="ltr" />
-                                  {row[h] && <a href={safeRender(row[h])} target="_blank" rel="noopener noreferrer" className="absolute left-0.5 top-1/2 -translate-y-1/2 p-1 opacity-50 hover:opacity-100 hover:text-blue-600 transition-all"><ExternalLink size={10} /></a>}
+                                  {row[h] === 'مدفوع' && row.paymentMethod && (
+                                    <span className={`text-[8px] font-bold px-1 py-0.5 rounded ${PAYMENT_METHODS[row.paymentMethod]?.bg || 'bg-slate-100'} ${PAYMENT_METHODS[row.paymentMethod]?.color || 'text-slate-500'} shrink-0`}>
+                                      {PAYMENT_METHODS[row.paymentMethod]?.label || row.paymentMethod}
+                                    </span>
+                                  )}
+                                  {row[h] === 'مدفوع' && row.walletTxId && isSuperAdmin && (
+                                    <button onClick={() => handleRefundPayment(row.id)} className="p-1 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded" title="إلغاء الدفع وإعادة الرصيد"><Undo2 size={11}/></button>
+                                  )}
                                 </div>
                               ) : h === "الجنس" ? (
-                                <select value={safeRender(row[h]) || "جنسين"} onChange={(e) => updateCell(index, h, e.target.value)} className="w-full p-1.5 bg-transparent outline-none font-bold text-center cursor-pointer appearance-none inherit-color text-xs">
+                                <select value={safeRender(row[h]) || "جنسين"} onChange={(e) => updateCell(index, h, e.target.value)} className="w-full p-2.5 bg-transparent outline-none font-bold text-center cursor-pointer appearance-none inherit-color">
                                   {SEX_OPTIONS.map(opt => <option key={opt} value={opt} className="text-slate-800">{opt}</option>)}
                                 </select>
                               ) : h === "كود الباقة" ? (
-                                <select value={safeRender(row[h]) || ""} onChange={(e) => updateCell(index, h, e.target.value)} className="w-full p-1.5 bg-transparent outline-none font-bold text-center cursor-pointer inherit-color text-xs">
+                                <select value={safeRender(row[h]) || ""} onChange={(e) => updateCell(index, h, e.target.value)} className="w-full p-2.5 bg-transparent outline-none font-bold text-center cursor-pointer inherit-color">
                                   <option value="" className="text-slate-400">- مخصص -</option>
                                   {packages.map(pkg => <option key={String(pkg.id)} value={pkg.code} className="text-slate-800">{PACKAGE_CATEGORIES[pkg.category]?.icon || ''} {pkg.code} ({pkg.priceUSD}$)</option>)}
                                 </select>
-                              ) : h === "#ID" ? (
-                                <div className="p-1 text-center font-mono text-[10px] font-black opacity-70 select-all" title="معرف الحملة (تلقائي)">{safeRender(row.campaignRef)}</div>
+                              ) : h === "المعرف" ? (
+                                <div className="p-2.5 text-center font-mono text-[10px] font-black opacity-70 select-all" title="معرف الحملة (تلقائي)">{safeRender(row.campaignRef)}</div>
                               ) : h === "الرابط" ? (
-                                <div className="relative group/link p-1">
-                                  <input type="text" value={safeRender(row[h])} onChange={(e) => updateCell(index, h, e.target.value)} className="w-full p-1.5 pl-6 bg-transparent outline-none font-medium text-[10px] inherit-color placeholder-black/30" placeholder="الصق الرابط..." dir="ltr" />
-                                  {row[h] && <a href={safeRender(row[h])} target="_blank" rel="noopener noreferrer" className="absolute left-0.5 top-1/2 -translate-y-1/2 p-1 opacity-50 hover:opacity-100 hover:text-blue-600 transition-all"><ExternalLink size={10} /></a>}
+                                <div className="relative group/link">
+                                  <input type="text" value={safeRender(row[h])} onChange={(e) => updateCell(index, h, e.target.value)} className="w-full p-2.5 pl-8 bg-transparent outline-none font-medium text-xs inherit-color placeholder-black/30" placeholder="الصق الرابط..." dir="ltr" />
+                                  {row[h] && <a href={safeRender(row[h])} target="_blank" rel="noopener noreferrer" className="absolute left-1 top-1/2 -translate-y-1/2 p-1.5 opacity-50 hover:opacity-100 hover:text-blue-600 transition-all"><ExternalLink size={12} /></a>}
                                 </div>
                               ) : (
-                                <input type="text" value={safeRender(row[h])} onChange={(e) => updateCell(index, h, e.target.value)} className="w-full p-1.5 bg-transparent outline-none font-semibold text-[10px] inherit-color placeholder-black/20" placeholder="-" list={h === "اسم الصفحة" ? "pageNamesOptions" : h === "المكان" ? "locationsOptions" : h === "الاهتمامات" ? "interestsOptions" : undefined} />
+                                <input type="text" value={safeRender(row[h])} onChange={(e) => updateCell(index, h, e.target.value)} className="w-full p-2.5 bg-transparent outline-none font-semibold text-xs inherit-color placeholder-black/20" placeholder="-" list={h === "اسم الصفحة" ? "pageNamesOptions" : h === "المكان" ? "locationsOptions" : h === "الاهتمامات" ? "interestsOptions" : undefined} />
                               )}
                             </td>
                             );
                           })}
-                          <td className="p-1 border-l border-black/5">
-                            <div className="flex items-center justify-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                              <button onClick={(e) => { e.stopPropagation(); updateCell(index, "الحالة", "متوقف"); }} className="p-1.5 hover:bg-red-50 text-red-600 rounded hover:text-red-700 transition" title="إيقاف"><Pause size={12} /></button>
-                              <button onClick={(e) => { e.stopPropagation(); updateCell(index, "الحالة", "مكتمل"); }} className="p-1.5 hover:bg-blue-50 text-blue-600 rounded hover:text-blue-700 transition" title="إكمال"><CheckCircle2 size={12} /></button>
-                              <button onClick={() => { handleGenerateAdCopy(row); }} className="p-1.5 hover:bg-indigo-50 text-indigo-600 rounded hover:text-indigo-700 transition" title="نسخة إعلان (AI)"><Sparkles size={12} /></button>
-                              <button onClick={(e) => { e.stopPropagation(); toggleModal('ai', true); handleAskAi(`حلل هذه الحملة: ${JSON.stringify(row)}`); }} className="p-1.5 hover:bg-purple-50 text-purple-600 rounded hover:text-purple-700 transition" title="مساعد ذكي"><Bot size={12} /></button>
-                              <button onClick={(e) => { e.stopPropagation(); handleBulkDuplicate(); }} className="p-1.5 hover:bg-slate-50 text-slate-600 rounded hover:text-slate-700 transition" title="نسخ"><Copy size={12} /></button>
-                              <button onClick={(e) => { e.stopPropagation(); setConfirmModal({ show: true, type: 'error', message: `حذف الحملة ${row.id}؟`, action: () => { const idx = data.findIndex(r => r.id === row.id); if (idx !== -1) { const nd = [...data]; nd.splice(idx, 1); setData(nd); saveCampaign({ ...row, isDeleted: true }); addLog("تم حذف الحملة", "success"); } } }); }} className="p-1.5 hover:bg-red-50 text-red-600 rounded hover:text-red-700 transition" title="حذف"><Trash2 size={12} /></button>
-                            </div>
-                          </td>
                         </tr>
                       ))}
                     </tbody>
