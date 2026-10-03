@@ -469,7 +469,7 @@ const App = () => {
   }, [sortedAndFilteredData, data, currentUser, setData, saveCampaign, deleteDocByType, setConfirmModal, selectedCustomer, selectedMarketer, setSelectedCustomer, setCurrentView, setSelectedMarketer]);
 
   // --- Smart Input / AI ---
-  const AI_MODEL = "gemini-1.5-flash-latest";
+  const AI_MODEL = "gemini-flash-latest";
 
   const callGemini = useCallback(async (parts, systemInstruction, generationConfig, contents) => {
     const body = {

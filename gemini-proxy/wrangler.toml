@@ -7,7 +7,7 @@ FIREBASE_PROJECT_ID = "lyalina-ads"
 FIREBASE_APP_PATH = "lyalina-ads-production"
 ALLOWED_ORIGINS = "https://lyalina-ads.web.app,https://lyalina-ads.firebaseapp.com,http://localhost:3000"
 ALLOWED_ROLES = "sales,marketer,admin"
-GEMINI_MODEL = "gemini-1.5-flash-latest"
+GEMINI_MODEL = "gemini-flash-latest"
 
 [[kv_namespaces]]
 binding = "RATE_LIMIT_KV"
