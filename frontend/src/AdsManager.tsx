@@ -9,7 +9,7 @@ import {
   Image as ImageIcon, AlertTriangle, Award, Gift, Download, Upload, FolderKanban as WorkspaceIcon,
   SlidersHorizontal, PackagePlus, Bot, SendHorizontal, RefreshCw, Info, MessageCircle, Activity, DollarSign,
   HardDrive, UserCircle, LogOut, CheckCircle2, Lock, Mail as MailIcon, Cloud, ShieldAlert, Key, Coins, ArrowRightLeft, Cog,
-  PauseCircle
+Pause,
 } from 'lucide-react';
 import { doc, setDoc, getDocs, collection, query, onSnapshot, deleteDoc, serverTimestamp, getDoc } from 'firebase/firestore';
 
@@ -1619,7 +1619,7 @@ const App = () => {
                           })}
                           <td className="p-1 border-l border-black/5">
                             <div className="flex items-center justify-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                              <button onClick={(e) => { e.stopPropagation(); updateCell(index, "الحالة", "متوقف"); }} className="p-1.5 hover:bg-red-50 text-red-600 rounded hover:text-red-700 transition" title="إيقاف"><PauseCircle size={12} /></button>
+                              <button onClick={(e) => { e.stopPropagation(); updateCell(index, "الحالة", "متوقف"); }} className="p-1.5 hover:bg-red-50 text-red-600 rounded hover:text-red-700 transition" title="إيقاف"><Pause size={12} /></button>
                               <button onClick={(e) => { e.stopPropagation(); updateCell(index, "الحالة", "مكتمل"); }} className="p-1.5 hover:bg-blue-50 text-blue-600 rounded hover:text-blue-700 transition" title="إكمال"><CheckCircle2 size={12} /></button>
                               <button onClick={() => { handleGenerateAdCopy(row); }} className="p-1.5 hover:bg-indigo-50 text-indigo-600 rounded hover:text-indigo-700 transition" title="نسخة إعلان (AI)"><Sparkles size={12} /></button>
                               <button onClick={(e) => { e.stopPropagation(); toggleModal('ai', true); handleAskAi(`حلل هذه الحملة: ${JSON.stringify(row)}`); }} className="p-1.5 hover:bg-purple-50 text-purple-600 rounded hover:text-purple-700 transition" title="مساعد ذكي"><Bot size={12} /></button>
