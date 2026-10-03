@@ -14,7 +14,7 @@
 // ═══════════ إعدادات الاتصال (قابلة للزرع) ═══════════
 
 // 🌿 المفتاح الفعلي لمشروع Firebase
-const DEFAULT_API_KEY = 'PASTE_YOUR_FIREBASE_API_KEY';
+const DEFAULT_API_KEY = 'AIzaSyB_2b54lT6Dd3e40mWBjkNjfOPrXxDRBPI';
 
 // 🌿 نطاق المصادقة (authDomain = projectId + .firebaseapp.com)
 const DEFAULT_AUTH_DOMAIN = 'lyalina-ads.firebaseapp.com';
@@ -29,7 +29,7 @@ const DEFAULT_STORAGE_BUCKET = 'lyalina-ads.firebasestorage.app';
 const DEFAULT_MESSAGING_SENDER_ID = '667813824853';
 
 // 🌿 معرّف التطبيق (appId)
-const DEFAULT_FIREBASE_APP_ID = 'PASTE_YOUR_FIREBASE_APP_ID';
+const DEFAULT_FIREBASE_APP_ID = '1:667813824853:web:2be830aef310e3024787dc';
 
 // 🌿 معرّف القياس (measurementId) — اختياري
 const DEFAULT_MEASUREMENT_ID = 'G-JCSN80R0S0';
