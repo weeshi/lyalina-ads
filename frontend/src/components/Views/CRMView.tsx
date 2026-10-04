@@ -2,7 +2,7 @@
 import { useState, useMemo, memo } from 'react';
 import {
   Users, UserPlus, Plus, Trash2, Wallet, Search, ChevronDown, CreditCard,
-  Phone, Mail, LayoutGrid, List, Download, MessageCircle, Eye, Edit3,
+  Phone, Mail, LayoutGrid, List, Download, MessageCircle, Edit3,
   Coins, Banknote, Activity, Layers, X, Check, CircleDollarSign, AlertTriangle,
   ArrowUpRight, ArrowDownRight, Loader2
 } from 'lucide-react';
@@ -131,8 +131,16 @@ const CRMView = ({ customers, customerStats, setSelectedCustomer, setCurrentView
     const s = customerStats[cust.id] || { totalSpend: 0, due: 0, count: 0 };
     const cat = categoryOf(cust, s);
     const bal = cust.walletBalanceUSD || 0;
+    const openAccount = () => { setSelectedCustomer(cust); setCurrentView('customer-detail'); };
     return (
-      <div className="group bg-white rounded-3xl border border-hairline/80 p-4 sm:p-5 shadow-sm hover:shadow-xl hover:-translate-y-0.5 transition-all cursor-pointer relative overflow-hidden">
+      <div
+        onClick={openAccount}
+        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openAccount(); } }}
+        role="button"
+        tabIndex={0}
+        aria-label={`فتح حساب ${safeRender(cust.name)}`}
+        className="group bg-white rounded-3xl border border-hairline/80 p-4 sm:p-5 shadow-sm hover:shadow-xl hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 transition-all cursor-pointer relative overflow-hidden"
+      >
         <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-l from-brand-600 via-brand-400 to-info-500 opacity-0 group-hover:opacity-100 transition-opacity" />
         <div className="flex items-start justify-between gap-2">
           <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -192,8 +200,7 @@ const CRMView = ({ customers, customerStats, setSelectedCustomer, setCurrentView
 
         <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-fill pt-4">
           <div className="flex items-center gap-1.5">
-            <button onClick={(e) => { e.stopPropagation(); setSelectedCustomer(cust); setCurrentView('customer-detail'); }} className="text-[10px] font-bold text-brand-700 hover:bg-brand-50 px-2.5 py-1.5 rounded-lg transition-colors flex items-center gap-1"><Eye size={13} /> كشف الحساب</button>
-            <button onClick={(e) => { e.stopPropagation(); if (cleanPhone(cust.phone)) window.open(`https://wa.me/${cleanPhone(cust.phone)}`, '_blank'); }} className="text-[10px] font-bold text-brand-600 hover:bg-brand-50 px-2 py-1.5 rounded-lg transition-colors"><MessageCircle size={13} /></button>
+            <button onClick={(e) => { e.stopPropagation(); if (cleanPhone(cust.phone)) window.open(`https://wa.me/${cleanPhone(cust.phone)}`, '_blank'); }} className="text-[10px] font-bold text-brand-600 hover:bg-brand-50 px-2.5 py-1.5 rounded-lg transition-colors flex items-center gap-1"><MessageCircle size={13} /> واتساب</button>
           </div>
           <div className="flex items-center gap-1">
             <button onClick={(e) => { e.stopPropagation(); setCustomerForm({ name: safeRender(cust.name), phone: safeRender(cust.phone), email: safeRender(cust.email), marketerId: cust.marketerId || '', walletBalanceUSD: cust.walletBalanceUSD || 0 }); toggleModal('addCustomer', true); }} className="text-ink-400 hover:text-assist-600 p-1.5 hover:bg-assist-50 rounded-lg transition-colors" title="تعديل"><Edit3 size={14} /></button>
@@ -212,9 +219,13 @@ const CRMView = ({ customers, customerStats, setSelectedCustomer, setCurrentView
     const cat = categoryOf(cust, s);
     const id = String(cust.id);
     return (
-      <tr key={id} className={`hover:bg-brand-50/30 transition-colors ${selected.has(id) ? 'bg-brand-50/60' : ''}`}>
+      <tr
+        key={id}
+        onClick={() => { setSelectedCustomer(cust); setCurrentView('customer-detail'); }}
+        className={`hover:bg-brand-50/30 transition-colors cursor-pointer ${selected.has(id) ? 'bg-brand-50/60' : ''}`}
+      >
         <td className="p-3 pr-5">
-          <button onClick={() => toggleSel(id)} className={`h-5 w-5 rounded-md border-2 flex items-center justify-center transition-all ${selected.has(id) ? 'bg-brand-600 border-brand-600 text-white' : 'border-hairline-strong text-transparent hover:border-brand-400'}`}>
+          <button onClick={(e) => { e.stopPropagation(); toggleSel(id); }} className={`h-5 w-5 rounded-md border-2 flex items-center justify-center transition-all ${selected.has(id) ? 'bg-brand-600 border-brand-600 text-white' : 'border-hairline-strong text-transparent hover:border-brand-400'}`}>
             <Check size={12} strokeWidth={4} />
           </button>
         </td>
@@ -243,11 +254,10 @@ const CRMView = ({ customers, customerStats, setSelectedCustomer, setCurrentView
         </td>
         <td className="p-3">
           <div className="flex items-center gap-1">
-            <button onClick={() => { setSelectedCustomer(cust); setCurrentView('customer-detail'); }} className="p-1.5 rounded-lg text-brand-600 hover:bg-brand-50" title="كشف الحساب"><Eye size={14} /></button>
-            <button onClick={() => { setSelectedCustomer(cust); toggleModal('topUp', true); }} className="p-1.5 rounded-lg text-assist-600 hover:bg-assist-50" title="شحن"><Plus size={14} /></button>
-            <button onClick={() => { setSelectedCustomer(cust); setCustomerForm({ name: safeRender(cust.name), phone: safeRender(cust.phone), email: safeRender(cust.email), marketerId: cust.marketerId || '', walletBalanceUSD: cust.walletBalanceUSD || 0 }); toggleModal('addCustomer', true); }} className="p-1.5 rounded-lg text-ink-400 hover:text-assist-600 hover:bg-assist-50" title="تعديل"><Edit3 size={14} /></button>
-            <button onClick={() => { if (cleanPhone(cust.phone)) window.open(`https://wa.me/${cleanPhone(cust.phone)}`, '_blank'); }} className="p-1.5 rounded-lg text-brand-600 hover:bg-brand-50" title="واتساب"><MessageCircle size={14} /></button>
-            <button onClick={() => requestDelete('customer', cust.id)} className="p-1.5 rounded-lg text-hairline-strong hover:text-danger-500 hover:bg-danger-soft" title="حذف"><Trash2 size={14} /></button>
+            <button onClick={(e) => { e.stopPropagation(); setSelectedCustomer(cust); toggleModal('topUp', true); }} className="p-1.5 rounded-lg text-assist-600 hover:bg-assist-50" title="شحن"><Plus size={14} /></button>
+            <button onClick={(e) => { e.stopPropagation(); setCustomerForm({ name: safeRender(cust.name), phone: safeRender(cust.phone), email: safeRender(cust.email), marketerId: cust.marketerId || '', walletBalanceUSD: cust.walletBalanceUSD || 0 }); toggleModal('addCustomer', true); }} className="p-1.5 rounded-lg text-ink-400 hover:text-assist-600 hover:bg-assist-50" title="تعديل"><Edit3 size={14} /></button>
+            <button onClick={(e) => { e.stopPropagation(); if (cleanPhone(cust.phone)) window.open(`https://wa.me/${cleanPhone(cust.phone)}`, '_blank'); }} className="p-1.5 rounded-lg text-brand-600 hover:bg-brand-50" title="واتساب"><MessageCircle size={14} /></button>
+            <button onClick={(e) => { e.stopPropagation(); requestDelete('customer', cust.id); }} className="p-1.5 rounded-lg text-hairline-strong hover:text-danger-500 hover:bg-danger-soft" title="حذف"><Trash2 size={14} /></button>
           </div>
         </td>
       </tr>

@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { memo } from 'react';
-import { Edit3, Phone, Mail as MailIcon, Sparkles, Loader2, Gift, Wallet, Plus, History, CreditCard, FilePlus, Printer, MessageCircle, Mail, Coins, CheckCircle2, AlertCircle, X, Link as LinkIcon, Unlink, Globe, ChevronDown } from 'lucide-react';
+import { Edit3, Phone, Mail as MailIcon, Sparkles, Loader2, Gift, Wallet, Plus, History, CreditCard, FilePlus, Printer, MessageCircle, Mail, Coins, CheckCircle2, AlertCircle, X, Link as LinkIcon, Unlink, Globe, ChevronDown, Search, Filter, RotateCcw, CalendarDays } from 'lucide-react';
 import { safeRender, calculateProgress } from '../../utils';
 import { useState, useRef, useEffect, useMemo } from 'react';
 
@@ -16,6 +16,83 @@ const CustomerDetailView = ({
   const stats = customerStats[selectedCustomer?.id] || { totalSpend: 0, due: 0, count: 0 };
   const [showPageDropdown, setShowPageDropdown] = useState(false);
   const pageDropdownRef = useRef(null);
+
+  /* ---------- فلترة ذكية لجدول الحملات (للفوترة التقليدية) ---------- */
+  const [ledgerQ, setLedgerQ] = useState('');
+  const [ledgerPage, setLedgerPage] = useState('');
+  const [ledgerPay, setLedgerPay] = useState('');
+  const [ledgerFrom, setLedgerFrom] = useState('');
+  const [ledgerTo, setLedgerTo] = useState('');
+
+  /* يحوّل أي شكل للتاريخ (نص/رقم/Timestamp) إلى مفتاح يوم محلي YYYY-MM-DD
+     المقارنة نصية lexicographic => آمنة من انزياح المناطق الزمنية */
+  const toDayKey = (v) => {
+    if (v === null || v === undefined || v === '') return '';
+    let d;
+    if (typeof v?.toDate === 'function') d = v.toDate();
+    else if (typeof v === 'object' && typeof v.seconds === 'number') d = new Date(v.seconds * 1000);
+    else d = new Date(v);
+    if (!(d instanceof Date) || isNaN(d.getTime())) return '';
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  };
+
+  const ledgerRows = useMemo(() => sortedAndFilteredData || [], [sortedAndFilteredData]);
+
+  const ledgerPages = useMemo(() => Array.from(new Set(ledgerRows.map(r => safeRender(r["اسم الصفحة"])).filter(Boolean))).sort(), [ledgerRows]);
+
+  const ledgerActiveFilters = useMemo(() => [ledgerQ, ledgerPage, ledgerPay, ledgerFrom, ledgerTo].filter(Boolean).length, [ledgerQ, ledgerPage, ledgerPay, ledgerFrom, ledgerTo]);
+
+  const clearLedgerFilters = () => { setLedgerQ(''); setLedgerPage(''); setLedgerPay(''); setLedgerFrom(''); setLedgerTo(''); };
+
+  const ledgerFiltered = useMemo(() => {
+    const needle = ledgerQ.trim().toLowerCase();
+    return ledgerRows.filter(r => {
+      if (ledgerPage && safeRender(r["اسم الصفحة"]) !== ledgerPage) return false;
+      const paid = safeRender(r["الدفع"]) === 'مدفوع';
+      if (ledgerPay === 'paid' && !paid) return false;
+      if (ledgerPay === 'unpaid' && paid) return false;
+      if (ledgerFrom || ledgerTo) {
+        const k = toDayKey(r["التاريخ"]);
+        if (!k) return false;
+        if (ledgerFrom && k < ledgerFrom) return false;
+        if (ledgerTo && k > ledgerTo) return false;
+      }
+      if (needle) {
+        const hay = `${safeRender(r["اسم الصفحة"])} ${safeRender(r["اسم Ad"])} ${safeRender(r["كود الباقة"])} ${safeRender(r["الحالة"])} ${safeRender(r["الدفع"])} ${safeRender(r["المكان"])}`.toLowerCase();
+        if (!hay.includes(needle)) return false;
+      }
+      return true;
+    });
+  }, [ledgerRows, ledgerQ, ledgerPage, ledgerPay, ledgerFrom, ledgerTo]);
+
+  const ledgerStats = useMemo(() => {
+    let sum = 0, paidCount = 0;
+    ledgerFiltered.forEach(r => {
+      sum += parseFloat(r["القيمة"]) || 0;
+      if (safeRender(r["الدفع"]) === 'مدفوع') paidCount++;
+    });
+    return { count: ledgerFiltered.length, sum, paidCount, unpaidCount: ledgerFiltered.length - paidCount };
+  }, [ledgerFiltered]);
+
+  const ledgerAllSelected = ledgerFiltered.length > 0 && ledgerFiltered.every(r => invoiceSelection.includes(r.id));
+
+  const setDatePreset = (days) => {
+    if (days === 0) { setLedgerFrom(''); setLedgerTo(''); return; }
+    const to = new Date();
+    const from = new Date();
+    from.setDate(from.getDate() - days);
+    const f = `${from.getFullYear()}-${String(from.getMonth() + 1).padStart(2, '0')}-${String(from.getDate()).padStart(2, '0')}`;
+    const t = `${to.getFullYear()}-${String(to.getMonth() + 1).padStart(2, '0')}-${String(to.getDate()).padStart(2, '0')}`;
+    setLedgerFrom(f); setLedgerTo(t);
+  };
+
+  const setMonthToDate = () => {
+    const now = new Date();
+    const from = new Date(now.getFullYear(), now.getMonth(), 1);
+    const f = `${from.getFullYear()}-${String(from.getMonth() + 1).padStart(2, '0')}-01`;
+    const t = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    setLedgerFrom(f); setLedgerTo(t);
+  };
 
   const customerUnpaidCampaigns = useMemo(() => data.filter(d =>
     d["الدفع"] !== "مدفوع" && selectedCustomer?.linkedPages?.includes(d["اسم الصفحة"]) && !d.isDeleted
@@ -191,11 +268,57 @@ const CustomerDetailView = ({
               <button onClick={() => handleGenerateInvoice('LYD')} disabled={invoiceSelection.length === 0} className="flex-1 sm:flex-none px-3 py-2 rounded-lg font-bold bg-brand-600 text-white hover:bg-brand-500 shadow-sm flex items-center justify-center gap-1 disabled:opacity-50 text-[10px]"><FilePlus size={12}/> فاتورة د.ل</button>
             </div>
           </div>
+          <div className="p-3 bg-canvas border-b border-hairline flex flex-col gap-3">
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="flex-1 min-w-[180px] flex items-center gap-1 bg-white border border-hairline focus-within:border-brand-500 rounded-lg px-2 transition-colors">
+                <Search size={13} className="text-ink-400 shrink-0" />
+                <input type="text" value={ledgerQ} onChange={(e) => setLedgerQ(e.target.value)} placeholder="بحث: صفحة، حملة، باقة، مكان..." className="flex-1 py-2 bg-transparent outline-none text-xs font-bold min-w-0" />
+                {ledgerQ && <button onClick={() => setLedgerQ('')} className="text-ink-400 hover:text-ink-700 shrink-0"><X size={13} /></button>}
+              </div>
+
+              <select value={ledgerPage} onChange={(e) => setLedgerPage(e.target.value)} className="py-2 px-2.5 bg-white border border-hairline rounded-lg text-xs font-bold text-ink-700 outline-none focus:border-brand-500 transition-colors">
+                <option value="">كل الصفحات</option>
+                {ledgerPages.map(pg => <option key={pg} value={pg}>{pg}</option>)}
+              </select>
+
+              <select value={ledgerPay} onChange={(e) => setLedgerPay(e.target.value)} className="py-2 px-2.5 bg-white border border-hairline rounded-lg text-xs font-bold text-ink-700 outline-none focus:border-brand-500 transition-colors">
+                <option value="">كل الدفعات</option>
+                <option value="paid">مدفوعة</option>
+                <option value="unpaid">غير مدفوعة</option>
+              </select>
+
+              <div className="flex items-center gap-1.5 bg-white border border-hairline rounded-lg px-2">
+                <CalendarDays size={13} className="text-ink-400 shrink-0" />
+                <input type="date" value={ledgerFrom} onChange={(e) => setLedgerFrom(e.target.value)} className="py-1.5 bg-transparent outline-none text-[11px] font-mono text-ink-600" title="من تاريخ" />
+                <span className="text-ink-400 text-[10px]">←</span>
+                <input type="date" value={ledgerTo} onChange={(e) => setLedgerTo(e.target.value)} className="py-1.5 bg-transparent outline-none text-[11px] font-mono text-ink-600" title="إلى تاريخ" />
+              </div>
+
+              {ledgerActiveFilters > 0 && (
+                <button onClick={clearLedgerFilters} className="flex items-center gap-1 px-2.5 py-2 rounded-lg text-[10px] font-bold bg-danger-soft text-danger-strong hover:bg-danger-soft transition-colors"><RotateCcw size={11} /> مسح ({ledgerActiveFilters})</button>
+              )}
+            </div>
+
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex flex-wrap items-center gap-1.5">
+                <button onClick={setMonthToDate} className="px-2 py-1 rounded-lg text-[10px] font-bold bg-white border border-hairline text-ink-600 hover:border-brand-400 hover:text-brand-700 transition-colors">هذا الشهر</button>
+                <button onClick={() => setDatePreset(7)} className="px-2 py-1 rounded-lg text-[10px] font-bold bg-white border border-hairline text-ink-600 hover:border-brand-400 hover:text-brand-700 transition-colors">آخر 7 أيام</button>
+                <button onClick={() => setDatePreset(30)} className="px-2 py-1 rounded-lg text-[10px] font-bold bg-white border border-hairline text-ink-600 hover:border-brand-400 hover:text-brand-700 transition-colors">آخر 30 يوم</button>
+                <button onClick={() => setDatePreset(90)} className="px-2 py-1 rounded-lg text-[10px] font-bold bg-white border border-hairline text-ink-600 hover:border-brand-400 hover:text-brand-700 transition-colors">آخر 90 يوم</button>
+              </div>
+              <div className="flex items-center gap-2.5 text-[10px] font-bold">
+                <span className="flex items-center gap-1 text-ink-500"><Filter size={11} /> {ledgerStats.count} من {ledgerRows.length}</span>
+                <span className="text-brand-700 font-black font-mono" dir="ltr">${ledgerStats.sum.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                <span className="flex items-center gap-1 text-brand-600"><CheckCircle2 size={11} /> {ledgerStats.paidCount}</span>
+                <span className="flex items-center gap-1 text-danger-strong"><AlertCircle size={11} /> {ledgerStats.unpaidCount}</span>
+              </div>
+            </div>
+          </div>
           <div className="overflow-x-auto w-full">
             <table className="w-full text-right min-w-[700px]">
               <thead className="bg-fill text-ink-500 text-[10px] uppercase font-bold">
                 <tr>
-                  <th className="p-3 w-8 text-center"><input type="checkbox" onChange={(e) => { if(e.target.checked) setInvoiceSelection(sortedAndFilteredData.map(r => r.id)); else setInvoiceSelection([]); }} className="rounded border-hairline-strong text-brand-600 focus:ring-brand-500 cursor-pointer" /></th>
+                  <th className="p-3 w-8 text-center"><input type="checkbox" checked={ledgerAllSelected} onChange={(e) => { if (e.target.checked) setInvoiceSelection([...new Set([...invoiceSelection, ...ledgerFiltered.map(r => r.id)])]); else setInvoiceSelection(invoiceSelection.filter(id => !ledgerFiltered.some(r => r.id === id))); }} className="rounded border-hairline-strong text-brand-600 focus:ring-brand-500 cursor-pointer" title="تحديد كل النتائج الظاهرة" /></th>
                   <th className="p-3">الصفحة</th>
                   <th className="p-3">الحملة</th>
                   <th className="p-3">الباقة</th>
@@ -205,7 +328,7 @@ const CustomerDetailView = ({
                 </tr>
               </thead>
               <tbody className="divide-y divide-fill text-xs">
-                {sortedAndFilteredData.length > 0 ? sortedAndFilteredData.map(row => (
+                {ledgerFiltered.length > 0 ? ledgerFiltered.map(row => (
                   <tr key={`inv-${row.id}`} className="hover:bg-canvas transition-colors group">
                     <td className="p-3 text-center"><input type="checkbox" checked={invoiceSelection.includes(row.id)} onChange={(e) => { if (e.target.checked) setInvoiceSelection(prev => [...prev, row.id]); else setInvoiceSelection(prev => prev.filter(id => id !== row.id)); }} className="rounded border-hairline-strong text-brand-600 focus:ring-brand-500 cursor-pointer" /></td>
                     <td className="p-3 font-bold text-ink-600">{safeRender(row["اسم الصفحة"])}</td>
@@ -215,7 +338,18 @@ const CustomerDetailView = ({
                     <td className="p-3 font-bold text-brand-600">{safeRender(row["الحالة"])}</td>
                     <td className="p-3"><span className={`px-2 py-1 rounded font-bold ${row["الدفع"] === 'مدفوع' ? 'bg-brand-100 text-brand-700' : 'bg-danger-soft text-danger-strong'}`}>{safeRender(row["الدفع"])}{row.paymentMethod && row["الدفع"] === 'مدفوع' ? ` (${row.paymentMethod})` : ''}</span></td>
                   </tr>
-                )) : <tr><td colSpan={7} className="p-6 text-center text-ink-400 italic">لا توجد حملات معروضة.</td></tr>}
+                )) : (
+                  <tr>
+                    <td colSpan={7} className="p-6 text-center">
+                      {ledgerRows.length > 0 ? (
+                        <>
+                          <p className="text-ink-400 italic mb-2">لا توجد حملات مطابقة للفلاتر المحددة.</p>
+                          <button onClick={clearLedgerFilters} className="text-[10px] font-bold text-brand-700 bg-brand-50 hover:bg-brand-100 px-3 py-1.5 rounded-lg transition-colors">مسح الفلاتر</button>
+                        </>
+                      ) : <p className="text-ink-400 italic">لا توجد حملات معروضة.</p>}
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
