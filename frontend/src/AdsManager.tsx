@@ -102,7 +102,7 @@ const App = () => {
   });
   const toggleModal = useCallback((name, state) => setModals(prev => ({ ...prev, [name]: state })), [setModals]);
 
-  const [confirmModal, setConfirmModal] = useState({ show: false, message: "", action: null, type: "info" });
+  const [confirmModal, setConfirmModal] = useState<{ show: boolean; message?: string; action?: any; type?: string }>({ show: false, message: "", action: null, type: "info" });
   const [progressModal, setProgressModal] = useState({ show: false, title: "", current: 0, total: 0, percentage: 0 });
   const [toast, setToast] = useState(null);
   const showToast = useCallback((message, type = 'info') => {
@@ -221,7 +221,7 @@ const App = () => {
   }, [authLogout, setGoogleAccessToken, addLog, setIsLoading, setData, setCustomers, setMarketers, setInvoices, setPayouts, setPackages]);
 
   // --- Campaign Operations ---
-  const addRow = useCallback((initialData) => {
+  const addRow = useCallback((initialData = null) => {
     try {
       const row = createNewRow(initialData && !initialData.nativeEvent ? initialData : {});
       setData(prev => [row, ...prev]);
@@ -475,7 +475,7 @@ const App = () => {
   // --- Smart Input / AI ---
   const AI_MODEL = "gemini-flash-latest";
 
-  const callGemini = useCallback(async (parts, systemInstruction, generationConfig, contents) => {
+  const callGemini = useCallback(async (parts, systemInstruction, generationConfig = null, contents = null) => {
     const body = {
       contents: contents || [{ role: "user", parts: Array.isArray(parts) ? parts : [{ text: parts }] }],
       ...(systemInstruction ? { systemInstruction: { parts: [{ text: systemInstruction }] } } : {}),
@@ -492,7 +492,7 @@ const App = () => {
     return data.candidates?.[0]?.content?.parts?.[0]?.text || "";
   }, [AI_MODEL]);
 
-  const handleAskAi = useCallback(async (overridePrompt) => {
+  const handleAskAi = useCallback(async (overridePrompt = null) => {
     const promptToUse = typeof overridePrompt === 'string' ? overridePrompt : aiChatPrompt;
     if (!promptToUse.trim()) return;
     setIsAiLoading(true);
@@ -515,7 +515,7 @@ const App = () => {
     if (!rawInput.trim() && !selectedImage) return;
     setIsAiLoading(true);
     const p = rawInput.trim() ? `Analyze: "${rawInput}".` : "Analyze image.";
-    const parts = [{ text: `${p} Return JSON mapping to columns: ${AI_HEADERS.join(',')}. Default Campaign: استهداف زيادة التفاعل. Default Payment: غير مدفوع.` }];
+    const parts: any[] = [{ text: `${p} Return JSON mapping to columns: ${AI_HEADERS.join(',')}. Default Campaign: استهداف زيادة التفاعل. Default Payment: غير مدفوع.` }];
     if (selectedImage) {
       parts.push({ inlineData: { mimeType: selectedImage.match(/data:(.*);/)?.[1] || "image/png", data: selectedImage.split(',')[1] } });
     }
@@ -560,7 +560,7 @@ const App = () => {
     if (!currentUser) return;
     try {
       const cid = selectedCustomer ? selectedCustomer.id : generateId();
-      const payload = {
+      const payload: any = {
         id: cid, name: customerForm.name, phone: customerForm.phone, email: customerForm.email,
         marketerId: customerForm.marketerId, workspaceId, updatedAt: serverTimestamp(),
       };
@@ -661,7 +661,7 @@ const App = () => {
     if (!currentUser) return;
     try {
       const mid = selectedMarketer ? selectedMarketer.id : generateId();
-      const payload = { id: mid, ...marketerForm, rate: parseFloat(marketerForm.rate) || 0, workspaceId, updatedAt: serverTimestamp() };
+      const payload: any = { id: mid, ...marketerForm, rate: parseFloat(marketerForm.rate) || 0, workspaceId, updatedAt: serverTimestamp() };
       if (!selectedMarketer) { payload.ownerId = currentUser.uid; payload.ownerEmail = currentUser.email; payload.createdAt = serverTimestamp(); }
       await updateDoc('marketers', mid, payload);
       if (selectedMarketer) setSelectedMarketer({ ...selectedMarketer, ...payload });
@@ -830,7 +830,7 @@ const App = () => {
     try {
       const pkgId = packageForm.id || generateId();
       const cat = packageForm.category || "G";
-      const payload = {
+      const payload: any = {
         id: pkgId, code: packageForm.code, days: parseInt(packageForm.days) || 0,
         priceUSD: parseFloat(packageForm.priceUSD) || 0, priceLYD: parseFloat(packageForm.priceLYD) || 0,
         category: cat, categoryLabel: PACKAGE_CATEGORIES[cat]?.label || 'متنوعة',
@@ -895,7 +895,7 @@ const App = () => {
     }
   }, [selectedCustomer, invoiceSelection, sortedAndFilteredData, currentUser, workspaceId]);
 
-  const printInvoice = useCallback((invoiceObj, itemsList) => {
+  const printInvoice = useCallback((invoiceObj, itemsList = null) => {
     const items = itemsList || invoiceObj.items;
     const curSym = invoiceObj.currency === 'LYD' ? 'د.ل' : '$';
     const itemsHtml = items.map((i, idx) =>
@@ -911,7 +911,7 @@ const App = () => {
     if (!selectedCustomer) return;
     const stats = customerStats[selectedCustomer.id] || { totalSpend: 0, due: 0, count: 0 };
     const linkedPages = selectedCustomer.linkedPages || [];
-    const items = data.filter(r => linkedPages.includes(r["اسم الصفحة"]) && !r.isDeleted).sort((a, b) => new Date(b["التاريخ"]) - new Date(a["التاريخ"]));
+    const items = data.filter(r => linkedPages.includes(r["اسم الصفحة"]) && !r.isDeleted).sort((a, b) => +new Date(b["التاريخ"]) - +new Date(a["التاريخ"]));
     const itemsHtml = items.map((i, idx) =>
       `<tr><td class="center">${idx+1}</td><td class="center">${safeRender(i["التاريخ"])}</td><td><strong>${safeRender(i["اسم Ad"])}</strong><br><span style="color:#64748b;font-size:11px">${safeRender(i["اسم الصفحة"])}</span></td><td class="center font-bold" style="color:#1e3a8a">${safeRender(i["كود الباقة"]||'-')}</td><td class="center"><span class="badge ${i["الدفع"]==='مدفوع'?'badge-success':'badge-danger'}">${safeRender(i["الدفع"])}</span></td><td class="text-left font-black" style="direction:ltr">${safeRender(i["القيمة"])} $</td><td class="text-left font-black" style="direction:ltr">${safeRender(i["القيمة (د.ل)"])} د.ل</td></tr>`
     ).join('');
@@ -986,7 +986,7 @@ const App = () => {
     try {
       const fetchAll = async (colName) => {
         const snap = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', colName));
-        return snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(item => isSuperAdmin || item.ownerId === currentUser.uid);
+        return snap.docs.map((d): any => ({ id: d.id, ...d.data() })).filter(item => isSuperAdmin || item.ownerId === currentUser.uid);
       };
       const [campaigns, customers, invoices, marketers, payouts, pointLogs, packages, marketerRequests, walletTransactions] = await Promise.all([
         fetchAll('campaigns'), fetchAll('customers'), fetchAll('invoices'), fetchAll('marketers'),
@@ -1020,7 +1020,7 @@ const App = () => {
     try {
       const fetchCurrent = async (colName) => {
         const snap = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', colName));
-        return snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(item =>
+        return snap.docs.map((d): any => ({ id: d.id, ...d.data() })).filter(item =>
           (isSuperAdmin || item.ownerId === currentUser.uid) && (item.workspaceId === workspaceId || (!item.workspaceId && workspaceId === DEFAULT_WORKSPACE))
         );
       };
@@ -1079,7 +1079,7 @@ const App = () => {
       setProgressModal({ show: true, title: "جاري الرفع إلى Google Drive...", current: 0, total: 9, percentage: 0 });
       const fetchAll = async (colName) => {
         const snap = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', colName));
-        return snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(item => isSuperAdmin || item.ownerId === currentUser.uid);
+        return snap.docs.map((d): any => ({ id: d.id, ...d.data() })).filter(item => isSuperAdmin || item.ownerId === currentUser.uid);
       };
       const [campaigns, customers, invoices, marketers, payouts, pointLogs, packages, marketerRequests, walletTransactions] = await Promise.all([
         fetchAll('campaigns'), fetchAll('customers'), fetchAll('invoices'), fetchAll('marketers'),
@@ -1170,7 +1170,7 @@ const App = () => {
     const reader = new FileReader();
     reader.onload = async (event) => {
       try {
-        const backup = JSON.parse(event.target.result);
+        const backup = JSON.parse(event.target.result as string);
         setConfirmModal({
           show: true, type: "info", message: `هل أنت متأكد من دمج هذه النسخة؟`,
           action: async () => {
@@ -1353,7 +1353,7 @@ const App = () => {
           {/* VIEW: CRM */}
           {currentView === 'crm' && (
             <CRMView
-              customers={customers} customerStats={customerStats} data={data}
+              customers={customers} customerStats={customerStats}
               setSelectedCustomer={setSelectedCustomer} setCurrentView={setCurrentView}
               setCustomerForm={setCustomerForm} toggleModal={toggleModal}
               requestDelete={requestDelete} isSuperAdmin={isSuperAdmin}

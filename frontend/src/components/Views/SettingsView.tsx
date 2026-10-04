@@ -108,7 +108,7 @@ const SettingsView = ({
               <input type="number" step="0.01" value={globalExchangeRate} onChange={(e) => {
                 const val = parseFloat(e.target.value);
                 setGlobalExchangeRate(val);
-                localStorage.setItem('lyalina_exchange_rate', val);
+                localStorage.setItem('lyalina_exchange_rate', String(val));
               }} className="flex-1 p-3 bg-warning-soft rounded-xl border border-warning-soft focus:border-warning-500 outline-none font-black text-xl text-warning-800 text-center" />
             </div>
             <p className="text-[10px] text-ink-400 mt-2">تحديث السعر هنا سيؤثر فقط على عمليات الشحن المستقبلية للمحافظ.</p>

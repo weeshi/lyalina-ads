@@ -29,7 +29,7 @@ const SetupWizard = ({ onComplete }) => {
 
     // توليد محتوى .env
     const buildEnv = () => {
-        const v = (k, fb) => form[k]?.trim() || fb || '';
+        const v = (k, fb?) => form[k]?.trim() || fb || '';
         return [
             `VITE_FIREBASE_API_KEY=${v('apiKey')}`,
             `VITE_FIREBASE_AUTH_DOMAIN=${v('authDomain', form.projectId.trim() ? form.projectId.trim() + '.firebaseapp.com' : '')}`,
@@ -45,7 +45,7 @@ const SetupWizard = ({ onComplete }) => {
 
     // توليد محتوى firebaseConfig.ts
     const buildConfig = () => {
-        const js = (v, fb) => JSON.stringify(form[v]?.trim() || fb || '');
+        const js = (v, fb?) => JSON.stringify(form[v]?.trim() || fb || '');
         const project = form.projectId?.trim() || 'YOUR_PROJECT_ID';
         return [
             '// @ts-nocheck',

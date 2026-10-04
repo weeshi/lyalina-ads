@@ -40,7 +40,7 @@ const TopUpModal = ({ isOpen, onClose, customer, exchangeRate, onSave }) => {
                     <input type="text" value={note} onChange={e => setNote(e.target.value)} className="w-full p-2.5 rounded-xl border border-hairline focus:border-brand-500 outline-none text-sm font-bold text-ink-700" placeholder="مثال: نقداً، إيداع مصرفي..." />
                 </div>
                 <div className="flex gap-2 mt-4">
-                    <button onClick={() => onSave(parseFloat(amountLYD), parseFloat(rate), amountUSD, note)} disabled={!amountLYD || amountLYD <= 0} className="flex-1 bg-brand-600 text-white py-3 rounded-xl font-black hover:bg-brand-700 shadow-md text-sm disabled:opacity-50 transition-all">تأكيد الإيداع</button>
+                    <button onClick={() => onSave(parseFloat(amountLYD), parseFloat(rate), amountUSD, note)} disabled={!amountLYD || Number(amountLYD) <= 0} className="flex-1 bg-brand-600 text-white py-3 rounded-xl font-black hover:bg-brand-700 shadow-md text-sm disabled:opacity-50 transition-all">تأكيد الإيداع</button>
                     <button onClick={onClose} className="flex-1 bg-fill text-ink-600 py-3 rounded-xl font-bold hover:bg-hairline text-sm">إلغاء</button>
                 </div>
             </div>

@@ -174,7 +174,7 @@ const CustomerDetailView = ({
                       {t.amountUSD > 0 ? '+' : ''}{t.amountUSD.toFixed(2)}
                     </td>
                   </tr>
-                )) : <tr><td colSpan="6" className="p-8 text-center text-ink-400 italic">لا توجد حركات مالية في هذه المحفظة.</td></tr>}
+                )) : <tr><td colSpan={6} className="p-8 text-center text-ink-400 italic">لا توجد حركات مالية في هذه المحفظة.</td></tr>}
               </tbody>
             </table>
           </div>
@@ -215,7 +215,7 @@ const CustomerDetailView = ({
                     <td className="p-3 font-bold text-brand-600">{safeRender(row["الحالة"])}</td>
                     <td className="p-3"><span className={`px-2 py-1 rounded font-bold ${row["الدفع"] === 'مدفوع' ? 'bg-brand-100 text-brand-700' : 'bg-danger-soft text-danger-strong'}`}>{safeRender(row["الدفع"])}{row.paymentMethod && row["الدفع"] === 'مدفوع' ? ` (${row.paymentMethod})` : ''}</span></td>
                   </tr>
-                )) : <tr><td colSpan="7" className="p-6 text-center text-ink-400 italic">لا توجد حملات معروضة.</td></tr>}
+                )) : <tr><td colSpan={7} className="p-6 text-center text-ink-400 italic">لا توجد حملات معروضة.</td></tr>}
               </tbody>
             </table>
           </div>
@@ -250,7 +250,7 @@ const CustomerDetailView = ({
                     </tr>
                   ))
                 ) : (
-                  <tr><td colSpan="5" className="p-6 text-center text-ink-400 italic">لا توجد فواتير مصدرة.</td></tr>
+                  <tr><td colSpan={5} className="p-6 text-center text-ink-400 italic">لا توجد فواتير مصدرة.</td></tr>
                 )}
               </tbody>
             </table>

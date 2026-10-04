@@ -8,7 +8,7 @@ import { safeRender, translateAuthError } from '../../utils';
 import { ROLE_OPTIONS } from '../../constants';
 import { Key, Loader2, Trash2, UserPlus, Users, Eye, EyeOff, AlertCircle, CheckCircle, X } from 'lucide-react';
 
-const SYSTEM_USERS_PATH = ['artifacts', appId, 'public', 'data', 'system_users'];
+const SYSTEM_USERS_PATH = ['artifacts', appId, 'public', 'data', 'system_users'] as [string, string, string, string, string];
 
 const ConfirmDialog = ({ isOpen, onClose, title, message, onConfirm, confirmText = 'تأكيد', variant = 'destructive' }) => {
   if (!isOpen) return null;
@@ -35,7 +35,7 @@ const ConfirmDialog = ({ isOpen, onClose, title, message, onConfirm, confirmText
   );
 };
 
-const PasswordInput = ({ value, onChange, placeholder, label, error }) => {
+const PasswordInput = ({ value, onChange, placeholder = '', label = '', error = '' }) => {
   const [showPassword, setShowPassword] = useState(false);
   return (
     <div className="relative">
@@ -82,7 +82,7 @@ const UserManagementModal = ({ isOpen, onClose }) => {
     if (!isOpen) return;
     const q = query(collection(db, ...SYSTEM_USERS_PATH));
     const unsub = onSnapshot(q, (snap) => {
-      setSystemUsers(snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0)));
+      setSystemUsers(snap.docs.map((d): any => ({ id: d.id, ...d.data() })).sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0)));
     });
     return () => unsub();
   }, [isOpen]);

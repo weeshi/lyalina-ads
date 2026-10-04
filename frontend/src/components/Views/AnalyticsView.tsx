@@ -106,7 +106,7 @@ const AnalyticsView = ({ data, customers, customerStats, packages, marketerStats
     totalWallet: customers.reduce((s, c) => s + (c.walletBalanceUSD || 0), 0),
     packageCount: packages.length,
     marketerCount: marketers.length,
-    totalCommissions: Object.values(marketerStats).reduce((s, x) => s + (x.balance || 0), 0),
+    totalCommissions: Object.values(marketerStats).reduce((s, x: any) => s + (x.balance || 0), 0),
   }), [customers, packages, marketers, marketerStats]);
 
   const paidPct = stats.total > 0 ? Math.round((stats.paidsum / stats.revenue) * 100) : 0;

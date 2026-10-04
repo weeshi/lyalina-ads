@@ -189,7 +189,7 @@ const MarketerDetailView = ({
                       )}
                     </td>
                   </tr>
-                )) : <tr><td colSpan="5" className="p-4 text-center text-ink-400 italic text-xs">لا يوجد {customerSearch ? 'عملاء مطابقون' : 'عملاء تابعون'}</td></tr>}
+                )) : <tr><td colSpan={5} className="p-4 text-center text-ink-400 italic text-xs">لا يوجد {customerSearch ? 'عملاء مطابقون' : 'عملاء تابعون'}</td></tr>}
               </tbody>
             </table>
           </div>
@@ -222,7 +222,7 @@ const MarketerDetailView = ({
                       )}
                     </td>
                   </tr>
-                )) : <tr><td colSpan="5" className="p-4 text-center text-ink-400 italic text-xs">لا يوجد {customerSearch ? 'عملاء مطابقون' : 'عملاء غير تابعين'}</td></tr>}
+                )) : <tr><td colSpan={5} className="p-4 text-center text-ink-400 italic text-xs">لا يوجد {customerSearch ? 'عملاء مطابقون' : 'عملاء غير تابعين'}</td></tr>}
               </tbody>
             </table>
           </div>
@@ -247,7 +247,7 @@ const MarketerDetailView = ({
                     <td className="p-3"><span className="px-2 py-1 rounded text-[10px] font-bold bg-info-soft text-info-700">{safeRender(row["الحالة"])}</span></td>
                     <td className="p-3"><span className={`px-2 py-1 rounded text-[10px] font-bold ${row["الدفع"] === 'مدفوع' ? 'bg-brand-50 text-brand-700' : 'bg-danger-soft text-danger-strong'}`}>{safeRender(row["الدفع"])}</span></td>
                   </tr>
-                )) : <tr><td colSpan="5" className="p-6 text-center text-ink-400 italic">لا توجد حملات مرتبطة</td></tr>}
+                )) : <tr><td colSpan={5} className="p-6 text-center text-ink-400 italic">لا توجد حملات مرتبطة</td></tr>}
               </tbody>
             </table>
           </div>

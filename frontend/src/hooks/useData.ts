@@ -63,7 +63,7 @@ const useData = ({ currentUser, isSuperAdmin, workspaceId }) => {
     }, (err) => console.error(err)));
 
     unsubscribers.push(onSnapshot(getQuery('marketer_requests'), (snapshot) => {
-      let reqs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })).filter(item => isSuperAdmin || item.ownerId === currentUser.uid);
+      let reqs = snapshot.docs.map((doc): any => ({ id: doc.id, ...doc.data() })).filter(item => isSuperAdmin || item.ownerId === currentUser.uid);
       setMarketerRequests(reqs.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0)));
     }, (err) => console.error(err)));
 

@@ -17,7 +17,7 @@ export const calculateProgress = (startDateStr, durationStr, status) => {
   const duration = parseInt(String(durationStr).replace(/\D/g, '')) || 0;
   if (isNaN(start.getTime()) || duration <= 0) return 0;
   const today = new Date();
-  const diffDays = Math.floor((today - start) / (1000 * 60 * 60 * 24));
+  const diffDays = Math.floor((+today - +start) / (1000 * 60 * 60 * 24));
   if (diffDays <= 0) return 0;
   if (diffDays >= duration) return 100;
   return Math.round((diffDays / duration) * 100);
