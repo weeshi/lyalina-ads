@@ -9,9 +9,9 @@ const ICONS = {
 };
 
 const STYLES = {
-  success: 'bg-emerald-600 text-white shadow-lg shadow-emerald-500/20',
-  error: 'bg-red-600 text-white shadow-lg shadow-red-500/20',
-  info: 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20',
+  success: 'bg-brand-600 text-white shadow-lg shadow-brand-500/20',
+  error: 'bg-danger-strong text-white shadow-lg shadow-danger-500/20',
+  info: 'bg-assist-600 text-white shadow-lg shadow-assist-500/20',
 };
 
 const Toast = ({ toast, onClose }) => {

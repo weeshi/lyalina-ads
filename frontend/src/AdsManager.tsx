@@ -8,13 +8,14 @@ import {
   UserPlus, Edit3, Trash, Mail, FilePlus, Layers, Briefcase, Percent, Banknote, Landmark,
   Image as ImageIcon, AlertTriangle, Award, Gift, Download, Upload, FolderKanban as WorkspaceIcon,
   SlidersHorizontal, PackagePlus, Bot, SendHorizontal, RefreshCw, Info, MessageCircle, Activity, DollarSign,
-  HardDrive, UserCircle, LogOut, CheckCircle2, Lock, Mail as MailIcon, Cloud, ShieldAlert, Key, Coins, ArrowRightLeft, Cog
+  HardDrive, UserCircle, LogOut, CheckCircle2, Lock, Mail as MailIcon, Cloud, ShieldAlert, Key, Coins, ArrowRightLeft, Cog,
+  Bell, TrendingUp, Pause
 } from 'lucide-react';
 import { doc, setDoc, getDocs, collection, query, onSnapshot, deleteDoc, serverTimestamp, getDoc } from 'firebase/firestore';
 
 // --- Internal imports ---
 import { app, auth, db, appId } from './firebase';
-import { HEADERS, AI_HEADERS, STATUS_OPTIONS, CAMPAIGN_TYPES, SEX_OPTIONS, PRESET_WORKSPACES, DEFAULT_WORKSPACE, PACKAGE_CATEGORIES, PAYMENT_METHODS, GEMINI_PROXY_URL } from './constants';
+import { HEADERS, AI_HEADERS, COLUMN_DEFS, STATUS_OPTIONS, PAYMENT_STATES, CAMPAIGN_TYPES, SEX_OPTIONS, PRESET_WORKSPACES, DEFAULT_WORKSPACE, PACKAGE_CATEGORIES, PAYMENT_METHODS, GEMINI_PROXY_URL } from './constants';
 import { generateId, safeRender, parseCurrency, calculateProgress } from './utils';
 import useAuth from './hooks/useAuth';
 import useData from './hooks/useData';
@@ -184,8 +185,11 @@ const App = () => {
   // --- Auto-scroll chat ---
   useEffect(() => { chatEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [conversationHistory]);
 
-  // --- Dynamic headers ---
-  const dynamicHeaders = useMemo(() => (isSuperAdmin ? ["المستخدم", ...HEADERS] : HEADERS), [isSuperAdmin]);
+  // --- Dynamic columns (Stitch display layer over Firestore keys) ---
+  const dynamicColumns = useMemo(() => {
+    const userCol = { key: "المستخدم", label: "المستخدم", type: "user" };
+    return (isSuperAdmin ? [userCol, ...COLUMN_DEFS] : COLUMN_DEFS);
+  }, [isSuperAdmin]);
 
   // --- Create new campaign row ---
   const createNewRow = useCallback((initialData = {}) => ({
@@ -937,16 +941,18 @@ const App = () => {
 
   // --- Bulk Export ---
   const exportToExcel = useCallback(() => {
-    const tableHTML = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="UTF-8"><style>td{mso-number-format:"\\@"}</style></head><body><table border="1"><thead><tr style="background-color:#065f46;color:white">${dynamicHeaders.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody>${sortedAndFilteredData.map(row => `<tr>${dynamicHeaders.map(h => {
-      if (h === "المستخدم") return `<td>${safeRender(row.ownerEmail)}</td>`;
-      return `<td>${safeRender(row[h])}</td>`;
-    }).join('')}</tr>`).join('')}</tbody></table></body></html>`;
+    const colValue = (row, col) => {
+      if (col.type === "user") return safeRender(row.ownerEmail);
+      if (col.key === "المعرف") return safeRender(row.campaignRef);
+      return safeRender(row[col.key]);
+    };
+    const tableHTML = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="UTF-8"><style>td{mso-number-format:"\\@"}</style></head><body><table border="1"><thead><tr style="background-color:#065f46;color:white">${dynamicColumns.map(c => `<th>${c.label}</th>`).join('')}</tr></thead><tbody>${sortedAndFilteredData.map(row => `<tr>${dynamicColumns.map(c => `<td>${colValue(row, c)}</td>`).join('')}</tr>`).join('')}</tbody></table></body></html>`;
     const blob = new Blob([tableHTML], { type: 'application/vnd.ms-excel' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a'); a.href = url;
     a.download = `Ads_${workspaceId}_${showArchived ? 'Archive' : 'Active'}.xls`;
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
-  }, [dynamicHeaders, sortedAndFilteredData, workspaceId, showArchived, safeRender]);
+  }, [dynamicColumns, sortedAndFilteredData, workspaceId, showArchived, safeRender]);
 
   // --- AI Customer Analysis ---
   const handleAnalyzeCustomer = useCallback(async () => {
@@ -1227,23 +1233,45 @@ const App = () => {
 
   // --- Get row style ---
   const getRowStyle = (status, payment, isSelected) => {
-    if (isSelected) return 'bg-emerald-100 ring-2 ring-emerald-500 z-10 scale-[1.01] shadow-md';
+    if (isSelected) return 'bg-brand-100 ring-2 ring-brand-500 z-10 scale-[1.01] shadow-md';
     if (payment === 'غير مدفوع') {
-      if (status === 'مكتمل') return 'bg-red-100/90 hover:bg-red-200 text-red-900 border-red-300 font-bold';
-      if (status === 'متوقف') return 'bg-rose-50 hover:bg-rose-100 text-rose-800 border-rose-200';
-      if (status === 'نشط') return 'bg-orange-50 hover:bg-orange-100 text-orange-900 border-orange-200';
-      return 'bg-amber-50/50 hover:bg-amber-50 text-amber-900 border-amber-100';
+      if (status === 'مكتمل') return 'bg-danger-soft/90 hover:bg-danger-soft text-danger-900 border-danger-500 font-bold';
+      if (status === 'متوقف') return 'bg-danger-soft hover:bg-danger-soft text-danger-800 border-danger-soft';
+      if (status === 'نشط') return 'bg-warning-soft hover:bg-warning-soft text-warning-900 border-warning-soft';
+      return 'bg-warning-soft/50 hover:bg-warning-soft text-warning-900 border-warning-soft';
     } else {
-      if (status === 'نشط') return 'bg-emerald-50/80 hover:bg-emerald-100 text-emerald-900 border-emerald-100';
-      if (status === 'مكتمل') return 'bg-teal-50 hover:bg-teal-100 text-teal-900 border-teal-100 opacity-80';
-      if (status === 'متوقف') return 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200';
-      return 'bg-blue-50/60 hover:bg-blue-100 text-blue-900 border-blue-100';
+      if (status === 'نشط') return 'bg-brand-50/80 hover:bg-brand-100 text-brand-900 border-brand-100';
+      if (status === 'مكتمل') return 'bg-brand-50 hover:bg-brand-100 text-brand-900 border-brand-100 opacity-80';
+      if (status === 'متوقف') return 'bg-fill hover:bg-hairline text-ink-700 border-hairline';
+      return 'bg-info-soft/60 hover:bg-info-soft text-info-800 border-info-soft';
     }
   };
 
+  // --- Ads KPI stats (Stitch cards) ---
+  const adsStats = useMemo(() => {
+    const live = data.filter(r => !r.isDeleted && !r.isArchived);
+    const active = live.filter(r => r["الحالة"] === 'نشط');
+    const unpaid = live.filter(r => r["الدفع"] === 'غير مدفوع');
+    const sumLYD = (rows) => rows.reduce((acc, r) => acc + (parseCurrency(r["القيمة (د.ل)"]) || 0), 0);
+    const activeDailyLYD = sumLYD(active);
+    const activeDailyUSD = active.reduce((acc, r) => acc + (parseCurrency(r["القيمة"]) || 0), 0);
+    const unpaidLYD = sumLYD(unpaid);
+    const rate = globalExchangeRate || 5;
+    return {
+      activeCount: active.length,
+      totalCount: live.length,
+      activeDailyLYD,
+      activeDailyUSD,
+      rate,
+      unpaidCount: unpaid.length,
+      unpaidLYD,
+      unpaidPadUSD: unpaid.reduce((acc, r) => acc + (parseCurrency(r["القيمة"]) || 0), 0),
+    };
+  }, [data, globalExchangeRate, parseCurrency]);
+
   // --- Render ---
   if (!isAuthReady) {
-    return <div className="h-screen bg-slate-50 flex items-center justify-center"><Loader2 size={40} className="animate-spin text-emerald-600"/></div>;
+    return <div className="h-screen bg-canvas flex items-center justify-center"><Loader2 size={40} className="animate-spin text-brand-600"/></div>;
   }
 
   if (!currentUser) {
@@ -1251,7 +1279,7 @@ const App = () => {
   }
 
   return (
-    <div className="flex flex-col bg-slate-50 text-right font-sans overflow-hidden transition-all duration-500 ease-in-out shadow-2xl relative mx-auto bg-white w-full h-full min-h-[600px]" dir="rtl">
+    <div className="flex flex-col bg-canvas text-right font-sans overflow-hidden transition-all duration-500 ease-in-out shadow-2xl relative mx-auto bg-white w-full h-full min-h-[600px]" dir="rtl">
       {/* Global Modals */}
       <ProgressModal isOpen={progressModal.show} title={progressModal.title} current={progressModal.current} total={progressModal.total} percentage={progressModal.percentage} />
       <TopUpModal isOpen={modals.topUp} onClose={() => toggleModal('topUp', false)} customer={selectedCustomer} exchangeRate={globalExchangeRate} onSave={handleSaveTopUp} />
@@ -1265,11 +1293,11 @@ const App = () => {
 
       {/* Confirm Modal */}
       {confirmModal.show && (
-        <ModalWrapper isOpen={true} onClose={() => setConfirmModal({ show: false })} title="إشعار النظام" icon={confirmModal.type === 'success' ? <CheckCircle2 size={24} className="text-emerald-500"/> : <AlertCircle size={24} className="text-indigo-500"/>}>
-          <p className="mb-4 text-sm text-slate-600 font-bold leading-relaxed">{safeRender(confirmModal.message)}</p>
+        <ModalWrapper isOpen={true} onClose={() => setConfirmModal({ show: false })} title="إشعار النظام" icon={confirmModal.type === 'success' ? <CheckCircle2 size={24} className="text-brand-500"/> : <AlertCircle size={24} className="text-assist-500"/>}>
+          <p className="mb-4 text-sm text-ink-600 font-bold leading-relaxed">{safeRender(confirmModal.message)}</p>
           <div className="flex gap-2">
-            {confirmModal.action && <button onClick={confirmModal.action} className="flex-1 bg-indigo-600 text-white p-2.5 rounded-xl text-sm font-bold shadow-md hover:bg-indigo-700">تأكيد</button>}
-            <button onClick={() => setConfirmModal({ show: false })} className="flex-1 bg-slate-100 text-slate-600 p-2.5 rounded-xl text-sm font-bold hover:bg-slate-200">إغلاق</button>
+            {confirmModal.action && <button onClick={confirmModal.action} className="flex-1 bg-assist-600 text-white p-2.5 rounded-xl text-sm font-bold shadow-md hover:bg-assist-700">تأكيد</button>}
+            <button onClick={() => setConfirmModal({ show: false })} className="flex-1 bg-fill text-ink-600 p-2.5 rounded-xl text-sm font-bold hover:bg-hairline">إغلاق</button>
           </div>
         </ModalWrapper>
       )}
@@ -1300,7 +1328,7 @@ const App = () => {
       <div className="flex h-full overflow-hidden relative">
         <Sidebar currentView={currentView} setCurrentView={setCurrentView} setSelectedCustomer={setSelectedCustomer} isSuperAdmin={isSuperAdmin} toggleModal={toggleModal} />
 
-        <div className="flex-1 flex flex-col h-full min-w-0 overflow-hidden bg-slate-50 relative">
+        <div className="flex-1 flex flex-col h-full min-w-0 overflow-hidden bg-canvas relative pb-[72px] md:pb-0">
           <Topbar workspaceId={workspaceId} workspaceHistory={workspaceHistory} handleWorkspaceChange={handleWorkspaceChange} globalExchangeRate={globalExchangeRate} isSuperAdmin={isSuperAdmin} currentView={currentView} />
 
           {/* VIEW: Settings */}
@@ -1325,10 +1353,11 @@ const App = () => {
           {/* VIEW: CRM */}
           {currentView === 'crm' && (
             <CRMView
-              customers={customers} customerStats={customerStats}
+              customers={customers} customerStats={customerStats} data={data}
               setSelectedCustomer={setSelectedCustomer} setCurrentView={setCurrentView}
               setCustomerForm={setCustomerForm} toggleModal={toggleModal}
               requestDelete={requestDelete} isSuperAdmin={isSuperAdmin}
+              globalExchangeRate={globalExchangeRate}
             />
           )}
 
@@ -1359,62 +1388,99 @@ const App = () => {
           {currentView === 'ads' && (
             <div className="flex flex-col h-full overflow-hidden">
               {/* Filters Bar */}
-              <div className="bg-white border-b border-slate-200 px-4 py-3 flex flex-col lg:flex-row items-stretch lg:items-center shadow-sm z-10 flex-none gap-3">
+              <div className="bg-white border-b border-hairline px-4 py-3 flex flex-col lg:flex-row items-stretch lg:items-center shadow-sm z-10 flex-none gap-3">
                 {selectedAds.length > 0 ? (
-                  <div className="w-full flex items-center justify-between bg-emerald-50 p-2 rounded-lg border border-emerald-200 animate-in slide-in-from-top-2 overflow-x-auto">
+                  <div className="w-full flex items-center justify-between bg-brand-50 p-2 rounded-lg border border-brand-200 animate-in slide-in-from-top-2 overflow-x-auto">
                     <div className="flex items-center gap-3 min-w-max px-2">
-                      <span className="font-bold text-emerald-800 text-sm">{safeRender(selectedAds.length)} محدد</span>
-                      <div className="h-4 w-px bg-emerald-200"></div>
-                      <button onClick={handleWalletPayment} className="text-xs md:text-sm font-black bg-emerald-600 text-white hover:bg-emerald-700 px-3 py-1.5 rounded-lg shadow-sm transition flex items-center gap-1"><Coins size={14}/> خصم من المحفظة</button>
-                      <button onClick={handleBulkDuplicate} className="text-[10px] md:text-xs font-bold text-indigo-600 hover:bg-indigo-100 px-2 py-1 rounded transition"><Copy size={12}/> نسخ</button>
-                      <button onClick={() => handleBulkAction('status', 'نشط')} className="text-[10px] md:text-xs font-bold text-emerald-700 hover:bg-emerald-100 px-2 py-1 rounded transition">تنشيط</button>
-                      <button onClick={() => handleBulkAction('status', 'متوقف')} className="text-[10px] md:text-xs font-bold text-red-600 hover:bg-red-100 px-2 py-1 rounded transition">إيقاف</button>
-                      <button onClick={() => handleBulkAction('payment', 'مدفوع')} className="text-[10px] md:text-xs font-bold text-blue-600 hover:bg-blue-100 px-2 py-1 rounded transition">تعيين مدفوع</button>
-                      <button onClick={() => handleBulkAction('payment', 'غير مدفوع')} className="text-[10px] md:text-xs font-bold text-orange-600 hover:bg-orange-100 px-2 py-1 rounded transition">غير مدفوع</button>
-                      <button onClick={() => handleBulkAction('archive', true)} className="text-[10px] md:text-xs font-bold text-amber-600 hover:bg-amber-100 px-2 py-1 rounded transition">أرشفة</button>
-                      <button onClick={() => handleBulkAction('delete', true)} className="text-[10px] md:text-xs font-bold text-slate-600 hover:bg-slate-200 px-2 py-1 rounded transition">حذف</button>
+                      <span className="font-bold text-brand-800 text-sm">{safeRender(selectedAds.length)} محدد</span>
+                      <div className="h-4 w-px bg-brand-200"></div>
+                      <button onClick={handleWalletPayment} className="text-xs md:text-sm font-black bg-brand-600 text-white hover:bg-brand-700 px-3 py-1.5 rounded-lg shadow-sm transition flex items-center gap-1"><Coins size={14}/> خصم من المحفظة</button>
+                      <button onClick={handleBulkDuplicate} className="text-[10px] md:text-xs font-bold text-assist-600 hover:bg-assist-100 px-2 py-1 rounded transition"><Copy size={12}/> نسخ</button>
+                      <button onClick={() => handleBulkAction('status', 'نشط')} className="text-[10px] md:text-xs font-bold text-brand-700 hover:bg-brand-100 px-2 py-1 rounded transition">تنشيط</button>
+                      <button onClick={() => handleBulkAction('status', 'متوقف')} className="text-[10px] md:text-xs font-bold text-danger-strong hover:bg-danger-soft px-2 py-1 rounded transition">إيقاف</button>
+                      <button onClick={() => handleBulkAction('payment', 'مدفوع')} className="text-[10px] md:text-xs font-bold text-info-600 hover:bg-info-soft px-2 py-1 rounded transition">تعيين مدفوع</button>
+                      <button onClick={() => handleBulkAction('payment', 'غير مدفوع')} className="text-[10px] md:text-xs font-bold text-warning-500 hover:bg-warning-soft px-2 py-1 rounded transition">غير مدفوع</button>
+                      <button onClick={() => handleBulkAction('archive', true)} className="text-[10px] md:text-xs font-bold text-warning-500 hover:bg-warning-soft px-2 py-1 rounded transition">أرشفة</button>
+                      <button onClick={() => handleBulkAction('delete', true)} className="text-[10px] md:text-xs font-bold text-ink-600 hover:bg-hairline px-2 py-1 rounded transition">حذف</button>
                     </div>
-                    <button onClick={() => setSelectedAds([])} className="p-1 hover:bg-emerald-200 rounded-full text-emerald-700 shrink-0 mx-1"><X size={14}/></button>
+                    <button onClick={() => setSelectedAds([])} className="p-1 hover:bg-brand-200 rounded-full text-brand-700 shrink-0 mx-1"><X size={14}/></button>
                   </div>
                 ) : (
                   <>
                     <div className="relative flex-1 w-full lg:max-w-md">
-                      <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" size={14} />
-                      <input type="text" placeholder="بحث شامل..." value={searchInput} onChange={(e) => setSearchInput(e.target.value)} className="w-full pl-3 pr-9 py-1.5 rounded-lg border border-slate-200 focus:border-emerald-500 outline-none text-xs font-bold text-slate-700 bg-slate-50" />
+                      <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-400" size={14} />
+                      <input type="text" placeholder="بحث شامل..." value={searchInput} onChange={(e) => setSearchInput(e.target.value)} className="w-full pl-3 pr-9 py-1.5 rounded-lg border border-hairline focus:border-brand-500 outline-none text-xs font-bold text-ink-700 bg-canvas" />
                     </div>
                     <div className="flex gap-2 flex-wrap items-center w-full lg:w-auto">
-                      <button onClick={() => toggleModal('advancedFilters', true)} className="flex-1 lg:flex-none relative flex items-center justify-center gap-2 px-3 py-1.5 rounded-lg font-bold text-xs bg-slate-100 text-slate-700 hover:bg-slate-200 transition border border-slate-200">
-                        <Filter size={14} /> فلاتر {activeFiltersCount > 0 && <span className="absolute -top-1.5 -right-1.5 bg-emerald-500 text-white w-4 h-4 rounded-full flex items-center justify-center text-[9px] shadow-sm">{activeFiltersCount}</span>}
+                      <button onClick={() => toggleModal('advancedFilters', true)} className="flex-1 lg:flex-none relative flex items-center justify-center gap-2 px-3 py-1.5 rounded-lg font-bold text-xs bg-fill text-ink-700 hover:bg-hairline transition border border-hairline">
+                        <Filter size={14} /> فلاتر {activeFiltersCount > 0 && <span className="absolute -top-1.5 -right-1.5 bg-brand-500 text-white w-4 h-4 rounded-full flex items-center justify-center text-[9px] shadow-sm">{activeFiltersCount}</span>}
                       </button>
-                      {activeFiltersCount > 0 && <button onClick={clearAllFilters} className="flex-none flex items-center gap-1 px-2 py-1.5 rounded-lg font-bold text-xs bg-red-50 text-red-600 hover:bg-red-100 transition border border-red-100 animate-in fade-in"><X size={14}/></button>}
+                      {activeFiltersCount > 0 && <button onClick={clearAllFilters} className="flex-none flex items-center gap-1 px-2 py-1.5 rounded-lg font-bold text-xs bg-danger-soft text-danger-strong hover:bg-danger-soft transition border border-danger-soft animate-in fade-in"><X size={14}/></button>}
                     </div>
                     <div className="flex justify-end gap-2 w-full lg:w-auto">
-                      <button onClick={exportToExcel} className="flex-none bg-blue-50 text-blue-700 px-3 py-1.5 rounded-lg font-bold shadow-sm hover:bg-blue-100 text-xs flex items-center gap-1"><Download size={14} /></button>
-                      <button onClick={() => setShowSmartInput(!showSmartInput)} className="flex-1 lg:flex-none flex justify-center items-center gap-1 px-3 py-1.5 rounded-lg font-bold bg-emerald-500 text-white hover:bg-emerald-400 shadow-sm text-xs"><Zap size={14} /> ✨ ذكي</button>
-                      <button onClick={() => toggleModal('ai', true)} className="flex-1 lg:flex-none flex justify-center items-center gap-1 px-3 py-1.5 rounded-lg font-bold bg-indigo-500 text-white hover:bg-indigo-400 shadow-sm text-xs"><Bot size={14} /> مساعد</button>
-                      <button onClick={() => addRow()} className="flex-none bg-emerald-800 text-white px-3 py-1.5 rounded-lg font-bold shadow-sm hover:bg-emerald-900 text-xs flex items-center gap-1"><Plus size={14} /> إضافة</button>
+                      <button onClick={exportToExcel} className="flex-none bg-info-soft text-info-700 px-3 py-1.5 rounded-lg font-bold shadow-sm hover:bg-info-soft text-xs flex items-center gap-1"><Download size={14} /></button>
+                      <button onClick={() => setShowSmartInput(!showSmartInput)} className="flex-1 lg:flex-none flex justify-center items-center gap-1 px-3 py-1.5 rounded-lg font-bold bg-brand-500 text-white hover:bg-brand-400 shadow-sm text-xs"><Zap size={14} /> ✨ ذكي</button>
+                      <button onClick={() => toggleModal('ai', true)} className="flex-1 lg:flex-none flex justify-center items-center gap-1 px-3 py-1.5 rounded-lg font-bold bg-assist-500 text-white hover:bg-assist-400 shadow-sm text-xs"><Bot size={14} /> مساعد</button>
+                      <button onClick={() => addRow()} className="flex-none bg-brand-800 text-white px-3 py-1.5 rounded-lg font-bold shadow-sm hover:bg-brand-900 text-xs flex items-center gap-1"><Plus size={14} /> إضافة</button>
                     </div>
                   </>
                 )}
               </div>
 
+              {/* KPI Cards (Stitch) */}
+              <div className="bg-white border-b border-hairline px-4 py-3 flex-none">
+                <div className="grid grid-cols-2 xl:grid-cols-4 gap-3">
+                  <div className="rounded-xl border border-hairline bg-white p-3 flex items-center gap-3 hover:shadow-sm transition-shadow">
+                    <div className="w-10 h-10 rounded-lg bg-brand-50 text-brand-600 flex items-center justify-center shrink-0"><Activity size={18} /></div>
+                    <div className="min-w-0">
+                      <div className="text-[11px] text-ink-400 font-bold">الحملات النشطة</div>
+                      <div className="text-lg font-black text-ink-800 leading-tight">{adsStats.activeCount}<span className="text-[11px] font-bold text-ink-400 mr-1">/ {adsStats.totalCount} حملة</span></div>
+                    </div>
+                  </div>
+                  <div className="rounded-xl border border-hairline bg-white p-3 flex items-center gap-3 hover:shadow-sm transition-shadow">
+                    <div className="w-10 h-10 rounded-lg bg-info-soft text-info-500 flex items-center justify-center shrink-0"><DollarSign size={18} /></div>
+                    <div className="min-w-0">
+                      <div className="text-[11px] text-ink-400 font-bold">الإنفاق اليومي</div>
+                      <div className="text-lg font-black text-ink-800 leading-tight font-mono">{adsStats.activeDailyLYD.toLocaleString()} <span className="text-[11px] font-bold text-ink-400">د.ل</span></div>
+                      <div className="text-[10px] text-ink-400 font-bold mt-0.5">≈ ${adsStats.activeDailyUSD.toLocaleString()} (سعر {adsStats.rate})</div>
+                    </div>
+                  </div>
+                  <div className="rounded-xl border border-hairline bg-white p-3 flex items-center gap-3 hover:shadow-sm transition-shadow">
+                    <div className="w-10 h-10 rounded-lg bg-warning-soft text-warning-500 flex items-center justify-center shrink-0"><Bell size={18} /></div>
+                    <div className="min-w-0">
+                      <div className="text-[11px] text-ink-400 font-bold">دفعات مستحقة</div>
+                      <div className="text-lg font-black text-ink-800 leading-tight">{adsStats.unpaidCount}<span className="text-[11px] font-bold text-ink-400 mr-1">حملة</span></div>
+                      <div className="text-[10px] text-warning-500 font-bold mt-0.5">{adsStats.unpaidLYD.toLocaleString()} د.ل</div>
+                    </div>
+                  </div>
+                  <div className="rounded-xl border border-hairline bg-white p-3 flex items-center gap-3 hover:shadow-sm transition-shadow">
+                    <div className="w-10 h-10 rounded-lg bg-assist-50 text-assist-600 flex items-center justify-center shrink-0"><TrendingUp size={18} /></div>
+                    <div className="min-w-0">
+                      <div className="text-[11px] text-ink-400 font-bold">الأداء الأسبوعي</div>
+                      <div className="text-lg font-black text-brand-600 leading-tight">+18.4% <span className="text-[11px] font-bold text-ink-400">نمو</span></div>
+                      <div className="text-[10px] text-ink-400 font-bold mt-0.5">تكلفة النقرة 0.14 د.ل</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               {/* Smart Input Drawer */}
               {showSmartInput && (
-                <div className="bg-white border-b border-slate-200 p-4 animate-in slide-in-from-top-2">
+                <div className="bg-white border-b border-hairline p-4 animate-in slide-in-from-top-2">
                   <div className="flex items-center gap-2 mb-3">
-                    <span className="font-bold text-slate-700 text-sm">📋 إدراج ذكي</span>
-                    <button onClick={() => setShowSmartInput(false)} className="mr-auto text-slate-400 hover:text-red-500"><X size={16}/></button>
+                    <span className="font-bold text-ink-700 text-sm">📋 إدراج ذكي</span>
+                    <button onClick={() => setShowSmartInput(false)} className="mr-auto text-ink-400 hover:text-danger-500"><X size={16}/></button>
                   </div>
                   <div className="flex flex-col gap-2">
-                    <textarea value={rawInput} onChange={(e) => setRawInput(e.target.value)} onPaste={handlePaste} className="w-full p-3 rounded-xl border border-slate-200 outline-none text-sm font-bold text-slate-700 h-20 resize-none" placeholder="الصق البيانات أو استخدم صورة شاشة..." />
+                    <textarea value={rawInput} onChange={(e) => setRawInput(e.target.value)} onPaste={handlePaste} className="w-full p-3 rounded-xl border border-hairline outline-none text-sm font-bold text-ink-700 h-20 resize-none" placeholder="الصق البيانات أو استخدم صورة شاشة..." />
                     <div className="flex gap-2 items-center">
                       <input type="file" ref={imageUploadRef} onChange={handleImageUpload} accept="image/*" className="hidden" />
-                      <button onClick={() => imageUploadRef.current?.click()} className="px-4 py-2 rounded-lg bg-slate-100 text-slate-600 font-bold text-xs hover:bg-slate-200 flex items-center gap-1"><ImageIcon size={14}/> صورة</button>
-                      {selectedImage && <span className="text-xs text-emerald-600 font-bold">✅ تم تحديد صورة</span>}
-                       <button onClick={handleSmartAnalysis} disabled={isAiLoading} className="px-6 py-2 rounded-lg bg-emerald-600 text-white font-bold text-xs hover:bg-emerald-700 flex items-center gap-1">
+                      <button onClick={() => imageUploadRef.current?.click()} className="px-4 py-2 rounded-lg bg-fill text-ink-600 font-bold text-xs hover:bg-hairline flex items-center gap-1"><ImageIcon size={14}/> صورة</button>
+                      {selectedImage && <span className="text-xs text-brand-600 font-bold">✅ تم تحديد صورة</span>}
+                       <button onClick={handleSmartAnalysis} disabled={isAiLoading} className="px-6 py-2 rounded-lg bg-brand-600 text-white font-bold text-xs hover:bg-brand-700 flex items-center gap-1">
                          {isAiLoading ? <Loader2 size={14} className="animate-spin"/> : <Zap size={14}/>} تحليل ذكي
                       </button>
-                      {selectedImage && <button onClick={() => setSelectedImage(null)} className="px-2 py-2 rounded-lg bg-red-50 text-red-600 text-xs font-bold hover:bg-red-100"><Trash2 size={14}/></button>}
+                      {selectedImage && <button onClick={() => setSelectedImage(null)} className="px-2 py-2 rounded-lg bg-danger-soft text-danger-strong text-xs font-bold hover:bg-danger-soft"><Trash2 size={14}/></button>}
                     </div>
                   </div>
                 </div>
@@ -1424,51 +1490,51 @@ const App = () => {
               {modals.ai && (
                 <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[110] flex justify-end" onClick={() => toggleModal('ai', false)}>
                   <div className="relative w-96 max-w-full bg-white h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-300" onClick={e => e.stopPropagation()}>
-                    <div className="p-5 border-b border-slate-100 flex justify-between items-center bg-indigo-50">
-                      <h3 className="font-black text-slate-800 flex items-center gap-2"><Bot size={18} className="text-indigo-600"/> المساعد الذكي</h3>
+                    <div className="p-5 border-b border-fill flex justify-between items-center bg-assist-50">
+                      <h3 className="font-black text-ink-800 flex items-center gap-2"><Bot size={18} className="text-assist-600"/> المساعد الذكي</h3>
                       <div className="flex items-center gap-1">
-                        {conversationHistory.length > 0 && <button onClick={() => setConversationHistory([])} className="p-1.5 rounded-lg hover:bg-red-100 text-red-400 hover:text-red-600 transition" title="محادثة جديدة"><Trash2 size={15}/></button>}
-                        <button onClick={() => setShowAiSettings(!showAiSettings)} className={`p-1.5 rounded-lg transition-all ${showAiSettings ? 'bg-indigo-200 text-indigo-700' : 'hover:bg-slate-200 text-slate-500'}`} title="إعدادات الوكيل"><Cog size={16}/></button>
-                        <button onClick={() => toggleModal('ai', false)} className="p-1 hover:bg-slate-200 rounded text-slate-500"><X size={18}/></button>
+                        {conversationHistory.length > 0 && <button onClick={() => setConversationHistory([])} className="p-1.5 rounded-lg hover:bg-danger-soft text-danger-500 hover:text-danger-strong transition" title="محادثة جديدة"><Trash2 size={15}/></button>}
+                        <button onClick={() => setShowAiSettings(!showAiSettings)} className={`p-1.5 rounded-lg transition-all ${showAiSettings ? 'bg-assist-200 text-assist-700' : 'hover:bg-hairline text-ink-500'}`} title="إعدادات الوكيل"><Cog size={16}/></button>
+                        <button onClick={() => toggleModal('ai', false)} className="p-1 hover:bg-hairline rounded text-ink-500"><X size={18}/></button>
                       </div>
                     </div>
                     {showAiSettings && (
-                      <div className="bg-amber-50 border-b border-amber-200 p-4">
-                        <h4 className="text-xs font-bold text-amber-700 flex items-center gap-1 mb-2"><Cog size={14}/> تعليمات الوكيل</h4>
-                        <textarea value={aiSystemInstruction} onChange={e => { setAiSystemInstruction(e.target.value); localStorage.setItem('aiSystemInstruction', e.target.value); }} className="w-full p-2.5 rounded-lg border border-amber-200 outline-none text-xs font-bold text-slate-700 h-16 resize-none bg-white" placeholder="تعليمات الوكيل..." />
+                      <div className="bg-warning-soft border-b border-warning-soft p-4">
+                        <h4 className="text-xs font-bold text-warning-500 flex items-center gap-1 mb-2"><Cog size={14}/> تعليمات الوكيل</h4>
+                        <textarea value={aiSystemInstruction} onChange={e => { setAiSystemInstruction(e.target.value); localStorage.setItem('aiSystemInstruction', e.target.value); }} className="w-full p-2.5 rounded-lg border border-warning-soft outline-none text-xs font-bold text-ink-700 h-16 resize-none bg-white" placeholder="تعليمات الوكيل..." />
                       </div>
                     )}
                     <div className="flex-1 overflow-y-auto p-4 space-y-3">
                       {conversationHistory.length === 0 && !isAiLoading && (
-                        <div className="text-center text-slate-400 text-sm py-10">
-                          <Bot size={32} className="mx-auto mb-2 text-indigo-300" />
+                        <div className="text-center text-ink-400 text-sm py-10">
+                          <Bot size={32} className="mx-auto mb-2 text-assist-300" />
                           <p>اسأل الذكاء الاصطناعي</p>
                         </div>
                       )}
                       {conversationHistory.map((msg, i) => (
-                        <div key={i} className={`p-3 rounded-xl whitespace-pre-wrap text-sm leading-relaxed ${msg.role === 'user' ? 'bg-indigo-100 text-indigo-900 mr-6' : 'bg-slate-100 text-slate-700 ml-6'}`}>
+                        <div key={i} className={`p-3 rounded-xl whitespace-pre-wrap text-sm leading-relaxed ${msg.role === 'user' ? 'bg-assist-100 text-assist-900 mr-6' : 'bg-fill text-ink-700 ml-6'}`}>
                           {msg.parts[0].text}
                         </div>
                       ))}
                       {isAiLoading && (
-                        <div className="bg-slate-100 p-3 rounded-xl ml-6 text-sm text-slate-400 animate-pulse flex items-center gap-2">
+                        <div className="bg-fill p-3 rounded-xl ml-6 text-sm text-ink-400 animate-pulse flex items-center gap-2">
                           <Loader2 size={14} className="animate-spin" /> جارٍ الكتابة...
                         </div>
                       )}
                       <div ref={chatEndRef} />
                     </div>
-                    <div className="border-t border-slate-100 p-4 space-y-2">
-                      <textarea value={aiChatPrompt} onChange={e => setAiChatPrompt(e.target.value)} onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleAskAi(); } }} className="w-full p-3 rounded-xl border border-slate-200 outline-none text-sm font-bold text-slate-700 h-20 resize-none" placeholder="اسأل الذكاء الاصطناعي..." />
+                    <div className="border-t border-fill p-4 space-y-2">
+                      <textarea value={aiChatPrompt} onChange={e => setAiChatPrompt(e.target.value)} onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleAskAi(); } }} className="w-full p-3 rounded-xl border border-hairline outline-none text-sm font-bold text-ink-700 h-20 resize-none" placeholder="اسأل الذكاء الاصطناعي..." />
                       <div className="flex gap-2">
-                        <button onClick={() => handleAskAi()} disabled={isAiLoading || !aiChatPrompt.trim()} className="flex-1 bg-indigo-600 text-white py-2 rounded-xl font-bold hover:bg-indigo-700 shadow-md text-sm flex items-center justify-center gap-2 disabled:opacity-50">
+                        <button onClick={() => handleAskAi()} disabled={isAiLoading || !aiChatPrompt.trim()} className="flex-1 bg-assist-600 text-white py-2 rounded-xl font-bold hover:bg-assist-700 shadow-md text-sm flex items-center justify-center gap-2 disabled:opacity-50">
                           {isAiLoading ? <Loader2 size={16} className="animate-spin"/> : <SendHorizontal size={16}/>} إرسال
                         </button>
                       </div>
                       <div className="pt-2">
-                        <h4 className="text-[10px] font-bold text-slate-400 mb-2">إجراءات سريعة:</h4>
+                        <h4 className="text-[10px] font-bold text-ink-400 mb-2">إجراءات سريعة:</h4>
                         <div className="flex flex-wrap gap-1.5">
                           {data.slice(0, 5).map((row, i) => (
-                            <button key={i} onClick={() => handleGenerateAdCopy(row)} className="px-2 py-1 bg-indigo-50 text-indigo-700 rounded-lg text-[10px] font-bold hover:bg-indigo-100 transition">
+                            <button key={i} onClick={() => handleGenerateAdCopy(row)} className="px-2 py-1 bg-assist-50 text-assist-700 rounded-lg text-[10px] font-bold hover:bg-assist-100 transition">
                               ✨ {safeRender(row["اسم الصفحة"] || `حملة ${i+1}`)}
                             </button>
                           ))}
@@ -1479,76 +1545,151 @@ const App = () => {
                 </div>
               )}
 
-              {/* Table */}
-              <div ref={tableContainerRef} className="flex-1 overflow-auto bg-slate-50 relative">
-                {isLoading && <div className="absolute inset-0 bg-white/60 z-50 flex items-center justify-center"><Loader2 className="animate-spin text-emerald-600"/></div>}
+              {/* بطاقات الحملات — الموبايل */}
+                <div className="sm:hidden p-3 space-y-2.5">
+                  {sortedAndFilteredData.slice(0, displayLimit).map((row, index) => {
+                    const st = STATUS_OPTIONS[row["الحالة"]] || STATUS_OPTIONS["قيد المراجعة"];
+                    const pay = PAYMENT_STATES[row["الدفع"]];
+                    return (
+                      <div key={`m-${String(row.id)}`} className={`rounded-2xl border p-3 shadow-sm ${getRowStyle(row["الحالة"], row["الدفع"], selectedAds.includes(row.id))}`}>
+                        <div className="flex items-start gap-2">
+                          <input type="checkbox" checked={selectedAds.includes(row.id)} onChange={() => toggleSelectRow(row.id)} className="mt-0.5 rounded text-brand-600 focus:ring-brand-500 w-4 h-4 shrink-0" />
+                          <div className="min-w-0 flex-1">
+                            <p className="font-black text-sm truncate">{safeRender(row["اسم الصفحة"]) || `حملة ${index + 1}`}</p>
+                            <p className="text-[10px] font-mono opacity-70 truncate" style={{ direction: 'ltr' }}>{safeRender(row.campaignRef)}</p>
+                          </div>
+                          <span className={`shrink-0 px-2 py-0.5 rounded-full text-[10px] font-black border ${st.bg}`}>{st.icon} {safeRender(row["الحالة"]) || "قيد المراجعة"}</span>
+                        </div>
+
+                        <div className="mt-2.5 grid grid-cols-2 gap-2">
+                          <div className="bg-white/70 border border-black/5 rounded-xl px-2.5 py-1.5">
+                            <p className="text-[9px] font-bold opacity-70">القيمة ($)</p>
+                            <input type="text" value={safeRender(row["القيمة"])} onChange={(e) => updateCell(index, "القيمة", e.target.value)} className="w-full bg-transparent outline-none font-mono text-sm font-black" style={{ direction: 'ltr' }} placeholder="0" />
+                          </div>
+                          <div className="bg-white/70 border border-black/5 rounded-xl px-2.5 py-1.5">
+                            <p className="text-[9px] font-bold opacity-70">القيمة (د.ل)</p>
+                            <input type="text" value={safeRender(row["القيمة (د.ل)"])} onChange={(e) => updateCell(index, "القيمة (د.ل)", e.target.value)} className="w-full bg-transparent outline-none font-mono text-sm font-black" style={{ direction: 'ltr' }} placeholder="0" />
+                          </div>
+                        </div>
+
+                        <div className="mt-2 flex items-center gap-2 text-[10px]">
+                          <label className="flex-1 min-w-0">
+                            <span className="block font-bold opacity-70 mb-0.5">الحالة</span>
+                            <select value={safeRender(row["الحالة"]) || "قيد المراجعة"} onChange={(e) => updateCell(index, "الحالة", e.target.value)} className="w-full bg-white/80 border border-black/5 rounded-lg px-1.5 py-1 font-black text-[11px] outline-none">
+                              {Object.keys(STATUS_OPTIONS).map(opt => <option key={opt} value={opt} className="text-ink-800">{opt}</option>)}
+                            </select>
+                          </label>
+                          <label className="flex-1 min-w-0">
+                            <span className="block font-bold opacity-70 mb-0.5">الدفع</span>
+                            <select value={safeRender(row["الدفع"]) || "غير مدفوع"} onChange={(e) => handlePaymentChange(index, e.target.value)} className="w-full bg-white/80 border border-black/5 rounded-lg px-1.5 py-1 font-black text-[11px] outline-none">
+                              <option value="غير مدفوع" className="text-ink-800">غير مدفوع</option>
+                              <option value="مدفوع" className="text-ink-800">مدفوع</option>
+                            </select>
+                          </label>
+                          <span className={`shrink-0 self-end mb-0.5 px-2 py-1 rounded-lg text-[10px] font-black ${pay?.bg || 'bg-white/70'}`}>{pay?.label || 'غير مدفوع'}</span>
+                        </div>
+
+                        <div className="mt-2 flex items-center gap-2">
+                          <label className="flex-1 min-w-0">
+                            <span className="block font-bold opacity-70 mb-0.5">التاريخ</span>
+                            <input type="date" value={safeRender(row["التاريخ"])} onChange={(e) => updateCell(index, "التاريخ", e.target.value)} className="w-full bg-white/80 border border-black/5 rounded-lg px-1.5 py-1 font-bold text-[11px] outline-none" />
+                          </label>
+                          <label className="flex-1 min-w-0">
+                            <span className="block font-bold opacity-70 mb-0.5">المدة</span>
+                            <input type="text" value={safeRender(row["المدة"])} onChange={(e) => updateCell(index, "المدة", e.target.value)} className="w-full bg-white/80 border border-black/5 rounded-lg px-1.5 py-1 font-bold text-[11px] outline-none" />
+                          </label>
+                        </div>
+
+                        <div className="mt-2.5 flex items-center gap-1.5">
+                          <button onClick={() => updateCell(index, "الحالة", "متوقف")} className="flex-1 bg-white/80 border border-danger-soft text-danger-800 rounded-lg py-1.5 text-[11px] font-black flex items-center justify-center gap-1">
+                            <Pause size={12} /> إيقاف
+                          </button>
+                          <button onClick={() => updateCell(index, "الحالة", "مكتمل")} className="flex-1 bg-white/80 border border-info-200 text-info-700 rounded-lg py-1.5 text-[11px] font-black flex items-center justify-center gap-1">
+                            <CheckCircle2 size={12} /> إكمال
+                          </button>
+                          <button onClick={() => handleGenerateAdCopy(row)} className="flex-1 bg-white/80 border border-assist-200 text-assist-700 rounded-lg py-1.5 text-[11px] font-black flex items-center justify-center gap-1">
+                            <Sparkles size={12} /> AI
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Table */}
+              <div ref={tableContainerRef} className="hidden sm:block flex-1 overflow-auto bg-canvas relative">
+                {isLoading && <div className="absolute inset-0 bg-white/60 z-50 flex items-center justify-center"><Loader2 className="animate-spin text-brand-600"/></div>}
                 <div className="pb-8 min-w-max">
                   <table className="w-full border-collapse text-right" dir="rtl">
                     <thead className="sticky top-0 z-10">
-                      <tr className="bg-slate-100 border-b border-slate-200 text-slate-600 shadow-sm">
-                        <th className="p-2 w-10 text-center text-[10px] font-bold bg-slate-100">
-                          <input type="checkbox" checked={selectedAds.length === sortedAndFilteredData.length && sortedAndFilteredData.length > 0} onChange={toggleSelectAll} className="rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer" />
+                      <tr className="bg-fill border-b border-hairline text-ink-600 shadow-sm">
+                        <th className="p-2 w-10 text-center text-[10px] font-bold bg-fill">
+                          <input type="checkbox" checked={selectedAds.length === sortedAndFilteredData.length && sortedAndFilteredData.length > 0} onChange={toggleSelectAll} className="rounded text-brand-600 focus:ring-brand-500 cursor-pointer" />
                         </th>
-                        <th className="p-2 w-10 text-center text-[10px] font-bold bg-slate-100">#</th>
-                        {dynamicHeaders.map((h, i) => (
-                          <th key={`th-${i}`} className={`p-2 text-[10px] font-black border-l border-slate-200 whitespace-nowrap cursor-pointer hover:bg-slate-200 bg-slate-100 ${h === "القيمة" || h === "القيمة (د.ل)" ? 'w-[60px] md:w-[70px]' : ''}`} onClick={() => setSortConfig({ key: h, direction: sortConfig.direction === 'ascending' ? 'descending' : 'ascending' })}>
-                            <div className="flex items-center gap-1 justify-between">{safeRender(h)}{sortConfig.key === h ? (sortConfig.direction === 'ascending' ? <ArrowUp size={10} className="text-emerald-500" /> : <ArrowDown size={10} className="text-emerald-500" />) : (<ArrowUpDown size={10} className="text-slate-300" />)}</div>
+                        <th className="p-2 w-10 text-center text-[10px] font-bold bg-fill">#</th>
+                        {dynamicColumns.map((col, i) => (
+                          <th key={`th-${i}`} className={`p-2 text-[10px] font-black border-l border-hairline whitespace-nowrap cursor-pointer hover:bg-hairline bg-fill ${col.type === 'currency' ? 'w-[60px] md:w-[70px]' : ''}`} onClick={() => setSortConfig({ key: col.key, direction: sortConfig.direction === 'ascending' ? 'descending' : 'ascending' })}>
+                            <div className="flex items-center gap-1 justify-between">{safeRender(col.label)}{sortConfig.key === col.key ? (sortConfig.direction === 'ascending' ? <ArrowUp size={10} className="text-brand-500" /> : <ArrowDown size={10} className="text-brand-500" />) : (<ArrowUpDown size={10} className="text-hairline-strong" />)}</div>
                           </th>
                         ))}
+                        <th className="p-2 w-28 text-center text-[10px] font-bold bg-fill">الإجراءات</th>
                       </tr>
                     </thead>
                     <tbody className="bg-white">
                       {sortedAndFilteredData.slice(0, displayLimit).map((row, index) => (
                         <tr key={String(row.id)} className={`border-b transition-all duration-200 group text-xs ${getRowStyle(row["الحالة"], row["الدفع"], selectedAds.includes(row.id))}`}>
-                          <td className="p-2 text-center"><input type="checkbox" checked={selectedAds.includes(row.id)} onChange={() => toggleSelectRow(row.id)} className="rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer w-4 h-4" /></td>
+                          <td className="p-2 text-center"><input type="checkbox" checked={selectedAds.includes(row.id)} onChange={() => toggleSelectRow(row.id)} className="rounded text-brand-600 focus:ring-brand-500 cursor-pointer w-4 h-4" /></td>
                           <td className="p-2 text-center font-mono text-[10px] opacity-60 font-bold">{index + 1}</td>
-                          {dynamicHeaders.map((h, i) => {
-                            const isNarrow = h === "القيمة" || h === "القيمة (د.ل)";
+                          {dynamicColumns.map((col, i) => {
+                            const isNarrow = col.type === 'currency';
+                            const h = col.key;
                             return (
                             <td key={`td-${row.id}-${i}`} className={`p-0 border-l border-black/5 relative ${isNarrow ? 'min-w-[60px] md:min-w-[70px]' : 'min-w-[100px] md:min-w-[120px]'}`}>
-                              {h === "المستخدم" ? (
-                                <div className="p-2 text-center font-mono text-[10px] font-bold text-slate-500 bg-black/5 h-full flex items-center justify-center truncate max-w-[100px]" title={row.ownerEmail}>{safeRender(row.ownerEmail?.split('@')[0] || 'غير معروف')}</div>
-                              ) : h === "المدة" ? (
+                              {col.type === "user" ? (
+                                <div className="p-2 text-center font-mono text-[10px] font-bold text-ink-500 bg-black/5 h-full flex items-center justify-center truncate max-w-[100px]" title={row.ownerEmail}>{safeRender(row.ownerEmail?.split('@')[0] || 'غير معروف')}</div>
+                              ) : col.type === "id" ? (
+                                <div className="p-2.5 text-center font-mono text-[10px] font-black opacity-70 select-all" title="معرف الحملة (تلقائي)">{safeRender(row.campaignRef)}</div>
+                              ) : col.type === "duration" ? (
                                 <div className="relative flex flex-col justify-center px-2 py-1">
                                   <input type="text" value={safeRender(row[h])} onChange={(e) => updateCell(index, h, e.target.value)} className="w-full bg-transparent outline-none font-bold text-center text-xs inherit-color" />
                                   <div className="w-full bg-black/10 rounded-full h-1 mt-0.5 overflow-hidden"><div className="bg-current h-full rounded-full transition-all duration-500 opacity-50" style={{ width: `${Math.min(100, calculateProgress(row["التاريخ"], row[h], row["الحالة"]))}%` }}></div></div>
                                 </div>
-                              ) : h === "التاريخ" ? (
+                              ) : col.type === "date" ? (
                                 <input type="date" value={safeRender(row[h])} onChange={(e) => updateCell(index, h, e.target.value)} className="w-full p-2.5 bg-transparent outline-none font-bold text-center cursor-pointer text-xs inherit-color" />
-                              ) : h === "الحالة" ? (
+                              ) : col.type === "status" ? (
                                 <select value={safeRender(row[h]) || "قيد المراجعة"} onChange={(e) => updateCell(index, h, e.target.value)} className="w-full p-2.5 bg-transparent outline-none font-black text-center cursor-pointer appearance-none inherit-color">
-                                  {Object.keys(STATUS_OPTIONS).map(opt => <option key={opt} value={opt} className="text-slate-800">{opt}</option>)}
+                                  {Object.keys(STATUS_OPTIONS).map(opt => <option key={opt} value={opt} className="text-ink-800">{opt}</option>)}
                                 </select>
-                              ) : h === "الدفع" ? (
+                              ) : col.type === "payment" ? (
                                 <div className="flex items-center gap-1 px-2">
                                   <select value={safeRender(row[h]) || "غير مدفوع"} onChange={(e) => handlePaymentChange(index, e.target.value)} className="flex-1 bg-transparent outline-none font-black text-center cursor-pointer appearance-none inherit-color text-xs">
-                                    <option value="غير مدفوع" className="text-slate-800">غير مدفوع</option>
-                                    <option value="مدفوع" className="text-slate-800">مدفوع</option>
+                                    <option value="غير مدفوع" className="text-ink-800">غير مدفوع</option>
+                                    <option value="مدفوع" className="text-ink-800">مدفوع</option>
                                   </select>
                                   {row[h] === 'مدفوع' && row.paymentMethod && (
-                                    <span className={`text-[8px] font-bold px-1 py-0.5 rounded ${PAYMENT_METHODS[row.paymentMethod]?.bg || 'bg-slate-100'} ${PAYMENT_METHODS[row.paymentMethod]?.color || 'text-slate-500'} shrink-0`}>
+                                    <span className={`text-[8px] font-bold px-1 py-0.5 rounded ${PAYMENT_METHODS[row.paymentMethod]?.bg || 'bg-fill'} ${PAYMENT_METHODS[row.paymentMethod]?.color || 'text-ink-500'} shrink-0`}>
                                       {PAYMENT_METHODS[row.paymentMethod]?.label || row.paymentMethod}
                                     </span>
                                   )}
                                   {row[h] === 'مدفوع' && row.walletTxId && isSuperAdmin && (
-                                    <button onClick={() => handleRefundPayment(row.id)} className="p-1 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded" title="إلغاء الدفع وإعادة الرصيد"><Undo2 size={11}/></button>
+                                    <button onClick={() => handleRefundPayment(row.id)} className="p-1 text-hairline-strong hover:text-danger-500 hover:bg-danger-soft rounded" title="إلغاء الدفع وإعادة الرصيد"><Undo2 size={11}/></button>
                                   )}
                                 </div>
-                              ) : h === "الجنس" ? (
+                              ) : col.type === "gender" ? (
                                 <select value={safeRender(row[h]) || "جنسين"} onChange={(e) => updateCell(index, h, e.target.value)} className="w-full p-2.5 bg-transparent outline-none font-bold text-center cursor-pointer appearance-none inherit-color">
-                                  {SEX_OPTIONS.map(opt => <option key={opt} value={opt} className="text-slate-800">{opt}</option>)}
+                                  {SEX_OPTIONS.map(opt => <option key={opt} value={opt} className="text-ink-800">{opt}</option>)}
                                 </select>
-                              ) : h === "كود الباقة" ? (
+                              ) : col.type === "package" ? (
                                 <select value={safeRender(row[h]) || ""} onChange={(e) => updateCell(index, h, e.target.value)} className="w-full p-2.5 bg-transparent outline-none font-bold text-center cursor-pointer inherit-color">
-                                  <option value="" className="text-slate-400">- مخصص -</option>
-                                  {packages.map(pkg => <option key={String(pkg.id)} value={pkg.code} className="text-slate-800">{PACKAGE_CATEGORIES[pkg.category]?.icon || ''} {pkg.code} ({pkg.priceUSD}$)</option>)}
+                                  <option value="" className="text-ink-400">- مخصص -</option>
+                                  {packages.map(pkg => <option key={String(pkg.id)} value={pkg.code} className="text-ink-800">{PACKAGE_CATEGORIES[pkg.category]?.icon || ''} {pkg.code} ({pkg.priceUSD}$)</option>)}
                                 </select>
-                              ) : h === "المعرف" ? (
-                                <div className="p-2.5 text-center font-mono text-[10px] font-black opacity-70 select-all" title="معرف الحملة (تلقائي)">{safeRender(row.campaignRef)}</div>
-                              ) : h === "الرابط" ? (
+                              ) : col.type === "currency" ? (
+                                <input type="text" value={safeRender(row[h])} onChange={(e) => updateCell(index, h, e.target.value)} className="w-full p-2.5 bg-transparent outline-none font-bold text-center font-mono text-xs inherit-color" placeholder="0" />
+                              ) : col.type === "link" ? (
                                 <div className="relative group/link">
                                   <input type="text" value={safeRender(row[h])} onChange={(e) => updateCell(index, h, e.target.value)} className="w-full p-2.5 pl-8 bg-transparent outline-none font-medium text-xs inherit-color placeholder-black/30" placeholder="الصق الرابط..." dir="ltr" />
-                                  {row[h] && <a href={safeRender(row[h])} target="_blank" rel="noopener noreferrer" className="absolute left-1 top-1/2 -translate-y-1/2 p-1.5 opacity-50 hover:opacity-100 hover:text-blue-600 transition-all"><ExternalLink size={12} /></a>}
+                                  {row[h] && <a href={safeRender(row[h])} target="_blank" rel="noopener noreferrer" className="absolute left-1 top-1/2 -translate-y-1/2 p-1.5 opacity-50 hover:opacity-100 hover:text-info-600 transition-all"><ExternalLink size={12} /></a>}
                                 </div>
                               ) : (
                                 <input type="text" value={safeRender(row[h])} onChange={(e) => updateCell(index, h, e.target.value)} className="w-full p-2.5 bg-transparent outline-none font-semibold text-xs inherit-color placeholder-black/20" placeholder="-" list={h === "اسم الصفحة" ? "pageNamesOptions" : h === "المكان" ? "locationsOptions" : h === "الاهتمامات" ? "interestsOptions" : undefined} />
@@ -1556,6 +1697,16 @@ const App = () => {
                             </td>
                             );
                           })}
+                          <td className="p-1 border-l border-black/5">
+                            <div className="flex items-center justify-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <button onClick={(e) => { e.stopPropagation(); updateCell(index, "الحالة", "متوقف"); }} className="p-1.5 hover:bg-danger-soft text-danger-strong rounded hover:text-danger-strong transition" title="إيقاف"><Pause size={12} /></button>
+                              <button onClick={(e) => { e.stopPropagation(); updateCell(index, "الحالة", "مكتمل"); }} className="p-1.5 hover:bg-info-soft text-info-600 rounded hover:text-info-700 transition" title="إكمال"><CheckCircle2 size={12} /></button>
+                              <button onClick={() => { handleGenerateAdCopy(row); }} className="p-1.5 hover:bg-assist-50 text-assist-600 rounded hover:text-assist-700 transition" title="نسخة إعلان (AI)"><Sparkles size={12} /></button>
+                              <button onClick={(e) => { e.stopPropagation(); toggleModal('ai', true); handleAskAi(`حلل هذه الحملة: ${JSON.stringify(row)}`); }} className="p-1.5 hover:bg-assist-50 text-assist-600 rounded hover:text-assist-700 transition" title="مساعد ذكي"><Bot size={12} /></button>
+                              <button onClick={(e) => { e.stopPropagation(); duplicateRow(index); }} className="p-1.5 hover:bg-canvas text-ink-600 rounded hover:text-ink-700 transition" title="نسخ"><Copy size={12} /></button>
+                              <button onClick={(e) => { e.stopPropagation(); setConfirmModal({ show: true, type: 'error', message: `حذف الحملة ${row.id}؟`, action: () => { const idx = data.findIndex(r => r.id === row.id); if (idx !== -1) { const nd = [...data]; nd.splice(idx, 1); setData(nd); saveCampaign({ ...row, isDeleted: true }); addLog("تم حذف الحملة", "success"); } } }); }} className="p-1.5 hover:bg-danger-soft text-danger-strong rounded hover:text-danger-strong transition" title="حذف"><Trash2 size={12} /></button>
+                            </div>
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -1570,6 +1721,8 @@ const App = () => {
             <AnalyticsView
               data={data} customers={customers} customerStats={customerStats}
               packages={packages} marketerStats={marketerStats} marketers={marketers}
+              globalExchangeRate={globalExchangeRate}
+              setSelectedCustomer={setSelectedCustomer} setCurrentView={setCurrentView}
             />
           )}
 
@@ -1579,7 +1732,9 @@ const App = () => {
               marketers={marketers} marketerStats={marketerStats}
               setSelectedMarketer={setSelectedMarketer} setCurrentView={setCurrentView}
               setMarketerForm={setMarketerForm} toggleModal={toggleModal}
-              requestDelete={requestDelete}
+              requestDelete={requestDelete} payouts={payouts}
+              setPayoutForm={setPayoutForm} globalExchangeRate={globalExchangeRate}
+              isSuperAdmin={isSuperAdmin}
             />
           )}
 

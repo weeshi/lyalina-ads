@@ -16,17 +16,17 @@ const ConfirmDialog = ({ isOpen, onClose, title, message, onConfirm, confirmText
     <div className="fixed inset-0 bg-black/50 z-[200] flex items-center justify-center p-4" onClick={onClose}>
       <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl p-6 animate-in zoom-in duration-150" onClick={e => e.stopPropagation()}>
         <div className="flex items-start gap-3">
-          <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${variant === 'destructive' ? 'bg-red-100 text-red-600' : 'bg-amber-100 text-amber-600'}`}>
+          <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${variant === 'destructive' ? 'bg-danger-soft text-danger-strong' : 'bg-warning-soft text-warning-500'}`}>
             {variant === 'destructive' ? <Trash2 size={20} /> : <AlertCircle size={20} />}
           </div>
           <div className="flex-1">
-            <h4 className="font-black text-slate-800">{title}</h4>
-            <p className="text-sm text-slate-600 mt-1">{message}</p>
+            <h4 className="font-black text-ink-800">{title}</h4>
+            <p className="text-sm text-ink-600 mt-1">{message}</p>
           </div>
         </div>
         <div className="flex justify-end gap-3 mt-6">
-          <button onClick={onClose} className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg font-bold hover:bg-slate-200 transition-colors">إلغاء</button>
-          <button onClick={() => { onConfirm(); onClose(); }} className={`px-4 py-2 rounded-lg font-bold transition-colors ${variant === 'destructive' ? 'bg-red-600 text-white hover:bg-red-700' : 'bg-amber-600 text-white hover:bg-amber-700'}`}>
+          <button onClick={onClose} className="px-4 py-2 bg-fill text-ink-700 rounded-lg font-bold hover:bg-hairline transition-colors">إلغاء</button>
+          <button onClick={() => { onConfirm(); onClose(); }} className={`px-4 py-2 rounded-lg font-bold transition-colors ${variant === 'destructive' ? 'bg-danger-strong text-white hover:bg-danger-strong' : 'bg-warning-500 text-white hover:bg-warning-500'}`}>
             {confirmText}
           </button>
         </div>
@@ -39,26 +39,26 @@ const PasswordInput = ({ value, onChange, placeholder, label, error }) => {
   const [showPassword, setShowPassword] = useState(false);
   return (
     <div className="relative">
-      <label className="block text-[10px] font-bold text-slate-500 mb-1">{label}</label>
+      <label className="block text-[10px] font-bold text-ink-500 mb-1">{label}</label>
       <div className="relative">
         <input
           type={showPassword ? 'text' : 'password'}
           value={value}
           onChange={onChange}
           placeholder={placeholder}
-          className="w-full p-2.5 pr-10 rounded-lg border border-slate-200 outline-none text-sm font-bold text-slate-700 focus:border-emerald-500 transition-colors"
+          className="w-full p-2.5 pr-10 rounded-lg border border-hairline outline-none text-sm font-bold text-ink-700 focus:border-brand-500 transition-colors"
           autoComplete="new-password"
         />
         <button
           type="button"
           onClick={() => setShowPassword(!showPassword)}
-          className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+          className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-400 hover:text-ink-600 transition-colors"
           aria-label={showPassword ? 'إخفاء كلمة المرور' : 'إظهار كلمة المرور'}
         >
           {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
         </button>
       </div>
-      {error && <p className="text-[10px] text-red-600 mt-1">{error}</p>}
+      {error && <p className="text-[10px] text-danger-strong mt-1">{error}</p>}
     </div>
   );
 };
@@ -158,21 +158,21 @@ const UserManagementModal = ({ isOpen, onClose }) => {
   const renderUserCard = (u) => {
     const roleOption = ROLE_OPTIONS.find(r => r.value === (u.role || 'sales')) || ROLE_OPTIONS[0];
     return (
-      <div key={u.id} className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 rounded-xl border ${u.isActive === false ? 'bg-red-50/50 border-red-100' : 'bg-white border-slate-100 hover:bg-slate-50/50 transition-colors'}`}>
+      <div key={u.id} className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 rounded-xl border ${u.isActive === false ? 'bg-danger-soft/50 border-danger-soft' : 'bg-white border-fill hover:bg-canvas/50 transition-colors'}`}>
         <div className="flex items-center gap-3 min-w-0 flex-1">
-          <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-sm font-black flex-shrink-0">
+          <div className="w-10 h-10 rounded-full bg-brand-100 text-brand-700 flex items-center justify-center text-sm font-black flex-shrink-0">
             {safeRender(u.name).charAt(0).toUpperCase()}
           </div>
           <div className="min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className={`font-bold text-sm truncate ${u.isActive === false ? 'text-red-700 line-through' : 'text-slate-800'}`}>{safeRender(u.name)}</span>
-              <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${u.isActive === false ? 'bg-red-100 text-red-700' : 'bg-emerald-100 text-emerald-700'}`}>
+              <span className={`font-bold text-sm truncate ${u.isActive === false ? 'text-danger-strong line-through' : 'text-ink-800'}`}>{safeRender(u.name)}</span>
+              <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${u.isActive === false ? 'bg-danger-soft text-danger-strong' : 'bg-brand-100 text-brand-700'}`}>
                 {u.isActive === false ? 'متجمد' : 'نشط'}
               </span>
             </div>
-            <span className="text-[11px] text-slate-500 font-mono block mt-0.5 truncate">{safeRender(u.email)}</span>
+            <span className="text-[11px] text-ink-500 font-mono block mt-0.5 truncate">{safeRender(u.email)}</span>
             {u.createdAt?.seconds && (
-              <span className="text-[10px] text-slate-400 block mt-0.5">مضاف: {new Date(u.createdAt.seconds * 1000).toLocaleDateString('ar-LY')}</span>
+              <span className="text-[10px] text-ink-400 block mt-0.5">مضاف: {new Date(u.createdAt.seconds * 1000).toLocaleDateString('ar-LY')}</span>
             )}
           </div>
         </div>
@@ -180,26 +180,26 @@ const UserManagementModal = ({ isOpen, onClose }) => {
           <select
             value={u.role || 'sales'}
             onChange={(e) => changeUserRole(u.id, e.target.value)}
-            className="bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-sm font-bold text-slate-700 outline-none shadow-sm cursor-pointer focus:border-emerald-500 min-w-[140px]"
+            className="bg-white border border-hairline rounded-lg px-3 py-1.5 text-sm font-bold text-ink-700 outline-none shadow-sm cursor-pointer focus:border-brand-500 min-w-[140px]"
           >
             {ROLE_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.shortLabel}</option>)}
           </select>
           <button
             onClick={() => handleToggleConfirm(u)}
-            className={`px-3 py-1.5 rounded-lg font-bold text-xs shadow-sm transition-colors whitespace-nowrap ${u.isActive === false ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-amber-100 text-amber-700 hover:bg-amber-200'}`}
+            className={`px-3 py-1.5 rounded-lg font-bold text-xs shadow-sm transition-colors whitespace-nowrap ${u.isActive === false ? 'bg-brand-100 text-brand-700 hover:bg-brand-200' : 'bg-warning-soft text-warning-500 hover:bg-warning-soft'}`}
           >
             {u.isActive === false ? 'تنشيط' : 'تجميد'}
           </button>
           <button
             onClick={() => handleResetPassword(u.email)}
-            className="bg-blue-50 text-blue-600 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-blue-100 shadow-sm transition-colors whitespace-nowrap"
+            className="bg-info-soft text-info-600 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-info-soft shadow-sm transition-colors whitespace-nowrap"
             title="إرسال رابط لتغيير الرقم السري"
           >
             <Key size={14} className="inline-block align-middle ml-1" /> كلمة المرور
           </button>
           <button
             onClick={() => { setConfirmDeleteId(u.id); setShowDeleteConfirm(true); }}
-            className="bg-red-50 text-red-600 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-red-100 shadow-sm transition-colors whitespace-nowrap"
+            className="bg-danger-soft text-danger-strong px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-danger-soft shadow-sm transition-colors whitespace-nowrap"
           >
             <Trash2 size={14} className="inline-block align-middle ml-1" /> حذف
           </button>
@@ -209,14 +209,14 @@ const UserManagementModal = ({ isOpen, onClose }) => {
   };
 
   return (
-    <ModalWrapper isOpen={isOpen} onClose={onClose} title="إدارة حسابات الموظفين" icon={<Key size={20} className="text-amber-600"/>} size="xl">
+    <ModalWrapper isOpen={isOpen} onClose={onClose} title="إدارة حسابات الموظفين" icon={<Key size={20} className="text-warning-500"/>} size="xl">
       <div className="space-y-4">
-        <div className="flex border-b border-slate-200" role="tablist">
+        <div className="flex border-b border-hairline" role="tablist">
           <button
             role="tab"
             aria-selected={activeTab === 'list'}
             onClick={() => setActiveTab('list')}
-            className={`flex-1 py-3 px-4 font-bold text-sm border-b-2 transition-colors ${activeTab === 'list' ? 'border-emerald-600 text-emerald-700' : 'border-transparent text-slate-400 hover:text-slate-600'}`}
+            className={`flex-1 py-3 px-4 font-bold text-sm border-b-2 transition-colors ${activeTab === 'list' ? 'border-brand-600 text-brand-700' : 'border-transparent text-ink-400 hover:text-ink-600'}`}
           >
             <Users size={16} className="inline-block align-middle ml-1" /> الموظفون الحاليون ({systemUsers.length})
           </button>
@@ -224,17 +224,17 @@ const UserManagementModal = ({ isOpen, onClose }) => {
             role="tab"
             aria-selected={activeTab === 'create'}
             onClick={() => { clearForm(); setActiveTab('create'); }}
-            className={`flex-1 py-3 px-4 font-bold text-sm border-b-2 transition-colors ${activeTab === 'create' ? 'border-emerald-600 text-emerald-700' : 'border-transparent text-slate-400 hover:text-slate-600'}`}
+            className={`flex-1 py-3 px-4 font-bold text-sm border-b-2 transition-colors ${activeTab === 'create' ? 'border-brand-600 text-brand-700' : 'border-transparent text-ink-400 hover:text-ink-600'}`}
           >
             <UserPlus size={16} className="inline-block align-middle ml-1" /> إضافة موظف
           </button>
         </div>
 
         {message.text && (
-          <div className={`flex items-center gap-2 p-3 rounded-xl text-sm font-bold ${message.type === 'error' ? 'bg-red-50 text-red-700 border border-red-100' : 'bg-emerald-50 text-emerald-700 border border-emerald-100'}`}>
+          <div className={`flex items-center gap-2 p-3 rounded-xl text-sm font-bold ${message.type === 'error' ? 'bg-danger-soft text-danger-strong border border-danger-soft' : 'bg-brand-50 text-brand-700 border border-brand-100'}`}>
             {message.type === 'error' ? <AlertCircle size={18} /> : <CheckCircle size={18} />}
             <span>{message.text}</span>
-            <button onClick={() => setMessage({ text: '', type: '' })} className="ml-auto text-slate-400 hover:text-slate-600"><X size={16} /></button>
+            <button onClick={() => setMessage({ text: '', type: '' })} className="ml-auto text-ink-400 hover:text-ink-600"><X size={16} /></button>
           </div>
         )}
 
@@ -242,11 +242,11 @@ const UserManagementModal = ({ isOpen, onClose }) => {
           <div className="space-y-3 max-h-[500px] overflow-y-auto pr-1">
             {systemUsers.length === 0 ? (
               <div className="text-center py-12">
-                <Users size={48} className="mx-auto text-slate-300" />
-                <p className="text-slate-500 mt-3 font-medium">لا توجد حسابات مسجلة بعد</p>
+                <Users size={48} className="mx-auto text-hairline-strong" />
+                <p className="text-ink-500 mt-3 font-medium">لا توجد حسابات مسجلة بعد</p>
                 <button
                   onClick={() => { clearForm(); setActiveTab('create'); }}
-                  className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg font-bold hover:bg-emerald-700 transition-colors"
+                  className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-brand-600 text-white rounded-lg font-bold hover:bg-brand-700 transition-colors"
                 >
                   <UserPlus size={16} /> إضافة أول موظف
                 </button>
@@ -260,25 +260,25 @@ const UserManagementModal = ({ isOpen, onClose }) => {
         {activeTab === 'create' && (
           <form onSubmit={handleCreateUser} className="space-y-4">
             <div>
-              <label className="block text-[10px] font-bold text-slate-500 mb-1">اسم الموظف</label>
+              <label className="block text-[10px] font-bold text-ink-500 mb-1">اسم الموظف</label>
               <input
                 type="text"
                 required
                 value={name}
                 onChange={e => setName(e.target.value)}
-                className="w-full p-3 rounded-lg border border-slate-200 outline-none text-sm font-bold text-slate-700 focus:border-emerald-500 transition-colors"
+                className="w-full p-3 rounded-lg border border-hairline outline-none text-sm font-bold text-ink-700 focus:border-brand-500 transition-colors"
                 placeholder="مثال: أحمد محمد"
                 autoComplete="name"
               />
             </div>
             <div>
-              <label className="block text-[10px] font-bold text-slate-500 mb-1">البريد الإلكتروني</label>
+              <label className="block text-[10px] font-bold text-ink-500 mb-1">البريد الإلكتروني</label>
               <input
                 type="email"
                 required
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                className="w-full p-3 rounded-lg border border-slate-200 outline-none text-sm font-bold text-slate-700 focus:border-emerald-500 transition-colors"
+                className="w-full p-3 rounded-lg border border-hairline outline-none text-sm font-bold text-ink-700 focus:border-brand-500 transition-colors"
                 placeholder="مثال: ahmed@company.com"
                 autoComplete="email"
               />
@@ -296,11 +296,11 @@ const UserManagementModal = ({ isOpen, onClose }) => {
               label="تأكيد كلمة المرور"
             />
             <div>
-              <label className="block text-[10px] font-bold text-slate-500 mb-1">الصلاحية</label>
+              <label className="block text-[10px] font-bold text-ink-500 mb-1">الصلاحية</label>
               <select
                 value={role}
                 onChange={e => setRole(e.target.value)}
-                className="w-full p-3 rounded-lg border border-slate-200 outline-none text-sm font-bold text-slate-700 bg-white cursor-pointer focus:border-emerald-500 transition-colors"
+                className="w-full p-3 rounded-lg border border-hairline outline-none text-sm font-bold text-ink-700 bg-white cursor-pointer focus:border-brand-500 transition-colors"
               >
                 {ROLE_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
               </select>
@@ -308,7 +308,7 @@ const UserManagementModal = ({ isOpen, onClose }) => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-slate-800 text-white py-3 rounded-lg font-bold hover:bg-slate-700 text-sm flex justify-center items-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-ink-800 text-white py-3 rounded-lg font-bold hover:bg-ink-700 text-sm flex justify-center items-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? <Loader2 size={18} className="animate-spin" /> : 'تسجيل الموظف'}
             </button>

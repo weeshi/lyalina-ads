@@ -81,34 +81,34 @@ const SetupWizard = ({ onComplete }) => {
     };
 
     return (
-        <div className="min-h-screen bg-slate-100 flex items-start justify-center p-4 py-10 font-sans text-right" dir="rtl">
-            <div className="bg-white rounded-3xl shadow-xl border border-slate-200 p-8 max-w-2xl w-full">
+        <div className="min-h-screen bg-fill flex items-start justify-center p-4 py-10 font-sans text-right" dir="rtl">
+            <div className="bg-white rounded-3xl shadow-xl border border-hairline p-8 max-w-2xl w-full">
                 {/* الرأس */}
                 <div className="flex flex-col items-center mb-6 text-center">
-                    <div className="bg-emerald-100 p-4 rounded-full text-emerald-600 mb-4">
+                    <div className="bg-brand-100 p-4 rounded-full text-brand-600 mb-4">
                         <Wand2 size={36} />
                     </div>
-                    <h1 className="text-2xl font-black text-slate-800 tracking-tight">معالج الإعداد الأولي</h1>
-                    <p className="text-sm text-slate-500 mt-2">يبدو أن إعدادات الاتصال بقاعدة البيانات لم تكتمل بعد. أكمل الحقول أدناه لتجهيز المنصة.</p>
+                    <h1 className="text-2xl font-black text-ink-800">معالج الإعداد الأولي</h1>
+                    <p className="text-sm text-ink-500 mt-2">يبدو أن إعدادات الاتصال بقاعدة البيانات لم تكتمل بعد. أكمل الحقول أدناه لتجهيز المنصة.</p>
                 </div>
 
                 {/* ملخص المشاكل */}
                 {issues.errors.length > 0 && (
-                    <div className="bg-red-50 rounded-2xl border border-red-100 p-4 mb-5">
-                        <div className="flex items-center gap-2 text-red-600 font-black text-sm mb-2">
+                    <div className="bg-danger-soft rounded-2xl border border-danger-soft p-4 mb-5">
+                        <div className="flex items-center gap-2 text-danger-strong font-black text-sm mb-2">
                             <AlertCircle size={18} /> {issues.errors.length} ملاحظة يجب معالجتها
                         </div>
-                        <ul className="text-xs text-red-700 space-y-1 pr-1">
+                        <ul className="text-xs text-danger-strong space-y-1 pr-1">
                             {issues.errors.map((e, i) => <li key={i} className="flex gap-2"><span>•</span><span>{e}</span></li>)}
                         </ul>
                     </div>
                 )}
                 {issues.warnings.length > 0 && (
-                    <div className="bg-amber-50 rounded-2xl border border-amber-100 p-4 mb-5">
-                        <div className="flex items-center gap-2 text-amber-700 font-black text-sm mb-1">
+                    <div className="bg-warning-soft rounded-2xl border border-warning-soft p-4 mb-5">
+                        <div className="flex items-center gap-2 text-warning-500 font-black text-sm mb-1">
                             <Settings size={16} /> تحذيرات (اختيارية)
                         </div>
-                        <ul className="text-xs text-amber-700 space-y-0.5 pr-1">
+                        <ul className="text-xs text-warning-500 space-y-0.5 pr-1">
                             {issues.warnings.map((w, i) => <li key={i} className="flex gap-2"><span>•</span><span>{w}</span></li>)}
                         </ul>
                     </div>
@@ -128,7 +128,7 @@ const SetupWizard = ({ onComplete }) => {
 
                 {/* المخرجات */}
                 <div className="mt-4">
-                    <div className="flex items-center gap-2 border-b border-slate-200 mb-3">
+                    <div className="flex items-center gap-2 border-b border-hairline mb-3">
                         <TabBtn active={tab === 'env'} onClick={() => setTab('env')} label=".env (مُستبعد من Git)" />
                         <TabBtn active={tab === 'config'} onClick={() => setTab('config')} label="firebaseConfig.ts (زرع دائم)" />
                     </div>
@@ -157,16 +157,16 @@ const SetupWizard = ({ onComplete }) => {
 
                 {/* إجراءات */}
                 <div className="flex items-center justify-between gap-3 mt-6">
-                    <div className="text-xs text-slate-400 font-bold flex items-center gap-1">
-                        <CheckCircle2 size={14} className="text-emerald-500" /> بعد الحفظ، انقر للمتابعة
+                    <div className="text-xs text-ink-400 font-bold flex items-center gap-1">
+                        <CheckCircle2 size={14} className="text-brand-500" /> بعد الحفظ، انقر للمتابعة
                     </div>
                     <div className="flex gap-2">
                         <button onClick={() => window.location.reload()}
-                            className="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-sm font-bold hover:bg-slate-50 flex items-center gap-1.5 transition-all">
+                            className="px-4 py-2.5 rounded-xl border border-hairline text-ink-600 text-sm font-bold hover:bg-canvas flex items-center gap-1.5 transition-all">
                             <RefreshCw size={15} /> إعادة التحقق
                         </button>
                         <button onClick={onComplete}
-                            className="px-5 py-2.5 rounded-xl bg-emerald-600 text-white text-sm font-black hover:bg-emerald-700 shadow-lg shadow-emerald-200 flex items-center gap-1.5 transition-all">
+                            className="px-5 py-2.5 rounded-xl bg-brand-600 text-white text-sm font-black hover:bg-brand-700 shadow-lg shadow-brand-200 flex items-center gap-1.5 transition-all">
                             <Loader2 size={15} /> متابعة التطبيق
                         </button>
                     </div>
@@ -179,16 +179,16 @@ const SetupWizard = ({ onComplete }) => {
 /* حقل إدخال مضمّن */
 const Field = ({ label, value, onChange, placeholder, ltr }) => (
     <div>
-        <label className="block text-xs font-bold text-slate-600 mb-1">{label}</label>
+        <label className="block text-xs font-bold text-ink-600 mb-1">{label}</label>
         <input type="text" value={value} onChange={onChange} placeholder={placeholder} dir={ltr ? 'ltr' : 'rtl'}
-            className="w-full p-3 bg-slate-50 rounded-xl border border-slate-200 focus:border-emerald-500 outline-none font-bold text-sm text-slate-800 transition-all" />
+            className="w-full p-3 bg-canvas rounded-xl border border-hairline focus:border-brand-500 outline-none font-bold text-sm text-ink-800 transition-all" />
     </div>
 );
 
 /* زر تبويب */
 const TabBtn = ({ active, onClick, label }) => (
     <button onClick={onClick}
-        className={`px-4 py-2 text-sm font-black rounded-t-xl transition-all ${active ? 'bg-emerald-600 text-white' : 'text-slate-500 hover:text-emerald-600'}`}>
+        className={`px-4 py-2 text-sm font-black rounded-t-xl transition-all ${active ? 'bg-brand-600 text-white' : 'text-ink-500 hover:text-brand-600'}`}>
         {label}
     </button>
 );
@@ -196,17 +196,17 @@ const TabBtn = ({ active, onClick, label }) => (
 /* كتلة الكود مع النسخ/التحميل */
 const CodeBlock = ({ content, hint, onCopy, onDownload, copiedKey, thisKey }) => (
     <div>
-        {hint && <p className="text-xs text-slate-500 mb-2 font-semibold leading-relaxed">{hint}</p>}
+        {hint && <p className="text-xs text-ink-500 mb-2 font-semibold leading-relaxed">{hint}</p>}
         <div className="relative">
-            <pre dir="ltr" className="text-left bg-slate-900 text-emerald-100 text-xs p-4 rounded-2xl overflow-auto max-h-60 whitespace-pre font-mono leading-relaxed">{content}</pre>
+            <pre dir="ltr" className="text-left bg-ink-900 text-brand-100 text-xs p-4 rounded-2xl overflow-auto max-h-60 whitespace-pre font-mono leading-relaxed">{content}</pre>
             <div className="absolute top-2 left-2 flex gap-2">
                 <button onClick={onCopy}
-                    className="bg-slate-700/80 hover:bg-slate-600 text-white text-xs font-bold px-2.5 py-1.5 rounded-lg flex items-center gap-1 transition-all">
+                    className="bg-ink-700/80 hover:bg-ink-600 text-white text-xs font-bold px-2.5 py-1.5 rounded-lg flex items-center gap-1 transition-all">
                     {copiedKey === thisKey ? <CheckCircle2 size={13} /> : <Copy size={13} />}
                     {copiedKey === thisKey ? 'تم النسخ' : 'نسخ'}
                 </button>
                 <button onClick={onDownload}
-                    className="bg-slate-700/80 hover:bg-slate-600 text-white text-xs font-bold px-2.5 py-1.5 rounded-lg flex items-center gap-1 transition-all">
+                    className="bg-ink-700/80 hover:bg-ink-600 text-white text-xs font-bold px-2.5 py-1.5 rounded-lg flex items-center gap-1 transition-all">
                     <Download size={13} /> تحميل
                 </button>
             </div>

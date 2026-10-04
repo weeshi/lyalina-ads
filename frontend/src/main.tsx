@@ -13,7 +13,7 @@ const AdsManager = React.lazy(() => import('./AdsManager'));
 function Root() {
   const [complete, setComplete] = React.useState(() => isConfigComplete());
   return complete ? (
-    <React.Suspense fallback={<div className="min-h-screen bg-slate-100 flex items-center justify-center">جارٍ التحميل...</div>}>
+    <React.Suspense fallback={<div className="min-h-screen bg-fill flex items-center justify-center">جارٍ التحميل...</div>}>
       <AdsManager />
     </React.Suspense>
   ) : (

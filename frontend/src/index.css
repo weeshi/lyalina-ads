@@ -1,1 +1,98 @@
 @import "tailwindcss";
+
+/* ==========================================================================
+   نظام التصميم: Lyalina Emerald Financial SaaS
+   المصدر: Stitch project 33796476431530798 → assets/4ec0cd5f80f84f528ab997effd7e778c
+   التوكنات أدناه هي المصدر الوحيد للألوان والخطوط والمسافات في التطبيق.
+   ========================================================================== */
+
+@theme {
+  /* ---------- الخطوط ---------- */
+  --font-sans: "Cairo", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "Courier New", monospace;
+
+  /* ---------- Emerald: الأساسي (Agency Emerald) ---------- */
+  --color-brand-50: #ecfdf5;
+  --color-brand-100: #d1fae5;
+  --color-brand-200: #a7f3d0;
+  --color-brand-300: #6ee7b7;
+  --color-brand-400: #34d399;
+  --color-brand-500: #10b981;
+  --color-brand-600: #059669;
+  --color-brand-700: #047857;
+  --color-brand-800: #065f46;
+  --color-brand-900: #064e3b;
+  --color-brand-950: #022c22;
+
+  /* ---------- Indigo: أدوات الذكاء والفلترة (Royal Indigo) ---------- */
+  --color-assist-50: #eef2ff;
+  --color-assist-100: #e0e7ff;
+  --color-assist-200: #c7d2fe;
+  --color-assist-300: #a5b4fc;
+  --color-assist-400: #818cf8;
+  --color-assist-500: #6366f1;
+  --color-assist-600: #4f46e5;
+  --color-assist-700: #4338ca;
+  --color-assist-800: #3730a3;
+  --color-assist-900: #312e81;
+
+  /* ---------- الحياد (Deep Obsidian Slate) ---------- */
+  --color-canvas: #f8fafc;
+  --color-surface: #ffffff;
+  --color-fill: #f1f5f9;
+  --color-hairline: #e2e8f0;
+  --color-hairline-strong: #cbd5e1;
+  --color-ink-400: #94a3b8;
+  --color-ink-500: #64748b;
+  --color-ink-600: #475569;
+  --color-ink-700: #334155;
+  --color-ink-800: #1e293b;
+  --color-ink-900: #0f172a;
+  --color-ink-950: #020617;
+
+  /* ---------- الحالات المالية ---------- */
+  --color-warning-500: #d97706;
+  --color-warning-800: #b45309;
+  --color-warning-900: #78350f;
+  --color-warning-soft: #fef3c7;
+  --color-danger-500: #dc2626;
+  --color-danger-strong: #b91c1c;
+  --color-danger-800: #991b1b;
+  --color-danger-900: #7f1d1d;
+  --color-danger-soft: #fee2e2;
+  --color-info-200: #bfdbfe;
+  --color-info-500: #2563eb;
+  --color-info-600: #1d4ed8;
+  --color-info-700: #1e40af;
+  --color-info-800: #1e40af;
+  --color-info-soft: #dbeafe;
+
+  /* ---------- الاستدارة ---------- */
+  --radius-control: 0.75rem;
+  --radius-card: 1rem;
+  --radius-modal: 1.25rem;
+  --radius-pill: 9999px;
+
+  /* ---------- الظلال (Depth 1-4) ---------- */
+  --shadow-elev1: 0 1px 2px 0 rgb(15 23 42 / 0.04);
+  --shadow-elev2: 0 4px 12px -2px rgba(15, 23, 42, 0.06), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
+  --shadow-elev3: 0 10px 25px -5px rgba(6, 78, 59, 0.12), 0 8px 10px -6px rgba(6, 78, 59, 0.08);
+  --shadow-elev4: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
+
+  /* ---------- المسافات (8px grid) ---------- */
+  --spacing-space-xs: 0.25rem;
+  --spacing-space-sm: 0.5rem;
+  --spacing-space-md: 0.75rem;
+  --spacing-space-lg: 1rem;
+  --spacing-space-xl: 1.5rem;
+  --spacing-space-2xl: 2rem;
+  --spacing-gutter: 1rem;
+}
+
+@layer base {
+  /* العربية تتطلب تباعداً صفرياً(strictly zero letter-spacing) */
+  body {
+    font-family: var(--font-sans);
+    letter-spacing: 0;
+  }
+}
