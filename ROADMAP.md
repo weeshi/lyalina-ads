@@ -23,3 +23,16 @@
 - 🔳 Manual test: create Firestore user with `isActive=false` and verify 403 response
 - 🔳 OAuth client cleanup: decide on deletion/relocation of unused `client_secrets` file
 - 🔳 ROADMAP phase 4 review after isActive/OAuth tasks complete
+
+## إصلاحات معلّقة
+> بند واحد موقوف بقرار صريح — لا يُنفَّذ حتى تحديد توقيته.
+
+### 🔴 `provider` يُستخدم قبل تعريفه في مسار ربط Google Drive
+- **الملف:** `frontend/src/hooks/useAuth.ts`
+- **السطر:** 56 (التعريف المحلي الصحيح موجود في السطر 86)
+- **الخطأ:** `ReferenceError: Cannot access 'provider' before initialization`
+- **السبب:** التعريف المحلي `const provider = new GoogleAuthProvider()` موجود في السطر 86، أي **بعد** السطر 56 بنحو 30 سطراً، فيقع الاستخدام في نطاق TDZ.
+- **متى يُطلق:** فقط عند رمز خطأ `auth/provider-already-linked` في محاولة ربط حساب Google Drive.
+- **الأثر:** استثناء في مسار ربط Drive فقط — **ليس** سبب الصفحة البيضاء (تم استبعاد ذلك بفحص أنواع كامل).
+- **الإصلاح المقترح:** نقل تعريف `provider` إلى أعلى الدالة أو إعادة استخدام التعريف الموجود في السطر 36.
+- **الحالة:** ⏸️ موقوف بقرار صريح — لا تنفيذ حتى تحديد التوقيت. الملف لم يُمسّ في جلسات التصميم/الموبايل؛ الخلل موجود في `HEAD` قبلها.
