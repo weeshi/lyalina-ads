@@ -11,7 +11,7 @@ const MarketerModal = ({ isOpen, onClose, form, setForm, onSave, isEdit }) => (
         <div><input type="number" value={form.rate} onChange={e => setForm({...form, rate: e.target.value})} className="w-full p-2.5 rounded-xl border border-hairline focus:border-assist-500 outline-none font-bold text-ink-800 text-sm" placeholder="النسبة %" /></div>
         {isEdit && (
             <div className="border-t border-fill pt-3 mt-1">
-                <p className="text-[10px] font-black text-assist-800 mb-2">البيانات المصرفية</p>
+                <p className="text-[10px] font-bold text-assist-800 mb-2">البيانات المصرفية</p>
                 <div className="space-y-2">
                     <input type="text" value={form.bankName} onChange={e => setForm({...form, bankName: e.target.value})} className="w-full p-2 rounded-lg border border-hairline focus:border-assist-500 outline-none text-xs text-ink-700" placeholder="اسم المصرف" />
                     <input type="text" value={form.accountNum} onChange={e => setForm({...form, accountNum: e.target.value})} className="w-full p-2 rounded-lg border border-hairline focus:border-assist-500 outline-none font-mono text-xs text-ink-700 text-left" placeholder="رقم الحساب" dir="ltr"/>

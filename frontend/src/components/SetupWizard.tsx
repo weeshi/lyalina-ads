@@ -88,14 +88,14 @@ const SetupWizard = ({ onComplete }) => {
                     <div className="bg-brand-100 p-4 rounded-full text-brand-600 mb-4">
                         <Wand2 size={36} />
                     </div>
-                    <h1 className="text-2xl font-black text-ink-800">معالج الإعداد الأولي</h1>
+                    <h1 className="text-2xl font-extrabold text-ink-800">معالج الإعداد الأولي</h1>
                     <p className="text-sm text-ink-500 mt-2">يبدو أن إعدادات الاتصال بقاعدة البيانات لم تكتمل بعد. أكمل الحقول أدناه لتجهيز المنصة.</p>
                 </div>
 
                 {/* ملخص المشاكل */}
                 {issues.errors.length > 0 && (
                     <div className="bg-danger-soft rounded-2xl border border-danger-soft p-4 mb-5">
-                        <div className="flex items-center gap-2 text-danger-strong font-black text-sm mb-2">
+                        <div className="flex items-center gap-2 text-danger-strong font-bold text-sm mb-2">
                             <AlertCircle size={18} /> {issues.errors.length} ملاحظة يجب معالجتها
                         </div>
                         <ul className="text-xs text-danger-strong space-y-1 pr-1">
@@ -105,7 +105,7 @@ const SetupWizard = ({ onComplete }) => {
                 )}
                 {issues.warnings.length > 0 && (
                     <div className="bg-warning-soft rounded-2xl border border-warning-soft p-4 mb-5">
-                        <div className="flex items-center gap-2 text-warning-500 font-black text-sm mb-1">
+                        <div className="flex items-center gap-2 text-warning-500 font-bold text-sm mb-1">
                             <Settings size={16} /> تحذيرات (اختيارية)
                         </div>
                         <ul className="text-xs text-warning-500 space-y-0.5 pr-1">
@@ -166,7 +166,7 @@ const SetupWizard = ({ onComplete }) => {
                             <RefreshCw size={15} /> إعادة التحقق
                         </button>
                         <button onClick={onComplete}
-                            className="px-5 py-2.5 rounded-xl bg-brand-600 text-white text-sm font-black hover:bg-brand-700 shadow-lg shadow-brand-200 flex items-center gap-1.5 transition-all">
+                            className="px-5 py-2.5 rounded-xl bg-brand-600 text-white text-sm font-bold hover:bg-brand-700 shadow-lg shadow-brand-200 flex items-center gap-1.5 transition-all">
                             <Loader2 size={15} /> متابعة التطبيق
                         </button>
                     </div>
@@ -188,7 +188,7 @@ const Field = ({ label, value, onChange, placeholder, ltr }) => (
 /* زر تبويب */
 const TabBtn = ({ active, onClick, label }) => (
     <button onClick={onClick}
-        className={`px-4 py-2 text-sm font-black rounded-t-xl transition-all ${active ? 'bg-brand-600 text-white' : 'text-ink-500 hover:text-brand-600'}`}>
+        className={`px-4 py-2 text-sm font-bold rounded-t-xl transition-all ${active ? 'bg-brand-600 text-white' : 'text-ink-500 hover:text-brand-600'}`}>
         {label}
     </button>
 );

@@ -14,11 +14,11 @@ const SettingsView = ({
   return (
     <div className="flex-1 bg-canvas p-6 overflow-auto">
       <div className="max-w-4xl mx-auto pb-20">
-        <h2 className="text-2xl font-black text-ink-800 mb-6 flex items-center gap-2"><Settings size={28} className="text-ink-600"/> الإعدادات المتقدمة</h2>
+        <h2 className="text-2xl font-extrabold text-ink-800 mb-6 flex items-center gap-2"><Settings size={28} className="text-ink-600"/> الإعدادات المتقدمة</h2>
 
         {/* Account Profile Section */}
         <div className="bg-white rounded-2xl shadow-sm border border-hairline p-6 md:p-8 mb-6 relative overflow-hidden">
-          {isSuperAdmin && <div className="absolute top-0 right-0 bg-warning-500 text-white text-[10px] font-black px-8 py-1 rotate-45 translate-x-6 translate-y-3 shadow-sm">SUPER ADMIN</div>}
+          {isSuperAdmin && <div className="absolute top-0 right-0 bg-warning-500 text-white text-[10px] font-bold px-8 py-1 rotate-45 translate-x-6 translate-y-3 shadow-sm">SUPER ADMIN</div>}
           <h3 className="text-lg font-bold text-ink-800 mb-4 flex items-center gap-2"><UserCircle size={20} className="text-info-600"/> الحساب الشخصي</h3>
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div className="flex items-center gap-4">
@@ -109,7 +109,7 @@ const SettingsView = ({
                 const val = parseFloat(e.target.value);
                 setGlobalExchangeRate(val);
                 localStorage.setItem('lyalina_exchange_rate', String(val));
-              }} className="flex-1 p-3 bg-warning-soft rounded-xl border border-warning-soft focus:border-warning-500 outline-none font-black text-xl text-warning-800 text-center" />
+              }} className="flex-1 p-3 bg-warning-soft rounded-xl border border-warning-soft focus:border-warning-500 outline-none font-extrabold text-xl text-warning-800 text-center" />
             </div>
             <p className="text-[10px] text-ink-400 mt-2">تحديث السعر هنا سيؤثر فقط على عمليات الشحن المستقبلية للمحافظ.</p>
           </div>

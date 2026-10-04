@@ -213,7 +213,7 @@ const AnalyticsView = ({ data, customers, customerStats, packages, marketerStats
               <BarChart3 size={26} className="text-white" />
             </div>
             <div>
-              <h2 className="text-2xl font-black text-ink-800">لوحة التحليلات المتقدمة</h2>
+              <h2 className="text-2xl font-extrabold text-ink-800">لوحة التحليلات المتقدمة</h2>
               <div className="flex items-center gap-2 mt-1">
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-75" />
@@ -254,7 +254,7 @@ const AnalyticsView = ({ data, customers, customerStats, packages, marketerStats
                 <div className="flex items-center gap-2 text-brand-100/90 text-xs font-bold">
                   <card.icon size={16} /> {card.title}
                 </div>
-                <span className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-black ${card.badge.cls}`}>
+                <span className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold ${card.badge.cls}`}>
                   <card.badge.icon size={12} /> {card.badge.txt}
                 </span>
               </div>
@@ -299,7 +299,7 @@ const AnalyticsView = ({ data, customers, customerStats, packages, marketerStats
               <div className="flex items-center gap-2">
                 <div className="p-2 rounded-xl bg-brand-100"><Sparkles size={16} className="text-brand-700" /></div>
                 <div>
-                  <h3 className="font-black text-ink-800 text-base">الإنفاق والإيرادات تبعاً للوقت</h3>
+                  <h3 className="font-bold text-ink-800 text-base">الإنفاق والإيرادات تبعاً للوقت</h3>
                   <p className="text-[11px] text-ink-400">تحليلات يومية خلال الفترة المحددة</p>
                 </div>
               </div>
@@ -360,7 +360,7 @@ const AnalyticsView = ({ data, customers, customerStats, packages, marketerStats
             <div className="flex items-center gap-2">
               <div className="p-2 rounded-xl bg-brand-100"><PieChart size={16} className="text-brand-700" /></div>
               <div>
-                <h3 className="font-black text-ink-800 text-base">توزيع الحالات</h3>
+                <h3 className="font-bold text-ink-800 text-base">توزيع الحالات</h3>
                 <p className="text-[11px] text-ink-400">حالة الحملات داخل الفترة</p>
               </div>
             </div>
@@ -421,7 +421,7 @@ const AnalyticsView = ({ data, customers, customerStats, packages, marketerStats
             <div className="flex items-center gap-2">
               <div className="p-2 rounded-xl bg-brand-100"><Target size={16} className="text-brand-700" /></div>
               <div>
-                <h3 className="font-black text-ink-800 text-base">أعلى الصفحات إنفاقاً</h3>
+                <h3 className="font-bold text-ink-800 text-base">أعلى الصفحات إنفاقاً</h3>
                 <p className="text-[11px] text-ink-400">ترتيب الصفحات حسب إجمالي قيمة الحملات</p>
               </div>
             </div>
@@ -431,7 +431,7 @@ const AnalyticsView = ({ data, customers, customerStats, packages, marketerStats
           <div className="overflow-x-auto">
             <table className="min-w-[680px] w-full text-right text-sm">
               <thead>
-                <tr className="bg-canvas text-[10px] text-ink-400 font-black uppercase tracking-wider">
+                <tr className="bg-canvas text-[10px] text-ink-400 font-bold uppercase tracking-wider">
                   <th className="p-4 pr-6">#</th>
                   <th className="p-4">الصفحة</th>
                   <th className="p-4 text-center">عدد الحملات</th>
@@ -456,7 +456,7 @@ const AnalyticsView = ({ data, customers, customerStats, packages, marketerStats
                       </td>
                       <td className="p-4">
                         <div className="flex items-center gap-3">
-                          <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-info-500 to-brand-600 flex items-center justify-center text-white font-black text-sm shrink-0">{String(p.page).charAt(0)}</div>
+                          <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-info-500 to-brand-600 flex items-center justify-center text-white font-bold text-sm shrink-0">{String(p.page).charAt(0)}</div>
                           <div>
                             <p className="font-bold text-ink-800">{p.page}</p>
                             <p className="text-[10px] text-ink-400 font-medium">{cust ? `مربوطة بـ ${String(cust.name).slice(0, 18)}` : 'غير مرتبطة بعميل'}</p>
@@ -470,7 +470,7 @@ const AnalyticsView = ({ data, customers, customerStats, packages, marketerStats
                       </td>
                       <td className="p-4 font-black font-mono text-brand-600" style={{ direction: 'ltr' }}>{fmtUSD(p.paid)}</td>
                       <td className="p-4">
-                        <span className={`px-2.5 py-1 rounded-full text-[10px] font-black ${fullyPaid ? 'bg-brand-100 text-brand-800' : 'bg-warning-soft text-warning-800'}`}>
+                        <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${fullyPaid ? 'bg-brand-100 text-brand-800' : 'bg-warning-soft text-warning-800'}`}>
                           {fullyPaid ? 'مدفوع بالكامل' : 'يوجد باقٍ'}
                         </span>
                       </td>

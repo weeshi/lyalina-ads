@@ -8,7 +8,7 @@ const ProgressModal = ({ isOpen, title, current, total, percentage }) => {
     <div className="fixed inset-0 bg-black/60 z-[120] flex items-center justify-center p-4 backdrop-blur-sm">
        <div className="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl animate-in zoom-in duration-200 text-center">
           <div className="flex justify-center mb-4"><Loader2 size={40} className="text-assist-600 animate-spin" /></div>
-          <h3 className="text-xl font-black text-ink-800 mb-6">{title}</h3>
+          <h3 className="text-xl font-extrabold text-ink-800 mb-6">{title}</h3>
           <div className="relative pt-1">
             <div className="flex mb-2 items-center justify-between">
               <div><span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-assist-600 bg-assist-100">التقدم</span></div>

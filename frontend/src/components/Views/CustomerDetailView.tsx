@@ -46,10 +46,10 @@ const CustomerDetailView = ({
         <div className="bg-white rounded-3xl p-6 shadow-sm border border-hairline lg:col-span-2 relative">
           {isSuperAdmin && <span className="absolute top-4 left-4 bg-fill text-ink-400 font-mono text-[9px] px-2 py-1 rounded">Owner: {selectedCustomer.ownerEmail}</span>}
           <div className="flex flex-col sm:flex-row gap-6 items-start sm:items-center">
-            <div className="bg-ink-900 text-white w-20 h-20 rounded-3xl flex items-center justify-center text-3xl font-black shadow-lg shrink-0">{safeRender(selectedCustomer.name).charAt(0)}</div>
+            <div className="bg-ink-900 text-white w-20 h-20 rounded-3xl flex items-center justify-center text-3xl font-extrabold shadow-lg shrink-0">{safeRender(selectedCustomer.name).charAt(0)}</div>
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-2">
-                <h1 className="text-2xl font-black text-ink-800">{safeRender(selectedCustomer.name)}</h1>
+                <h1 className="text-2xl font-extrabold text-ink-800">{safeRender(selectedCustomer.name)}</h1>
                 <button onClick={() => { setCustomerForm(selectedCustomer); toggleModal('editCustomer', true); }} className="text-ink-400 hover:text-brand-600 transition-colors p-1" title="تعديل"><Edit3 size={18}/></button>
               </div>
               <div className="flex items-center gap-4 text-sm text-ink-500 font-medium">
@@ -80,11 +80,11 @@ const CustomerDetailView = ({
             </div>
             <h2 className="text-5xl font-black mb-2">${(selectedCustomer.walletBalanceUSD || 0).toLocaleString(undefined, {minimumFractionDigits: 2})}</h2>
             <p className="text-brand-200 text-xs mb-6 font-medium">الرصيد متاح للاستخدام الفوري لتمويل الحملات.</p>
-            <button onClick={() => toggleModal('topUp', true)} className="w-full bg-white text-brand-700 font-black py-3 rounded-xl shadow-md hover:bg-brand-50 transition-colors flex items-center justify-center gap-2">
+            <button onClick={() => toggleModal('topUp', true)} className="w-full bg-white text-brand-700 font-bold py-3 rounded-xl shadow-md hover:bg-brand-50 transition-colors flex items-center justify-center gap-2">
               <Plus size={18}/> شحن الرصيد
             </button>
             {customerUnpaidCampaigns.length > 0 && (
-              <button onClick={() => handleWalletPayment(customerUnpaidCampaigns.map(d => d.id))} className="w-full bg-warning-500 text-white font-black py-2.5 rounded-xl shadow-md hover:bg-warning-500 transition-colors flex items-center justify-center gap-2 mt-2 text-sm">
+              <button onClick={() => handleWalletPayment(customerUnpaidCampaigns.map(d => d.id))} className="w-full bg-warning-500 text-white font-bold py-2.5 rounded-xl shadow-md hover:bg-warning-500 transition-colors flex items-center justify-center gap-2 mt-2 text-sm">
                 <Coins size={16}/> سداد {customerUnpaidCampaigns.length} حملة (${totalUnpaidUSD.toFixed(2)})
               </button>
             )}
@@ -211,7 +211,7 @@ const CustomerDetailView = ({
                     <td className="p-3 font-bold text-ink-600">{safeRender(row["اسم الصفحة"])}</td>
                     <td className="p-3 font-bold text-ink-800">{safeRender(row["اسم Ad"])}</td>
                     <td className="p-3 font-bold text-assist-600">{safeRender(row["كود الباقة"] || '-')}</td>
-                    <td className="p-3 font-black text-ink-800">{safeRender(row["القيمة"])}</td>
+                    <td className="p-3 font-bold text-ink-800">{safeRender(row["القيمة"])}</td>
                     <td className="p-3 font-bold text-brand-600">{safeRender(row["الحالة"])}</td>
                     <td className="p-3"><span className={`px-2 py-1 rounded font-bold ${row["الدفع"] === 'مدفوع' ? 'bg-brand-100 text-brand-700' : 'bg-danger-soft text-danger-strong'}`}>{safeRender(row["الدفع"])}{row.paymentMethod && row["الدفع"] === 'مدفوع' ? ` (${row.paymentMethod})` : ''}</span></td>
                   </tr>

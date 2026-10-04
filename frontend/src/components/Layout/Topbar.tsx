@@ -10,7 +10,7 @@ const Topbar = ({ workspaceId, workspaceHistory, handleWorkspaceChange, globalEx
     <div className="bg-white border-b border-hairline px-4 py-3 flex justify-between items-center shadow-sm z-20 flex-none">
       <div className="flex items-center gap-2 max-w-[60%] w-full">
         <div className="bg-brand-100 p-2 rounded-lg text-brand-700 shrink-0"><FolderKanban size={18}/></div>
-        <select value={safeRender(workspaceId)} onChange={(e) => handleWorkspaceChange(e.target.value)} className="bg-transparent outline-none font-black text-ink-800 text-sm cursor-pointer w-full text-ellipsis overflow-hidden whitespace-nowrap">
+        <select value={safeRender(workspaceId)} onChange={(e) => handleWorkspaceChange(e.target.value)} className="bg-transparent outline-none font-bold text-ink-800 text-sm cursor-pointer w-full text-ellipsis overflow-hidden whitespace-nowrap">
           {workspaceHistory.map(ws => <option key={String(ws)} value={String(ws)}>{safeRender(ws)}</option>)}
         </select>
       </div>

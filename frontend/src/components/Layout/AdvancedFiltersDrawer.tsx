@@ -24,7 +24,7 @@ const AdvancedFiltersDrawer = ({
       <div className="absolute inset-0" onClick={onClose}></div>
       <div className="relative w-80 max-w-full bg-white h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-300 border-l border-hairline">
         <div className="p-5 border-b border-fill flex justify-between items-center bg-canvas">
-          <h3 className="font-black text-ink-800 flex items-center gap-2"><Filter size={18} className="text-brand-600"/> فلاتر متقدمة</h3>
+          <h3 className="font-bold text-ink-800 flex items-center gap-2"><Filter size={18} className="text-brand-600"/> فلاتر متقدمة</h3>
           <button onClick={onClose} className="p-1 hover:bg-hairline rounded text-ink-500"><X size={18}/></button>
         </div>
         <div className="flex-1 overflow-y-auto p-5 space-y-6">

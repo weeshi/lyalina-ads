@@ -95,4 +95,34 @@
     font-family: var(--font-sans);
     letter-spacing: 0;
   }
+
+  /* ---------- تصيير النصوص (Text Rendering) ---------- */
+  /* يُمنع تضخيم النص تلقائياً في الوضع الأفقي على أندرويد */
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    /* تشكيل الحروف العربية بشكل صحيح + مسافات دقيقة */
+    font-kerning: normal;
+    font-variant-ligatures: common-ligatures contextual;
+    font-feature-settings: "liga" 1, "calt" 1, "rlig" 1;
+    /* خط Cairo متغيّر ويغطي 200-1000، فأي وزن يُطلب حقيقي.
+       هذا يمنع Chrome من اختلاق عريض أو مائل زائف يبدو حاداً ومشوَّهاً */
+    font-synthesis-weight: none;
+    font-synthesis-style: none;
+    font-synthesis-small-caps: none;
+    /* مهم: لا تضع optimizeLegibility هنا.
+       في Chromium فهي تعطّل hinting للخط، فتصبح سيقان الحروف غير محاذية
+       للبكسل ويظهر النص مسنّناً (خاصة على Cairo بأحجام 12-14px).
+       التحسينات الحقيقية للقراءة أعلاه: kerning + ligatures. */
+    text-rendering: auto;
+  }
+
+  /* الأرقام والعملات: عرض متساوٍ لمحاذاة الجداول المالية */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
+  }
 }

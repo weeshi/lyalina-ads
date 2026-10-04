@@ -20,7 +20,7 @@ const ConfirmDialog = ({ isOpen, onClose, title, message, onConfirm, confirmText
             {variant === 'destructive' ? <Trash2 size={20} /> : <AlertCircle size={20} />}
           </div>
           <div className="flex-1">
-            <h4 className="font-black text-ink-800">{title}</h4>
+            <h4 className="font-bold text-ink-800">{title}</h4>
             <p className="text-sm text-ink-600 mt-1">{message}</p>
           </div>
         </div>
@@ -160,7 +160,7 @@ const UserManagementModal = ({ isOpen, onClose }) => {
     return (
       <div key={u.id} className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 rounded-xl border ${u.isActive === false ? 'bg-danger-soft/50 border-danger-soft' : 'bg-white border-fill hover:bg-canvas/50 transition-colors'}`}>
         <div className="flex items-center gap-3 min-w-0 flex-1">
-          <div className="w-10 h-10 rounded-full bg-brand-100 text-brand-700 flex items-center justify-center text-sm font-black flex-shrink-0">
+          <div className="w-10 h-10 rounded-full bg-brand-100 text-brand-700 flex items-center justify-center text-sm font-bold flex-shrink-0">
             {safeRender(u.name).charAt(0).toUpperCase()}
           </div>
           <div className="min-w-0">

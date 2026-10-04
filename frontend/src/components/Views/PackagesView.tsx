@@ -20,7 +20,7 @@ const PackagesView = ({ packages, setPackageForm, toggleModal, requestDelete, ha
       <div className="pb-20">
         <div className="flex flex-col sm:flex-row sm:flex-wrap sm:justify-between sm:items-center gap-3 mb-6">
           <div>
-            <h2 className="text-xl sm:text-2xl font-black text-ink-800">إدارة الباقات</h2>
+            <h2 className="text-xl sm:text-2xl font-extrabold text-ink-800">إدارة الباقات</h2>
             <p className="text-sm text-ink-500 mt-1">الباقات الجاهزة للاستخدام السريع في الحملات</p>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -52,9 +52,9 @@ const PackagesView = ({ packages, setPackageForm, toggleModal, requestDelete, ha
                     <tr key={String(pkg.id)} className="border-b border-fill hover:bg-canvas transition-colors">
                       <td className="p-3">
                         {isSuperAdmin ? (
-                          <input type="text" defaultValue={safeRender(pkg.code)} onBlur={e => { const v = e.target.value.trim(); if (v && v !== pkg.code) handlePackageUpdate(pkg.id, 'code', v); }} className="w-full bg-transparent outline-none font-black text-ink-800 text-sm border-b border-dashed border-transparent focus:border-assist-400" />
+                          <input type="text" defaultValue={safeRender(pkg.code)} onBlur={e => { const v = e.target.value.trim(); if (v && v !== pkg.code) handlePackageUpdate(pkg.id, 'code', v); }} className="w-full bg-transparent outline-none font-bold text-ink-800 text-sm border-b border-dashed border-transparent focus:border-assist-400" />
                         ) : (
-                          <span className="font-black text-ink-800">{safeRender(pkg.code)}</span>
+                          <span className="font-bold text-ink-800">{safeRender(pkg.code)}</span>
                         )}
                       </td>
                       <td className="p-3">

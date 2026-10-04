@@ -137,17 +137,17 @@ const CRMView = ({ customers, customerStats, setSelectedCustomer, setCurrentView
         <div className="flex items-start justify-between gap-2">
           <div className="flex items-center gap-3 min-w-0 flex-1">
             <div className="relative shrink-0">
-              <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-brand-700 via-brand-600 to-brand-500 flex items-center justify-center text-white font-black text-lg shadow-md shadow-brand-900/10">
+              <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-brand-700 via-brand-600 to-brand-500 flex items-center justify-center text-white font-extrabold text-lg shadow-md shadow-brand-900/10">
                 {safeRender(cust.name).charAt(0)}
               </div>
               <span className={`absolute -bottom-1 -right-1 h-3.5 w-3.5 rounded-full border-2 border-white ${cat.dot}`} />
             </div>
             <div className="min-w-0">
-              <h3 className="font-black text-ink-800 truncate">{safeRender(cust.name)}</h3>
+              <h3 className="font-bold text-ink-800 truncate">{safeRender(cust.name)}</h3>
               <p className="text-[11px] text-ink-400 font-mono mt-0.5 truncate" style={{ direction: 'ltr' }}>{safeRender(cust.phone)}</p>
             </div>
           </div>
-          <span className={`shrink-0 px-2.5 py-1 rounded-full text-[10px] font-black ${cat.cls}`}>{cat.label}</span>
+          <span className={`shrink-0 px-2.5 py-1 rounded-full text-[10px] font-bold ${cat.cls}`}>{cat.label}</span>
         </div>
 
         <div className="mt-4 flex items-center justify-between gap-2 rounded-2xl bg-gradient-to-br from-brand-700 to-brand-600 text-white px-3 sm:px-4 py-3 shadow-lg shadow-brand-900/10">
@@ -158,7 +158,7 @@ const CRMView = ({ customers, customerStats, setSelectedCustomer, setCurrentView
           </div>
           <button
             onClick={(e) => { e.stopPropagation(); setSelectedCustomer(cust); toggleModal('topUp', true); }}
-            className="shrink-0 flex items-center gap-1.5 bg-white text-brand-700 px-3 py-2 rounded-xl text-xs font-black shadow hover:bg-brand-50 transition-all"
+            className="shrink-0 flex items-center gap-1.5 bg-white text-brand-700 px-3 py-2 rounded-xl text-xs font-bold shadow hover:bg-brand-50 transition-all"
           >
             <Plus size={14} /> شحن
           </button>
@@ -220,7 +220,7 @@ const CRMView = ({ customers, customerStats, setSelectedCustomer, setCurrentView
         </td>
         <td className="p-3">
           <div className="flex items-center gap-3 min-w-[180px]">
-            <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-brand-700 to-brand-500 flex items-center justify-center text-white font-black text-sm shrink-0">{safeRender(cust.name).charAt(0)}</div>
+            <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-brand-700 to-brand-500 flex items-center justify-center text-white font-bold text-sm shrink-0">{safeRender(cust.name).charAt(0)}</div>
             <div>
               <p className="font-bold text-ink-800 text-sm">{safeRender(cust.name)}</p>
               <p className="text-[10px] text-ink-400 font-mono" style={{ direction: 'ltr' }}>{safeRender(cust.email)}</p>
@@ -231,7 +231,7 @@ const CRMView = ({ customers, customerStats, setSelectedCustomer, setCurrentView
           <span className="flex items-center gap-1.5 text-ink-600 font-mono text-xs" style={{ direction: 'ltr' }}><Phone size={12} className="text-hairline-strong" /> {safeRender(cust.phone)}</span>
         </td>
         <td className="p-3">
-          <span className={`px-2.5 py-1 rounded-full text-[10px] font-black ${cat.cls}`}>{cat.label}</span>
+          <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${cat.cls}`}>{cat.label}</span>
         </td>
         <td className="p-3 font-black font-mono text-brand-600 text-sm" style={{ direction: 'ltr' }}>{fmtUSD(cust.walletBalanceUSD || 0)}</td>
         <td className={`p-3 font-black font-mono text-sm ${(s.due || 0) > 0 ? 'text-warning-500' : 'text-ink-400'}`} style={{ direction: 'ltr' }}>{fmtUSD(s.due)}</td>
@@ -268,7 +268,7 @@ const CRMView = ({ customers, customerStats, setSelectedCustomer, setCurrentView
               <Wallet size={24} className="text-white" />
             </div>
             <div>
-              <h2 className="text-xl sm:text-2xl font-black text-ink-800">إدارة العملاء والمحافظ الإلكترونية</h2>
+              <h2 className="text-xl sm:text-2xl font-extrabold text-ink-800">إدارة العملاء والمحافظ الإلكترونية</h2>
               <p className="text-xs text-ink-500 mt-0.5">شحن الأرصدة · إدارة الديون · المتابعة اليومية</p>
             </div>
           </div>
@@ -276,7 +276,7 @@ const CRMView = ({ customers, customerStats, setSelectedCustomer, setCurrentView
             <button onClick={waReminder} className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white border border-hairline text-ink-600 text-xs font-bold hover:border-brand-400 hover:text-brand-700 transition-all shadow-sm">
               <MessageCircle size={15} /> تذكير سداد
             </button>
-            <button onClick={() => { setCustomerForm({ name: "", phone: "", email: "", marketerId: "", walletBalanceUSD: 0 }); toggleModal('addCustomer', true); }} className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-brand-700 text-white text-xs font-black shadow-lg shadow-brand-900/15 hover:bg-brand-800 transition-all">
+            <button onClick={() => { setCustomerForm({ name: "", phone: "", email: "", marketerId: "", walletBalanceUSD: 0 }); toggleModal('addCustomer', true); }} className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-brand-700 text-white text-xs font-bold shadow-lg shadow-brand-900/15 hover:bg-brand-800 transition-all">
               <UserPlus size={15} /> إضافة عميل
             </button>
           </div>
@@ -290,7 +290,7 @@ const CRMView = ({ customers, customerStats, setSelectedCustomer, setCurrentView
                 <div className={`p-2.5 rounded-xl bg-gradient-to-br ${card.accent} shadow-md shadow-black/5`}>
                   <card.icon size={19} className="text-white" />
                 </div>
-                <span className={`flex items-center gap-1 text-[10px] font-black px-2 py-1 rounded-full ${card.badge.up ? 'bg-brand-100 text-brand-800' : 'bg-warning-soft text-warning-800'}`}>
+                <span className={`flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-full ${card.badge.up ? 'bg-brand-100 text-brand-800' : 'bg-warning-soft text-warning-800'}`}>
                   {card.badge.up ? <ArrowUpRight size={11} /> : <ArrowDownRight size={11} />} {card.badge.txt}
                 </span>
               </div>
@@ -339,7 +339,7 @@ const CRMView = ({ customers, customerStats, setSelectedCustomer, setCurrentView
         {selected.size > 0 && (
           <div className="flex flex-wrap items-center justify-between gap-2 rounded-2xl bg-ink-900 text-white px-4 sm:px-5 py-3 shadow-xl">
             <div className="flex items-center gap-3 text-sm font-bold">
-              <span className="h-7 w-7 rounded-xl bg-brand-600 flex items-center justify-center text-white text-xs font-black">{selected.size}</span>
+              <span className="h-7 w-7 rounded-xl bg-brand-600 flex items-center justify-center text-white text-xs font-bold">{selected.size}</span>
               تم تحديد {selected.size} عميل
             </div>
             <div className="flex items-center gap-2">
@@ -360,7 +360,7 @@ const CRMView = ({ customers, customerStats, setSelectedCustomer, setCurrentView
             <div className="overflow-x-auto">
               <table className="min-w-[680px] w-full text-right text-sm">
                 <thead>
-                  <tr className="bg-canvas text-[10px] text-ink-400 font-black uppercase">
+                  <tr className="bg-canvas text-[10px] text-ink-400 font-bold uppercase">
                     <th className="p-3 pr-5"></th>
                     <th className="p-3">العميل</th>
                     <th className="p-3">الهاتف</th>

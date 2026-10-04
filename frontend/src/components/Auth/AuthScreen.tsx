@@ -51,7 +51,7 @@ const AuthScreen = ({ onGoogleAuthSuccess, externalError }) => {
                     <div className="bg-brand-100 p-4 rounded-full text-brand-600 mb-4">
                         <BrainCircuit size={40} />
                     </div>
-                    <h1 className="text-2xl font-black text-ink-800">منصة <span className="text-brand-600">LYALINA</span></h1>
+                    <h1 className="text-2xl font-extrabold text-ink-800">منصة <span className="text-brand-600">LYALINA</span></h1>
                     <p className="text-sm text-ink-500 mt-2">نظام إدارة الإعلانات والمحافظ الرقمية <span className="text-[10px] bg-fill px-2 py-0.5 rounded-full font-bold ml-1">V8.0</span></p>
                 </div>
 
@@ -77,7 +77,7 @@ const AuthScreen = ({ onGoogleAuthSuccess, externalError }) => {
                         </div>
                     </div>
 
-                    <button type="submit" disabled={isLoading} className="w-full bg-brand-600 text-white py-3.5 rounded-xl font-black hover:bg-brand-700 shadow-lg shadow-brand-200 active:scale-95 transition-all flex justify-center items-center gap-2 mt-2">
+                    <button type="submit" disabled={isLoading} className="w-full bg-brand-600 text-white py-3.5 rounded-xl font-bold hover:bg-brand-700 shadow-lg shadow-brand-200 active:scale-95 transition-all flex justify-center items-center gap-2 mt-2">
                         {isLoading ? <Loader2 size={18} className="animate-spin" /> : "تسجيل الدخول"}
                     </button>
                 </form>

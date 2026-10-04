@@ -899,7 +899,7 @@ const App = () => {
     const items = itemsList || invoiceObj.items;
     const curSym = invoiceObj.currency === 'LYD' ? 'د.ل' : '$';
     const itemsHtml = items.map((i, idx) =>
-      `<tr><td class="center">${idx + 1}</td><td><strong>${safeRender(i.name)}</strong><br><span style="color:#64748b; font-size: 11px;">${safeRender(i.page)}</span></td><td class="center font-bold" style="color:#1e3a8a;">${safeRender(i.packageCode || i["كود الباقة"] || '-')}</td><td class="center">${safeRender(i.days || i["المدة"] || '-')}</td><td class="center">${safeRender(i.date || i["التاريخ"])}</td><td class="center"><span class="badge ${i.payment || i["الدفع"] === 'مدفوع' ? 'badge-success' : 'badge-danger'}">${safeRender(i.payment || i["الدفع"])}</span></td><td class="text-left font-black" style="color:#1e3a8a; direction:ltr;">${safeRender(i.amount || i[invoiceObj.currency === 'USD' ? "القيمة" : "القيمة (د.ل)"])} ${curSym}</td></tr>`
+      `<tr><td class="center">${idx + 1}</td><td><strong>${safeRender(i.name)}</strong><br><span style="color:#64748b; font-size: 11px;">${safeRender(i.page)}</span></td><td class="center font-bold" style="color:#1e3a8a;">${safeRender(i.packageCode || i["كود الباقة"] || '-')}</td><td class="center">${safeRender(i.days || i["المدة"] || '-')}</td><td class="center">${safeRender(i.date || i["التاريخ"])}</td><td class="center"><span class="badge ${i.payment || i["الدفع"] === 'مدفوع' ? 'badge-success' : 'badge-danger'}">${safeRender(i.payment || i["الدفع"])}</span></td><td class="text-left font-bold" style="color:#1e3a8a; direction:ltr;">${safeRender(i.amount || i[invoiceObj.currency === 'USD' ? "القيمة" : "القيمة (د.ل)"])} ${curSym}</td></tr>`
     ).join('');
     const htmlContent = `<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>فاتورة رقم ${safeRender(invoiceObj.invoiceNum)}</title><style>body{font-family:sans-serif;background:#f8fafc;padding:40px 20px;color:#334155;margin:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}.invoice-wrapper{max-width:800px;margin:0 auto;background:#fff;border-radius:16px;box-shadow:0 10px 25px rgba(0,0,0,.05);padding:50px;position:relative}.invoice-wrapper::before{content:'';position:absolute;top:0;left:0;right:0;height:8px;background:linear-gradient(90deg,#1e3a8a,#7c3aed)}.header-section{display:flex;justify-content:space-between;border-bottom:2px solid #f1f5f9;padding-bottom:25px;margin-bottom:30px}.company-name{font-size:28px;font-weight:900;color:#1e3a8a;margin:0 0 5px 0}.company-sub{font-size:14px;color:#7c3aed;font-weight:700;margin:0}.contact-info{text-align:left;font-size:12px;line-height:1.8;color:#475569}.meta-box{background:#f8fafc;border-radius:12px;padding:20px;display:flex;justify-content:space-between;margin-bottom:30px;border:1px solid #e2e8f0;border-right:4px solid #7c3aed}.meta-label{font-size:12px;color:#64748b;font-weight:700;margin-bottom:6px}.meta-value{font-size:16px;font-weight:900;color:#0f172a}table{width:100%;border-collapse:separate;border-spacing:0;margin-bottom:30px;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden}th{background:#1e3a8a;color:#fff;padding:16px 12px;text-align:right;font-size:14px;font-weight:700}th.center,td.center{text-align:center}th.text-left,td.text-left{text-align:left}td{padding:14px 12px;border-bottom:1px solid #e2e8f0}tr:nth-child(even) td{background:#f8fafc}.badge{padding:4px 8px;border-radius:6px;font-size:11px;font-weight:700}.badge-success{background:#dcfce7;color:#166534}.badge-danger{background:#fee2e2;color:#991b1b}.summary-box{width:360px;background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:20px}.summary-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f1f5f9;font-size:14px}.summary-total{display:flex;justify-content:space-between;padding:14px 0 0;font-size:18px;font-weight:900;color:#1e3a8a}</style></head><body><div class="invoice-wrapper"><div class="header-section"><div><h1 class="company-name">LYALINA</h1><p class="company-sub">وكالة إعلانات رقمية</p></div><div class="contact-info"><strong>LYALINA-ADS</strong><br>بنغازي - ليبيا<br>0915955991<br>www.ly-tech.ly</div></div><div class="meta-box"><div class="meta-item"><span class="meta-label">رقم الفاتورة</span><span class="meta-value">${safeRender(invoiceObj.invoiceNum)}</span></div><div class="meta-item"><span class="meta-label">تاريخ الإصدار</span><span class="meta-value">${safeRender(invoiceObj.date)}</span></div><div class="meta-item"><span class="meta-label">العميل</span><span class="meta-value">${invoiceObj.customerName || safeRender(selectedCustomer?.name) || '-'}</span></div><div class="meta-item"><span class="meta-label">العملة</span><span class="meta-value highlight">${curSym}</span></div></div><table><thead><tr><th class="center">#</th><th>البيان / المنشور</th><th class="center">الباقة</th><th class="center">المدة</th><th class="center">التاريخ</th><th class="center">الدفع</th><th class="text-left">المبلغ</th></tr></thead><tbody>${itemsHtml}</tbody></table><div style="display:flex;justify-content:flex-end"><div class="summary-box"><div class="summary-row"><span>المدفوع</span><strong style="color:#166534">${safeRender(invoiceObj.totalPaid)} ${curSym}</strong></div><div class="summary-row"><span>المتبقي</span><strong style="color:#991b1b">${safeRender(invoiceObj.totalUnpaid)} ${curSym}</strong></div><div class="summary-total"><span>الإجمالي الكلي</span><span>${safeRender(invoiceObj.total)} ${curSym}</span></div></div></div></div></body></html>`;
     const printWindow = window.open('', '', 'width=900,height=800');
@@ -913,7 +913,7 @@ const App = () => {
     const linkedPages = selectedCustomer.linkedPages || [];
     const items = data.filter(r => linkedPages.includes(r["اسم الصفحة"]) && !r.isDeleted).sort((a, b) => +new Date(b["التاريخ"]) - +new Date(a["التاريخ"]));
     const itemsHtml = items.map((i, idx) =>
-      `<tr><td class="center">${idx+1}</td><td class="center">${safeRender(i["التاريخ"])}</td><td><strong>${safeRender(i["اسم Ad"])}</strong><br><span style="color:#64748b;font-size:11px">${safeRender(i["اسم الصفحة"])}</span></td><td class="center font-bold" style="color:#1e3a8a">${safeRender(i["كود الباقة"]||'-')}</td><td class="center"><span class="badge ${i["الدفع"]==='مدفوع'?'badge-success':'badge-danger'}">${safeRender(i["الدفع"])}</span></td><td class="text-left font-black" style="direction:ltr">${safeRender(i["القيمة"])} $</td><td class="text-left font-black" style="direction:ltr">${safeRender(i["القيمة (د.ل)"])} د.ل</td></tr>`
+      `<tr><td class="center">${idx+1}</td><td class="center">${safeRender(i["التاريخ"])}</td><td><strong>${safeRender(i["اسم Ad"])}</strong><br><span style="color:#64748b;font-size:11px">${safeRender(i["اسم الصفحة"])}</span></td><td class="center font-bold" style="color:#1e3a8a">${safeRender(i["كود الباقة"]||'-')}</td><td class="center"><span class="badge ${i["الدفع"]==='مدفوع'?'badge-success':'badge-danger'}">${safeRender(i["الدفع"])}</span></td><td class="text-left font-bold" style="direction:ltr">${safeRender(i["القيمة"])} $</td><td class="text-left font-bold" style="direction:ltr">${safeRender(i["القيمة (د.ل)"])} د.ل</td></tr>`
     ).join('');
     const htmlContent = `<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>كشف حساب - ${safeRender(selectedCustomer.name)}</title><style>body{font-family:sans-serif;background:#f8fafc;padding:40px 20px;color:#334155;margin:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}.invoice-wrapper{max-width:900px;margin:0 auto;background:#fff;border-radius:16px;padding:50px}.header-section{display:flex;justify-content:space-between;border-bottom:2px solid #f1f5f9;padding-bottom:25px;margin-bottom:30px}.company-name{font-size:28px;font-weight:900;color:#1e3a8a;margin:0}.meta-box{background:#f8fafc;border-radius:12px;padding:20px;display:flex;gap:20px;margin-bottom:30px;border:1px solid #e2e8f0;border-right:4px solid #1e3a8a}.meta-item{display:flex;flex-direction:column}.meta-label{font-size:12px;color:#64748b;font-weight:700;margin-bottom:6px}.meta-value{font-size:18px;font-weight:900;color:#0f172a}table{width:100%;border-collapse:separate;border-spacing:0;margin-bottom:30px;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden}th{background:#1e3a8a;color:#fff;padding:16px 12px;text-align:right}th.center,td.center{text-align:center}th.text-left,td.text-left{text-align:left}td{padding:14px 12px;border-bottom:1px solid #e2e8f0}tr:nth-child(even) td{background:#f8fafc}.badge{padding:4px 8px;border-radius:6px;font-size:11px;font-weight:700}.badge-success{background:#dcfce7;color:#166534}.badge-danger{background:#fee2e2;color:#991b1b}</style></head><body><div class="invoice-wrapper"><div class="header-section"><div><h1 class="company-name">LYALINA</h1><p style="color:#7c3aed;font-weight:700;margin:5px 0 0">وكالة إعلانات رقمية</p></div><div style="font-size:12px;line-height:1.8;color:#475569;text-align:left"><strong>LYALINA-ADS</strong><br>بنغازي - ليبيا<br>0915955991<br>www.ly-tech.ly</div></div><div class="meta-box"><div class="meta-item"><span class="meta-label">اسم العميل</span><span class="meta-value">${safeRender(selectedCustomer.name)}</span></div><div class="meta-item"><span class="meta-label">إجمالي الإنفاق</span><span class="meta-value">$${safeRender(stats.totalSpend)}</span></div><div class="meta-item"><span class="meta-label">الرصيد المتبقي</span><span class="meta-value" style="color:#991b1b">$${safeRender(stats.due)}</span></div></div><table><thead><tr><th class="center">#</th><th class="center">التاريخ</th><th>الحملة</th><th class="center">الباقة</th><th class="center">الدفع</th><th class="text-left">المبلغ ($)</th><th class="text-left">المبلغ (د.ل)</th></tr></thead><tbody>${itemsHtml}</tbody></table></div></body></html>`;
     const printWindow = window.open('', '', 'width=900,height=800');
@@ -1394,7 +1394,7 @@ const App = () => {
                     <div className="flex items-center gap-3 min-w-max px-2">
                       <span className="font-bold text-brand-800 text-sm">{safeRender(selectedAds.length)} محدد</span>
                       <div className="h-4 w-px bg-brand-200"></div>
-                      <button onClick={handleWalletPayment} className="text-xs md:text-sm font-black bg-brand-600 text-white hover:bg-brand-700 px-3 py-1.5 rounded-lg shadow-sm transition flex items-center gap-1"><Coins size={14}/> خصم من المحفظة</button>
+                      <button onClick={handleWalletPayment} className="text-xs md:text-sm font-bold bg-brand-600 text-white hover:bg-brand-700 px-3 py-1.5 rounded-lg shadow-sm transition flex items-center gap-1"><Coins size={14}/> خصم من المحفظة</button>
                       <button onClick={handleBulkDuplicate} className="text-[10px] md:text-xs font-bold text-assist-600 hover:bg-assist-100 px-2 py-1 rounded transition"><Copy size={12}/> نسخ</button>
                       <button onClick={() => handleBulkAction('status', 'نشط')} className="text-[10px] md:text-xs font-bold text-brand-700 hover:bg-brand-100 px-2 py-1 rounded transition">تنشيط</button>
                       <button onClick={() => handleBulkAction('status', 'متوقف')} className="text-[10px] md:text-xs font-bold text-danger-strong hover:bg-danger-soft px-2 py-1 rounded transition">إيقاف</button>
@@ -1434,7 +1434,7 @@ const App = () => {
                     <div className="w-10 h-10 rounded-lg bg-brand-50 text-brand-600 flex items-center justify-center shrink-0"><Activity size={18} /></div>
                     <div className="min-w-0">
                       <div className="text-[11px] text-ink-400 font-bold">الحملات النشطة</div>
-                      <div className="text-lg font-black text-ink-800 leading-tight">{adsStats.activeCount}<span className="text-[11px] font-bold text-ink-400 mr-1">/ {adsStats.totalCount} حملة</span></div>
+                      <div className="text-lg font-extrabold text-ink-800 leading-tight">{adsStats.activeCount}<span className="text-[11px] font-bold text-ink-400 mr-1">/ {adsStats.totalCount} حملة</span></div>
                     </div>
                   </div>
                   <div className="rounded-xl border border-hairline bg-white p-3 flex items-center gap-3 hover:shadow-sm transition-shadow">
@@ -1449,7 +1449,7 @@ const App = () => {
                     <div className="w-10 h-10 rounded-lg bg-warning-soft text-warning-500 flex items-center justify-center shrink-0"><Bell size={18} /></div>
                     <div className="min-w-0">
                       <div className="text-[11px] text-ink-400 font-bold">دفعات مستحقة</div>
-                      <div className="text-lg font-black text-ink-800 leading-tight">{adsStats.unpaidCount}<span className="text-[11px] font-bold text-ink-400 mr-1">حملة</span></div>
+                      <div className="text-lg font-extrabold text-ink-800 leading-tight">{adsStats.unpaidCount}<span className="text-[11px] font-bold text-ink-400 mr-1">حملة</span></div>
                       <div className="text-[10px] text-warning-500 font-bold mt-0.5">{adsStats.unpaidLYD.toLocaleString()} د.ل</div>
                     </div>
                   </div>
@@ -1457,7 +1457,7 @@ const App = () => {
                     <div className="w-10 h-10 rounded-lg bg-assist-50 text-assist-600 flex items-center justify-center shrink-0"><TrendingUp size={18} /></div>
                     <div className="min-w-0">
                       <div className="text-[11px] text-ink-400 font-bold">الأداء الأسبوعي</div>
-                      <div className="text-lg font-black text-brand-600 leading-tight">+18.4% <span className="text-[11px] font-bold text-ink-400">نمو</span></div>
+                      <div className="text-lg font-extrabold text-brand-600 leading-tight">+18.4% <span className="text-[11px] font-bold text-ink-400">نمو</span></div>
                       <div className="text-[10px] text-ink-400 font-bold mt-0.5">تكلفة النقرة 0.14 د.ل</div>
                     </div>
                   </div>
@@ -1491,7 +1491,7 @@ const App = () => {
                 <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[110] flex justify-end" onClick={() => toggleModal('ai', false)}>
                   <div className="relative w-96 max-w-full bg-white h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-300" onClick={e => e.stopPropagation()}>
                     <div className="p-5 border-b border-fill flex justify-between items-center bg-assist-50">
-                      <h3 className="font-black text-ink-800 flex items-center gap-2"><Bot size={18} className="text-assist-600"/> المساعد الذكي</h3>
+                      <h3 className="font-bold text-ink-800 flex items-center gap-2"><Bot size={18} className="text-assist-600"/> المساعد الذكي</h3>
                       <div className="flex items-center gap-1">
                         {conversationHistory.length > 0 && <button onClick={() => setConversationHistory([])} className="p-1.5 rounded-lg hover:bg-danger-soft text-danger-500 hover:text-danger-strong transition" title="محادثة جديدة"><Trash2 size={15}/></button>}
                         <button onClick={() => setShowAiSettings(!showAiSettings)} className={`p-1.5 rounded-lg transition-all ${showAiSettings ? 'bg-assist-200 text-assist-700' : 'hover:bg-hairline text-ink-500'}`} title="إعدادات الوكيل"><Cog size={16}/></button>
@@ -1555,10 +1555,10 @@ const App = () => {
                         <div className="flex items-start gap-2">
                           <input type="checkbox" checked={selectedAds.includes(row.id)} onChange={() => toggleSelectRow(row.id)} className="mt-0.5 rounded text-brand-600 focus:ring-brand-500 w-4 h-4 shrink-0" />
                           <div className="min-w-0 flex-1">
-                            <p className="font-black text-sm truncate">{safeRender(row["اسم الصفحة"]) || `حملة ${index + 1}`}</p>
+                            <p className="font-bold text-sm truncate">{safeRender(row["اسم الصفحة"]) || `حملة ${index + 1}`}</p>
                             <p className="text-[10px] font-mono opacity-70 truncate" style={{ direction: 'ltr' }}>{safeRender(row.campaignRef)}</p>
                           </div>
-                          <span className={`shrink-0 px-2 py-0.5 rounded-full text-[10px] font-black border ${st.bg}`}>{st.icon} {safeRender(row["الحالة"]) || "قيد المراجعة"}</span>
+                          <span className={`shrink-0 px-2 py-0.5 rounded-full text-[10px] font-bold border ${st.bg}`}>{st.icon} {safeRender(row["الحالة"]) || "قيد المراجعة"}</span>
                         </div>
 
                         <div className="mt-2.5 grid grid-cols-2 gap-2">
@@ -1575,18 +1575,18 @@ const App = () => {
                         <div className="mt-2 flex items-center gap-2 text-[10px]">
                           <label className="flex-1 min-w-0">
                             <span className="block font-bold opacity-70 mb-0.5">الحالة</span>
-                            <select value={safeRender(row["الحالة"]) || "قيد المراجعة"} onChange={(e) => updateCell(index, "الحالة", e.target.value)} className="w-full bg-white/80 border border-black/5 rounded-lg px-1.5 py-1 font-black text-[11px] outline-none">
+                            <select value={safeRender(row["الحالة"]) || "قيد المراجعة"} onChange={(e) => updateCell(index, "الحالة", e.target.value)} className="w-full bg-white/80 border border-black/5 rounded-lg px-1.5 py-1 font-bold text-[11px] outline-none">
                               {Object.keys(STATUS_OPTIONS).map(opt => <option key={opt} value={opt} className="text-ink-800">{opt}</option>)}
                             </select>
                           </label>
                           <label className="flex-1 min-w-0">
                             <span className="block font-bold opacity-70 mb-0.5">الدفع</span>
-                            <select value={safeRender(row["الدفع"]) || "غير مدفوع"} onChange={(e) => handlePaymentChange(index, e.target.value)} className="w-full bg-white/80 border border-black/5 rounded-lg px-1.5 py-1 font-black text-[11px] outline-none">
+                            <select value={safeRender(row["الدفع"]) || "غير مدفوع"} onChange={(e) => handlePaymentChange(index, e.target.value)} className="w-full bg-white/80 border border-black/5 rounded-lg px-1.5 py-1 font-bold text-[11px] outline-none">
                               <option value="غير مدفوع" className="text-ink-800">غير مدفوع</option>
                               <option value="مدفوع" className="text-ink-800">مدفوع</option>
                             </select>
                           </label>
-                          <span className={`shrink-0 self-end mb-0.5 px-2 py-1 rounded-lg text-[10px] font-black ${pay?.bg || 'bg-white/70'}`}>{pay?.label || 'غير مدفوع'}</span>
+                          <span className={`shrink-0 self-end mb-0.5 px-2 py-1 rounded-lg text-[10px] font-bold ${pay?.bg || 'bg-white/70'}`}>{pay?.label || 'غير مدفوع'}</span>
                         </div>
 
                         <div className="mt-2 flex items-center gap-2">
@@ -1601,13 +1601,13 @@ const App = () => {
                         </div>
 
                         <div className="mt-2.5 flex items-center gap-1.5">
-                          <button onClick={() => updateCell(index, "الحالة", "متوقف")} className="flex-1 bg-white/80 border border-danger-soft text-danger-800 rounded-lg py-1.5 text-[11px] font-black flex items-center justify-center gap-1">
+                          <button onClick={() => updateCell(index, "الحالة", "متوقف")} className="flex-1 bg-white/80 border border-danger-soft text-danger-800 rounded-lg py-1.5 text-[11px] font-bold flex items-center justify-center gap-1">
                             <Pause size={12} /> إيقاف
                           </button>
-                          <button onClick={() => updateCell(index, "الحالة", "مكتمل")} className="flex-1 bg-white/80 border border-info-200 text-info-700 rounded-lg py-1.5 text-[11px] font-black flex items-center justify-center gap-1">
+                          <button onClick={() => updateCell(index, "الحالة", "مكتمل")} className="flex-1 bg-white/80 border border-info-200 text-info-700 rounded-lg py-1.5 text-[11px] font-bold flex items-center justify-center gap-1">
                             <CheckCircle2 size={12} /> إكمال
                           </button>
-                          <button onClick={() => handleGenerateAdCopy(row)} className="flex-1 bg-white/80 border border-assist-200 text-assist-700 rounded-lg py-1.5 text-[11px] font-black flex items-center justify-center gap-1">
+                          <button onClick={() => handleGenerateAdCopy(row)} className="flex-1 bg-white/80 border border-assist-200 text-assist-700 rounded-lg py-1.5 text-[11px] font-bold flex items-center justify-center gap-1">
                             <Sparkles size={12} /> AI
                           </button>
                         </div>
@@ -1628,7 +1628,7 @@ const App = () => {
                         </th>
                         <th className="p-2 w-10 text-center text-[10px] font-bold bg-fill">#</th>
                         {dynamicColumns.map((col, i) => (
-                          <th key={`th-${i}`} className={`p-2 text-[10px] font-black border-l border-hairline whitespace-nowrap cursor-pointer hover:bg-hairline bg-fill ${col.type === 'currency' ? 'w-[60px] md:w-[70px]' : ''}`} onClick={() => setSortConfig({ key: col.key, direction: sortConfig.direction === 'ascending' ? 'descending' : 'ascending' })}>
+                          <th key={`th-${i}`} className={`p-2 text-[10px] font-bold border-l border-hairline whitespace-nowrap cursor-pointer hover:bg-hairline bg-fill ${col.type === 'currency' ? 'w-[60px] md:w-[70px]' : ''}`} onClick={() => setSortConfig({ key: col.key, direction: sortConfig.direction === 'ascending' ? 'descending' : 'ascending' })}>
                             <div className="flex items-center gap-1 justify-between">{safeRender(col.label)}{sortConfig.key === col.key ? (sortConfig.direction === 'ascending' ? <ArrowUp size={10} className="text-brand-500" /> : <ArrowDown size={10} className="text-brand-500" />) : (<ArrowUpDown size={10} className="text-hairline-strong" />)}</div>
                           </th>
                         ))}
@@ -1657,12 +1657,12 @@ const App = () => {
                               ) : col.type === "date" ? (
                                 <input type="date" value={safeRender(row[h])} onChange={(e) => updateCell(index, h, e.target.value)} className="w-full p-2.5 bg-transparent outline-none font-bold text-center cursor-pointer text-xs inherit-color" />
                               ) : col.type === "status" ? (
-                                <select value={safeRender(row[h]) || "قيد المراجعة"} onChange={(e) => updateCell(index, h, e.target.value)} className="w-full p-2.5 bg-transparent outline-none font-black text-center cursor-pointer appearance-none inherit-color">
+                                <select value={safeRender(row[h]) || "قيد المراجعة"} onChange={(e) => updateCell(index, h, e.target.value)} className="w-full p-2.5 bg-transparent outline-none font-bold text-center cursor-pointer appearance-none inherit-color">
                                   {Object.keys(STATUS_OPTIONS).map(opt => <option key={opt} value={opt} className="text-ink-800">{opt}</option>)}
                                 </select>
                               ) : col.type === "payment" ? (
                                 <div className="flex items-center gap-1 px-2">
-                                  <select value={safeRender(row[h]) || "غير مدفوع"} onChange={(e) => handlePaymentChange(index, e.target.value)} className="flex-1 bg-transparent outline-none font-black text-center cursor-pointer appearance-none inherit-color text-xs">
+                                  <select value={safeRender(row[h]) || "غير مدفوع"} onChange={(e) => handlePaymentChange(index, e.target.value)} className="flex-1 bg-transparent outline-none font-bold text-center cursor-pointer appearance-none inherit-color text-xs">
                                     <option value="غير مدفوع" className="text-ink-800">غير مدفوع</option>
                                     <option value="مدفوع" className="text-ink-800">مدفوع</option>
                                   </select>

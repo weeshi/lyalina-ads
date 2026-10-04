@@ -34,12 +34,12 @@ const MarketerDetailView = ({
         {/* Header */}
         <div className="bg-white rounded-3xl p-6 shadow-sm border border-hairline mb-6 relative">
           <div className="flex flex-col sm:flex-row gap-6 items-start sm:items-center">
-            <div className="bg-warning-500 text-white w-20 h-20 rounded-3xl flex items-center justify-center text-3xl font-black shadow-lg shrink-0">
+            <div className="bg-warning-500 text-white w-20 h-20 rounded-3xl flex items-center justify-center text-3xl font-extrabold shadow-lg shrink-0">
               {safeRender(selectedMarketer.name).charAt(0)}
             </div>
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-2">
-                <h1 className="text-2xl font-black text-ink-800">{safeRender(selectedMarketer.name)}</h1>
+                <h1 className="text-2xl font-extrabold text-ink-800">{safeRender(selectedMarketer.name)}</h1>
                 <button onClick={() => { setMarketerForm(selectedMarketer); toggleModal('editMarketer', true); }} className="text-ink-400 hover:text-brand-600 transition-colors p-1" title="تعديل"><Edit3 size={18}/></button>
               </div>
               <div className="flex items-center gap-4 text-sm text-ink-500 font-medium flex-wrap">
@@ -63,12 +63,12 @@ const MarketerDetailView = ({
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           <div className="bg-white rounded-2xl p-5 shadow-sm border border-hairline">
             <Users size={20} className="text-assist-500 mb-2"/>
-            <p className="text-2xl font-black text-ink-800">{stats.customerCount}</p>
+            <p className="text-2xl font-extrabold text-ink-800">{stats.customerCount}</p>
             <p className="text-xs text-ink-500 font-bold">العملاء</p>
           </div>
           <div className="bg-white rounded-2xl p-5 shadow-sm border border-hairline">
             <Briefcase size={20} className="text-brand-500 mb-2"/>
-            <p className="text-2xl font-black text-ink-800">{stats.campaignCount}</p>
+            <p className="text-2xl font-extrabold text-ink-800">{stats.campaignCount}</p>
             <p className="text-xs text-ink-500 font-bold">الحملات</p>
           </div>
           <div className="bg-white rounded-2xl p-5 shadow-sm border border-hairline">
@@ -243,7 +243,7 @@ const MarketerDetailView = ({
                   <tr key={row.id} className="hover:bg-canvas">
                     <td className="p-3 font-bold text-ink-700">{safeRender(row["اسم Ad"])}</td>
                     <td className="p-3 text-ink-500">{safeRender(row["اسم الصفحة"])}</td>
-                    <td className="p-3 font-black text-ink-800">${safeRender(row["القيمة"])}</td>
+                    <td className="p-3 font-bold text-ink-800">${safeRender(row["القيمة"])}</td>
                     <td className="p-3"><span className="px-2 py-1 rounded text-[10px] font-bold bg-info-soft text-info-700">{safeRender(row["الحالة"])}</span></td>
                     <td className="p-3"><span className={`px-2 py-1 rounded text-[10px] font-bold ${row["الدفع"] === 'مدفوع' ? 'bg-brand-50 text-brand-700' : 'bg-danger-soft text-danger-strong'}`}>{safeRender(row["الدفع"])}</span></td>
                   </tr>

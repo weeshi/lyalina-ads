@@ -276,9 +276,9 @@ const MarketersView = ({ marketers, marketerStats, setSelectedMarketer, setCurre
               <Users size={24} className="text-white" />
             </div>
             <div>
-              <h2 className="text-xl sm:text-2xl font-black text-ink-800">لوحة إدارة المسوّقين وعمولاتهم</h2>
+              <h2 className="text-xl sm:text-2xl font-extrabold text-ink-800">لوحة إدارة المسوّقين وعمولاتهم</h2>
               <div className="flex items-center gap-2 mt-1">
-                <span className="text-[10px] font-black bg-brand-100 text-brand-800 px-2 py-0.5 rounded-md">v8.5 Prod</span>
+                <span className="text-[10px] font-bold bg-brand-100 text-brand-800 px-2 py-0.5 rounded-md">v8.5 Prod</span>
                 <p className="text-xs text-ink-500">تتبّع العمولات · متابعة الأداء · تسويات مالية موثّقة</p>
               </div>
             </div>
