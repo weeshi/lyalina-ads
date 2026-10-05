@@ -866,9 +866,11 @@ const App = () => {
   }, [packages, deleteDocByType, addLog, setConfirmModal, showToast]);
 
   // --- Invoice ---
-  const handleGenerateInvoice = useCallback(async (currency = 'USD') => {
+  const handleGenerateInvoice = useCallback(async (currency = 'USD', scopeRows = null) => {
     if (!selectedCustomer || invoiceSelection.length === 0 || !currentUser) return;
-    const items = sortedAndFilteredData.filter(r => invoiceSelection.includes(r.id));
+    const scope = scopeRows || sortedAndFilteredData;
+    const items = scope.filter(r => invoiceSelection.includes(r.id));
+    if (items.length === 0) { showToast('لا توجد حملات ظاهرة ومحدّدة لتصديرها — راجع الفلاتر والتحديد', 'error'); return; }
     const valKey = currency === 'USD' ? "القيمة" : "القيمة (د.ل)";
     let totalPaid = 0, totalUnpaid = 0;
     items.forEach(r => { const val = parseCurrency(r[valKey]); if (r["الدفع"] === "مدفوع") totalPaid += val; else totalUnpaid += val; });

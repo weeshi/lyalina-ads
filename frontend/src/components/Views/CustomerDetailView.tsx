@@ -76,6 +76,23 @@ const CustomerDetailView = ({
 
   const ledgerAllSelected = ledgerFiltered.length > 0 && ledgerFiltered.every(r => invoiceSelection.includes(r.id));
 
+  const ledgerVisibleIds = useMemo(() => new Set(ledgerFiltered.map(r => r.id)), [ledgerFiltered]);
+  const ledgerSelectedVisible = useMemo(() => invoiceSelection.filter(id => ledgerVisibleIds.has(id)), [invoiceSelection, ledgerVisibleIds]);
+  const ledgerSelectedHidden = useMemo(() => invoiceSelection.filter(id => !ledgerVisibleIds.has(id)), [invoiceSelection, ledgerVisibleIds]);
+  const ledgerInvalidDates = useMemo(() => {
+    if (!ledgerFrom && !ledgerTo) return 0;
+    return ledgerRows.filter(r => !toDayKey(r["التاريخ"])).length;
+  }, [ledgerRows, ledgerFrom, ledgerTo]);
+
+  const [pendingInvoice, setPendingInvoice] = useState(null);
+  const requestInvoice = (currency) => {
+    if (ledgerSelectedVisible.length === 0) return;
+    if (ledgerSelectedHidden.length > 0) { setPendingInvoice(currency); return; }
+    handleGenerateInvoice(currency, ledgerFiltered);
+  };
+  const confirmInvoiceVisibleOnly = () => { const c = pendingInvoice; setPendingInvoice(null); if (c) handleGenerateInvoice(c, ledgerFiltered); };
+  const removeHiddenFromSelection = () => setInvoiceSelection(prev => prev.filter(id => ledgerVisibleIds.has(id)));
+
   const setDatePreset = (days) => {
     if (days === 0) { setLedgerFrom(''); setLedgerTo(''); return; }
     const to = new Date();
@@ -263,9 +280,22 @@ const CustomerDetailView = ({
         <div className="bg-white rounded-2xl shadow-sm border border-hairline overflow-hidden mb-20 animate-in fade-in">
           <div className="p-4 bg-canvas border-b border-hairline flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
             <h3 className="font-bold text-ink-700 flex items-center gap-2 text-sm"><CreditCard size={16}/> الحملات (للفوترة التقليدية)</h3>
-            <div className="flex gap-2">
-              <button onClick={() => handleGenerateInvoice('USD')} disabled={invoiceSelection.length === 0} className="flex-1 sm:flex-none px-3 py-2 rounded-lg font-bold bg-assist-600 text-white hover:bg-assist-500 shadow-sm flex items-center justify-center gap-1 disabled:opacity-50 text-[10px]"><FilePlus size={12}/> فاتورة $</button>
-              <button onClick={() => handleGenerateInvoice('LYD')} disabled={invoiceSelection.length === 0} className="flex-1 sm:flex-none px-3 py-2 rounded-lg font-bold bg-brand-600 text-white hover:bg-brand-500 shadow-sm flex items-center justify-center gap-1 disabled:opacity-50 text-[10px]"><FilePlus size={12}/> فاتورة د.ل</button>
+            <div className="flex flex-col items-end gap-2">
+              {invoiceSelection.length > 0 && (
+                <div className="flex flex-wrap items-center justify-end gap-2">
+                  <span className="px-2 py-1 rounded-lg text-[10px] font-bold bg-brand-50 text-brand-700 border border-brand-100">{ledgerSelectedVisible.length} محدد</span>
+                  {ledgerSelectedHidden.length > 0 && (
+                    <>
+                      <span className="px-2 py-1 rounded-lg text-[10px] font-bold bg-danger-soft text-danger-strong border border-danger-soft">{ledgerSelectedHidden.length} مخفي بالفلاتر</span>
+                      <button onClick={removeHiddenFromSelection} className="px-2 py-1 rounded-lg text-[10px] font-bold bg-white border border-hairline text-ink-600 hover:bg-hairline transition-colors">إزالة المخفي من التحديد</button>
+                    </>
+                  )}
+                </div>
+              )}
+              <div className="flex gap-2">
+                <button onClick={() => requestInvoice('USD')} disabled={ledgerSelectedVisible.length === 0} className="flex-1 sm:flex-none px-3 py-2 rounded-lg font-bold bg-assist-600 text-white hover:bg-assist-500 shadow-sm flex items-center justify-center gap-1 disabled:opacity-50 text-[10px]"><FilePlus size={12}/> فاتورة $</button>
+                <button onClick={() => requestInvoice('LYD')} disabled={ledgerSelectedVisible.length === 0} className="flex-1 sm:flex-none px-3 py-2 rounded-lg font-bold bg-brand-600 text-white hover:bg-brand-500 shadow-sm flex items-center justify-center gap-1 disabled:opacity-50 text-[10px]"><FilePlus size={12}/> فاتورة د.ل</button>
+              </div>
             </div>
           </div>
           <div className="p-3 bg-canvas border-b border-hairline flex flex-col gap-3">
@@ -311,6 +341,7 @@ const CustomerDetailView = ({
                 <span className="text-brand-700 font-black font-mono" dir="ltr">${ledgerStats.sum.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                 <span className="flex items-center gap-1 text-brand-600"><CheckCircle2 size={11} /> {ledgerStats.paidCount}</span>
                 <span className="flex items-center gap-1 text-danger-strong"><AlertCircle size={11} /> {ledgerStats.unpaidCount}</span>
+                {ledgerInvalidDates > 0 && <span className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-warning-soft text-warning-800"><CalendarDays size={11} /> {ledgerInvalidDates} حملة بدون تاريخ صالح (مستبعدة من الفلتر)</span>}
               </div>
             </div>
           </div>
@@ -353,6 +384,24 @@ const CustomerDetailView = ({
               </tbody>
             </table>
           </div>
+
+          {pendingInvoice && (
+            <div className="fixed inset-0 bg-black/50 z-[120] flex items-center justify-center p-4 backdrop-blur-sm" onClick={() => setPendingInvoice(null)}>
+              <div className="bg-white rounded-2xl shadow-xl max-w-sm w-full p-5 animate-in fade-in" onClick={(e) => e.stopPropagation()}>
+                <div className="flex items-start gap-3 mb-4">
+                  <div className="w-9 h-9 rounded-xl bg-danger-soft text-danger-strong flex items-center justify-center shrink-0"><AlertCircle size={18} /></div>
+                  <div>
+                    <h4 className="font-black text-ink-800 text-sm">تأكيد تصدير الفاتورة</h4>
+                    <p className="text-ink-500 text-xs mt-1 leading-relaxed">لديك {ledgerSelectedHidden.length} حملة محددة لكنها مخفية بالفلاتر، ولن تدخل الفاتورة. الفاتورة ستضم {ledgerSelectedVisible.length} حملة ظاهرة فقط.</p>
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <button onClick={confirmInvoiceVisibleOnly} className="flex-1 bg-brand-600 text-white py-2.5 rounded-xl font-bold hover:bg-brand-700 shadow-md text-sm">متابعة بالظاهر فقط ({ledgerSelectedVisible.length})</button>
+                  <button onClick={() => setPendingInvoice(null)} className="flex-1 bg-fill text-ink-600 py-2.5 rounded-xl font-bold hover:bg-hairline text-sm">إلغاء</button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
